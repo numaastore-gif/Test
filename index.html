@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Full Padel Club</title>
 <meta name="description" content="Full Padel Club — 7 pistas indoor en La Pobla de Vallbona. Reserva online, escuela de pádel, torneos FIP y SNP, cafetería y comunidad. Vive el pádel a FULL.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%2314181a'/%3E%3Cg fill='none' stroke='%23c8e832' stroke-linecap='round'%3E%3Cpath d='M44 40c-12 4-18 13-12 22' stroke-width='11'/%3E%3Cpath d='M32 62c6 8 16 9 25 4' stroke-width='10'/%3E%3Cpath d='M32 62c-5 7-4 15 1 21' stroke-width='9'/%3E%3C/g%3E%3Ccircle cx='55' cy='28' r='10' fill='%23c8e832'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -14,8 +15,9 @@
    Paleta: azul pista + verde bola de pádel
    ============================================================ */
 :root{
-  --ball:#d6f24b;         /* verde bola */
-  --ball-deep:#b4d322;
+  --ball:#c8e832;         /* lima del logo */
+  --ball-deep:#a5c41f;
+  --brand-ink:#14181a;    /* negro del logo */
   --court:#1d63d1;        /* azul pista */
   --court-deep:#0b3ea6;
   --ink:#0d1220;
@@ -30,7 +32,7 @@
   --radius:18px;
   --nav-h:72px;
   --ok:#16a34a; --warn:#f59e0b; --bad:#e11d48;
-  --grad-ball:linear-gradient(135deg,var(--ball),#8fd94a);
+  --grad-ball:linear-gradient(135deg,var(--ball),#9ed127);
   --grad-court:linear-gradient(135deg,var(--court),#0a2c7a);
 }
 :root[data-theme="dark"], html.dark{
@@ -63,7 +65,7 @@ button,input,select,textarea{font:inherit;color:inherit}
 
 /* ---------- utilidades ---------- */
 .eyebrow{display:inline-flex;align-items:center;gap:.55rem;font-family:"Barlow Condensed";text-transform:uppercase;font-weight:700;letter-spacing:.16em;font-size:.85rem;color:var(--court);background:color-mix(in srgb,var(--court) 12%,transparent);padding:.35rem .85rem;border-radius:999px}
-:root[data-theme="dark"] .eyebrow{color:var(--ball);background:rgba(214,242,75,.12)}
+:root[data-theme="dark"] .eyebrow{color:var(--ball);background:rgba(200,232,50,.12)}
 .lead{font-size:1.06rem;color:var(--txt-soft);max-width:62ch}
 .section{padding:clamp(3.5rem,8vw,6.5rem) 0;position:relative}
 .section--alt{background:var(--paper-2)}
@@ -100,12 +102,15 @@ button,input,select,textarea{font:inherit;color:inherit}
 /* ---------- preloader ---------- */
 #preloader{position:fixed;inset:0;z-index:999;background:var(--ink);display:grid;place-items:center;transition:opacity .5s,visibility .5s}
 #preloader.done{opacity:0;visibility:hidden}
-.pl-court{width:120px;height:170px;border:3px solid rgba(214,242,75,.35);border-radius:6px;position:relative;display:grid;place-items:center}
-.pl-court::before{content:"";position:absolute;left:0;right:0;top:50%;height:3px;background:rgba(214,242,75,.35)}
+.pl-stack{display:grid;justify-items:center;gap:1.6rem}
+.pl-logo{width:118px;height:118px;border-radius:26px;animation:plpop .6s cubic-bezier(.2,.9,.3,1)}
+@keyframes plpop{from{transform:scale(.86);opacity:0}to{transform:none;opacity:1}}
+.pl-court{width:120px;height:170px;border:3px solid rgba(200,232,50,.35);border-radius:6px;position:relative;display:grid;place-items:center}
+.pl-court::before{content:"";position:absolute;left:0;right:0;top:50%;height:3px;background:rgba(200,232,50,.35)}
 .pl-ball{width:26px;height:26px;border-radius:50%;background:var(--grad-ball);box-shadow:0 0 24px var(--ball);
   animation:plbounce 1.05s cubic-bezier(.3,0,.4,1) infinite}
 @keyframes plbounce{0%,100%{transform:translateY(-58px) scaleY(1)}45%{transform:translateY(58px) scaleY(1)}50%{transform:translateY(58px) scale(1.25,.75)}55%{transform:translateY(58px) scaleY(1)}}
-#preloader .pl-txt{position:absolute;bottom:14%;color:var(--ball);font-family:"Barlow Condensed";letter-spacing:.4em;font-size:1.1rem;text-transform:uppercase}
+#preloader{background:var(--brand-ink)}
 
 /* ---------- progreso + nav ---------- */
 #progress{position:fixed;top:0;left:0;height:3px;width:0;background:var(--grad-ball);z-index:120;transition:width .1s linear}
@@ -114,11 +119,16 @@ header.nav{position:fixed;top:0;left:0;right:0;height:var(--nav-h);z-index:110;d
   border-bottom:1px solid transparent;transition:.28s}
 header.nav.stuck{border-bottom-color:var(--line);box-shadow:0 10px 30px -22px rgba(0,0,0,.6)}
 .nav .wrap{display:flex;align-items:center;gap:1rem;justify-content:space-between;width:min(1440px,96vw)}
-.logo{display:flex;align-items:center;gap:.6rem;font-family:"Barlow Condensed";font-weight:800;font-size:1.5rem;letter-spacing:.02em}
-.logo .dot{width:26px;height:26px;border-radius:50%;background:var(--grad-ball);position:relative;box-shadow:0 0 0 2px rgba(0,0,0,.06)}
-.logo .dot::after{content:"";position:absolute;inset:4px;border-radius:50%;border:2px solid rgba(13,18,32,.35);border-left-color:transparent;border-right-color:transparent}
-.logo b{color:var(--court)}
-:root[data-theme="dark"] .logo b{color:var(--ball)}
+.logo{display:flex;align-items:center;gap:.6rem;flex:0 0 auto}
+.logo .mark{width:44px;height:44px;border-radius:13px;background:var(--brand-ink);display:grid;place-items:center;flex:0 0 auto;
+  box-shadow:0 6px 16px -10px rgba(0,0,0,.8);transition:transform .25s}
+.logo:hover .mark{transform:rotate(-6deg) scale(1.05)}
+.logo .mark svg{width:27px;height:27px;color:var(--ball)}
+.logo .wm{line-height:1;display:flex;flex-direction:column;gap:.16rem}
+.logo .wm b{font-family:"Barlow Condensed";font-weight:800;font-style:italic;font-size:1.45rem;letter-spacing:.01em;color:var(--txt)}
+.logo .wm b i{font-style:inherit;color:var(--ball-deep)}
+:root[data-theme="dark"] .logo .wm b i{color:var(--ball)}
+.logo .wm>span{font-family:"Barlow Condensed";font-weight:700;font-size:.62rem;letter-spacing:.42em;text-transform:uppercase;color:var(--txt-soft)}
 .menu{display:flex;gap:.2rem;align-items:center}
 .menu a{padding:.5rem .8rem;white-space:nowrap;border-radius:10px;font-weight:600;font-size:.95rem;position:relative;transition:.18s}
 .menu a::after{content:"";position:absolute;left:.8rem;right:.8rem;bottom:.32rem;height:2px;background:var(--ball);transform:scaleX(0);transform-origin:left;transition:transform .25s}
@@ -135,10 +145,24 @@ header.nav.stuck{border-bottom-color:var(--line);box-shadow:0 10px 30px -22px rg
 #burger{display:none}
 .mobile{position:fixed;inset:var(--nav-h) 0 0;background:var(--paper);z-index:105;transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1);padding:1.5rem 6vw;overflow:auto}
 .mobile.open{transform:none}
+.mobile a.mob-cta{background:var(--grad-ball);color:#10160a;border:0;border-radius:14px;padding:.9rem 1.1rem;margin-bottom:.6rem;text-align:center}
 .mobile a{display:block;padding:.9rem 0;border-bottom:1px solid var(--line);font-family:"Barlow Condensed";text-transform:uppercase;font-size:1.6rem;font-weight:700}
 @media(max-width:1180px){
   .menu{display:none}
   #burger{display:grid}
+}
+/* en móvil la barra solo lleva marca, idioma, tema y menú: el CTA de reserva
+   vive en el hero y en la primera línea del menú desplegable */
+@media(max-width:620px){
+  .nav-actions .btn{display:none}
+  .nav .wrap{gap:.5rem}
+  .nav-actions{gap:.35rem}
+  .logo .mark{width:38px;height:38px;border-radius:11px}
+  .logo .mark svg{width:23px;height:23px}
+  .logo .wm b{font-size:1.2rem}
+  .logo .wm>span{font-size:.55rem;letter-spacing:.34em}
+  .lang button{padding:.4rem .45rem;font-size:.75rem}
+  .icon-btn{width:36px;height:36px}
 }
 
 /* ---------- hero ---------- */
@@ -180,7 +204,7 @@ header.nav.stuck{border-bottom-color:var(--line);box-shadow:0 10px 30px -22px rg
 .court-shape rect.bg{fill:var(--court);opacity:.9;transition:.25s}
 .court-shape:hover rect.bg,.court-shape.sel rect.bg{fill:var(--ball-deep)}
 .court-shape.busy rect.bg{fill:#7d8698;opacity:.6}
-.court-shape text{fill:#fff;font-family:"Barlow Condensed";font-weight:800;font-size:13px;pointer-events:none}
+.court-shape text{fill:#fff;font-family:"Barlow Condensed";font-weight:800;pointer-events:none}
 .court-legend{display:flex;flex-wrap:wrap;gap:1rem;margin-top:1rem;font-size:.85rem;color:var(--txt-soft)}
 .court-legend i{width:12px;height:12px;border-radius:3px;display:inline-block;margin-right:.35rem}
 .feature-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.9rem;margin-top:1.4rem}
@@ -246,7 +270,7 @@ header.nav.stuck{border-bottom-color:var(--line);box-shadow:0 10px 30px -22px rg
 .event .d small{text-transform:uppercase;font-size:.75rem;color:var(--txt-soft)}
 .badge{font-size:.68rem;text-transform:uppercase;letter-spacing:.1em;font-weight:700;padding:.2rem .6rem;border-radius:999px;background:var(--ball);color:#10160a}
 
-/* ---------- herramientas (marcador, americano, nivel) ---------- */
+/* ---------- herramientas (marcador, torneo, nivel, pizarra, pala) ---------- */
 .tools-tabs{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:1.4rem}
 .tabpanel{display:none;animation:fade .35s}
 .tabpanel.on{display:block}
@@ -271,6 +295,31 @@ header.nav.stuck{border-bottom-color:var(--line);box-shadow:0 10px 30px -22px rg
 #matchLog{max-height:150px;overflow:auto;font-size:.85rem;color:var(--txt-soft);margin-top:1rem;border-top:1px dashed var(--line);padding-top:.8rem}
 #matchLog div{padding:.15rem 0;border-bottom:1px dotted var(--line)}
 .gp-note{text-align:center;color:var(--ball);font-family:"Barlow Condensed";letter-spacing:.2em;text-transform:uppercase;font-size:.9rem;min-height:1.2em}
+
+.tactics{border-radius:var(--radius);overflow:hidden;border:1px solid var(--line);background:#0a2c7a;margin-top:1rem}
+.tactics svg{width:100%;height:auto;display:block;touch-action:none}
+.tb-token{cursor:grab}
+.tb-token:active{cursor:grabbing}
+.tb-token circle{transition:none}
+.tb-step{text-align:center;font-family:"Barlow Condensed";text-transform:uppercase;letter-spacing:.08em;font-size:1.15rem;margin:1rem 0 .2rem}
+
+.pala-grid{display:grid;grid-template-columns:minmax(0,300px) minmax(0,1fr);gap:1.4rem;align-items:start}
+@media(max-width:820px){.pala-grid{grid-template-columns:1fr}}
+.pala-q{margin-bottom:1rem}
+.pala-q>b{display:block;font-size:.8rem;text-transform:uppercase;letter-spacing:.08em;color:var(--txt-soft);margin-bottom:.4rem}
+.pala-q .opts{display:flex;flex-wrap:wrap;gap:.35rem}
+.pala-out{border:1px solid var(--line);border-radius:var(--radius);padding:1.2rem;background:var(--paper)}
+.shapes{display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem;margin-bottom:1rem}
+.shapes figure{margin:0;text-align:center;padding:.6rem .3rem;border:2px solid transparent;border-radius:14px;transition:.25s;opacity:.45}
+.shapes figure.on{border-color:var(--ball);background:color-mix(in srgb,var(--ball) 14%,transparent);opacity:1;transform:translateY(-3px)}
+.shapes figcaption{font-family:"Barlow Condensed";text-transform:uppercase;font-size:.95rem;font-weight:700;margin-top:.3rem}
+.shapes svg{width:100%;max-width:78px;height:auto}
+.specs{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:.5rem;margin:.9rem 0}
+.specs div{border:1px solid var(--line);border-radius:12px;padding:.55rem .7rem;background:var(--card)}
+.specs small{display:block;font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:var(--txt-soft)}
+.specs b{font-family:"Barlow Condensed";font-size:1.25rem}
+.meter{display:flex;align-items:center;gap:.7rem;font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:var(--txt-soft)}
+.meter .bar{flex:1}
 
 table.tbl{width:100%;border-collapse:collapse;font-size:.9rem}
 table.tbl th,table.tbl td{padding:.6rem .7rem;border-bottom:1px solid var(--line);text-align:left}
@@ -366,10 +415,33 @@ footer ul{list-style:none;padding:0;margin:0;display:grid;gap:.45rem;font-size:.
 <body>
 <a class="skip" href="#main" data-i18n="skip">Saltar al contenido</a>
 
+<!-- Marca del club, definida una sola vez y reutilizada con <use> -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="fpcFigure" viewBox="0 0 200 200">
+    <g fill="none" stroke="currentColor" stroke-linecap="round">
+      <path d="M112 56C92 62 84 76 92 88" stroke-width="21"/>
+      <path d="M92 88c9 12 26 14 42 6" stroke-width="19"/>
+      <path d="M92 88c-9 11-9 24-1 34" stroke-width="17"/>
+      <path d="M116 60c15 1 23-7 23-18" stroke-width="15"/>
+    </g>
+    <circle cx="122" cy="36" r="19" fill="currentColor"/>
+  </symbol>
+  <symbol id="fpcLockup" viewBox="0 0 260 260">
+    <rect width="260" height="260" rx="34" fill="#14181a"/>
+    <g color="#c8e832"><use href="#fpcFigure" x="42" y="14" width="176" height="176"/></g>
+    <text x="130" y="196" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-weight="800" font-style="italic" font-size="52">
+      <tspan fill="#c8e832">Full</tspan><tspan fill="#ffffff">Padel</tspan></text>
+    <g stroke="#c8e832" stroke-width="2"><line x1="58" y1="224" x2="94" y2="224"/><line x1="166" y1="224" x2="202" y2="224"/></g>
+    <text x="130" y="230" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-weight="700" font-size="22" letter-spacing="7" fill="#c8e832">CLUB</text>
+  </symbol>
+</svg>
+
 <!-- ══════════ PRELOADER ══════════ -->
 <div id="preloader" aria-hidden="true">
-  <div class="pl-court"><div class="pl-ball"></div></div>
-  <div class="pl-txt">Full Padel</div>
+  <div class="pl-stack">
+    <svg class="pl-logo" viewBox="0 0 260 260" aria-hidden="true"><use href="#fpcLockup"/></svg>
+    <div class="pl-court"><div class="pl-ball"></div></div>
+  </div>
 </div>
 
 <div id="progress" role="progressbar" aria-label="Progreso de lectura"></div>
@@ -377,7 +449,10 @@ footer ul{list-style:none;padding:0;margin:0;display:grid;gap:.45rem;font-size:.
 <!-- ══════════ NAV ══════════ -->
 <header class="nav" id="nav">
   <div class="wrap">
-    <a class="logo" href="#top"><span class="dot"></span>FULL<b>PADEL</b></a>
+    <a class="logo" href="#top" aria-label="Full Padel Club — inicio">
+      <span class="mark"><svg viewBox="0 0 200 200" aria-hidden="true"><use href="#fpcFigure"/></svg></span>
+      <span class="wm"><b><i>Full</i>Padel</b><span>Club</span></span>
+    </a>
 
     <nav class="menu" id="menu" aria-label="Principal">
       <a href="#club" data-i18n="nav.club">El Club</a>
@@ -404,6 +479,7 @@ footer ul{list-style:none;padding:0;margin:0;display:grid;gap:.45rem;font-size:.
 </header>
 
 <nav class="mobile" id="mobileMenu" aria-label="Menú móvil">
+  <a href="#reservas" class="mob-cta" data-i18n="nav.cta">Reservar pista</a>
   <a href="#club" data-i18n="nav.club">El Club</a>
   <a href="#reservas" data-i18n="nav.book">Reservas</a>
   <a href="#escuela" data-i18n="nav.school">Escuela</a>
@@ -422,7 +498,7 @@ footer ul{list-style:none;padding:0;margin:0;display:grid;gap:.45rem;font-size:.
 <section class="hero" id="top">
   <canvas id="heroCanvas" aria-hidden="true"></canvas>
   <div class="wrap">
-    <span class="eyebrow" style="background:rgba(214,242,75,.15);color:#d6f24b" data-i18n="hero.badge">La Pobla de Vallbona · Valencia</span>
+    <span class="eyebrow" style="background:rgba(200,232,50,.15);color:#c8e832" data-i18n="hero.badge">La Pobla de Vallbona · Valencia</span>
     <h1>
       <span data-i18n="hero.l1">Vive el pádel</span>
       <span class="accent" data-i18n="hero.l2">a FULL</span>
@@ -449,31 +525,26 @@ footer ul{list-style:none;padding:0;margin:0;display:grid;gap:.45rem;font-size:.
     <div class="sec-head reveal">
       <div>
         <span class="eyebrow" data-i18n="club.eyebrow">El club</span>
-        <h2 data-i18n="club.title">Siete pistas. Cero excusas.</h2>
-        <p class="lead" data-i18n="club.lead">Pistas panorámicas cubiertas con césped de última generación e iluminación LED sin sombras. Llueva, haga sol o sean las 23:00: aquí siempre se juega. Pasa el ratón por una pista para ver su estado en directo.</p>
+        <h2 data-i18n="club.title">El plano de la nave</h2>
+        <p class="lead" data-i18n="club.lead">Toda la nave es indoor: cinco pistas en la fila superior (de la 1, junto a los aseos, a la 5 al fondo) y dos en horizontal abajo, con la cafetería al lado de la 7. Pasa el ratón o el dedo por el plano para ver el estado de cada pista y reservarla.</p>
       </div>
       <a class="btn btn--court" href="#reservas" data-i18n="club.cta">Ver disponibilidad</a>
     </div>
 
-    <div class="club-grid">
-      <div class="courtmap reveal">
-        <svg viewBox="0 0 420 300" role="img" aria-label="Plano interactivo de las 7 pistas del club">
-          <rect x="0" y="0" width="420" height="300" rx="14" fill="none" stroke="var(--line)"/>
-          <g id="courtsLayer"></g>
-          <g transform="translate(300,214)">
-            <rect width="104" height="70" rx="10" fill="var(--ball)" opacity=".9"/>
-            <text x="52" y="32" text-anchor="middle" font-family="Barlow Condensed" font-weight="800" font-size="14" fill="#10160a">CAFETERÍA</text>
-            <text x="52" y="50" text-anchor="middle" font-family="Inter" font-size="9" fill="#2c3410">Bar · Terraza · Pro Shop</text>
-          </g>
-          <text x="16" y="292" font-family="Inter" font-size="9" fill="var(--txt-soft)">Carrer de l'Aurora, 1 · La Pobla de Vallbona</text>
-        </svg>
-        <div class="court-legend">
-          <span><i style="background:var(--court)"></i><span data-i18n="club.free">Libre ahora</span></span>
-          <span><i style="background:#7d8698"></i><span data-i18n="club.busy">Ocupada</span></span>
-          <span><i style="background:var(--ball-deep)"></i><span data-i18n="club.sel">Seleccionada</span></span>
-        </div>
+    <div class="courtmap reveal">
+      <svg viewBox="0 0 1122 660" role="img" aria-label="Plano interactivo de la nave: 7 pistas, aseos y cafetería">
+        <g id="courtsLayer"></g>
+        <g id="roomsLayer"></g>
+        <text x="10" y="645" font-family="Inter" font-size="15" fill="var(--txt-soft)">Carrer de l'Aurora, 1 · La Pobla de Vallbona · 7 pistas indoor</text>
+      </svg>
+      <div class="court-legend">
+        <span><i style="background:var(--court)"></i><span data-i18n="club.free">Libre ahora</span></span>
+        <span><i style="background:#7d8698"></i><span data-i18n="club.busy">Ocupada</span></span>
+        <span><i style="background:var(--ball-deep)"></i><span data-i18n="club.sel">Seleccionada</span></span>
       </div>
+    </div>
 
+    <div class="club-grid" style="margin-top:1.4rem">
       <div class="reveal">
         <div class="card pad" id="courtInfo">
           <span class="eyebrow" data-i18n="club.detail">Detalle de pista</span>
@@ -481,14 +552,14 @@ footer ul{list-style:none;padding:0;margin:0;display:grid;gap:.45rem;font-size:.
           <p id="ciDesc" class="lead" style="font-size:.95rem">Pista panorámica de cristal con grada. Es donde se juegan las finales del club y los cuadros FIP.</p>
           <div style="display:flex;gap:.6rem;flex-wrap:wrap;margin-top:.6rem">
             <span class="badge" id="ciStatus">Libre</span>
-            <span class="badge" style="background:var(--line);color:var(--txt)" id="ciType">Panorámica</span>
+            <span class="badge" style="background:var(--line);color:var(--txt)" id="ciType">Fila superior</span>
             <span class="badge" style="background:var(--line);color:var(--txt)" id="ciPrice">24 € / 90 min</span>
           </div>
           <button class="btn btn--court btn--sm" style="margin-top:1rem" id="ciBook" data-i18n="club.bookThis">Reservar esta pista</button>
         </div>
 
         <div class="feature-list">
-          <div class="feature"><span class="ic">🏟️</span><div><b data-i18n="f1.t">7 pistas indoor</b><small data-i18n="f1.d">Cubiertas, panorámicas y con LED antirreflejo.</small></div></div>
+          <div class="feature"><span class="ic">🏟️</span><div><b data-i18n="f1.t">7 pistas indoor</b><small data-i18n="f1.d">Las 7 cubiertas: se juega igual en enero que en agosto.</small></div></div>
           <div class="feature"><span class="ic">🎓</span><div><b data-i18n="f2.t">Escuela</b><small data-i18n="f2.d">De iniciación a competición, con entrenadores titulados.</small></div></div>
           <div class="feature"><span class="ic">🏆</span><div><b data-i18n="f3.t">Torneos FIP &amp; SNP</b><small data-i18n="f3.d">Sede del circuito nacional y de pruebas internacionales.</small></div></div>
           <div class="feature"><span class="ic">☕</span><div><b data-i18n="f4.t">Cafetería</b><small data-i18n="f4.d">Comida casera y menú del día a precio de club.</small></div></div>
@@ -625,14 +696,16 @@ footer ul{list-style:none;padding:0;margin:0;display:grid;gap:.45rem;font-size:.
       <div>
         <span class="eyebrow" data-i18n="tools.eyebrow">Herramientas Full Padel</span>
         <h2 data-i18n="tools.title">El club, también fuera de la pista</h2>
-        <p class="lead" data-i18n="tools.lead">Marcador oficial con punto de oro, generador de rondas de Americano y test de nivel. Todo funciona sin registro.</p>
+        <p class="lead" data-i18n="tools.lead">Marcador oficial con punto de oro, generador de torneos rotatorios, test de nivel, pizarra táctica y selector de pala. Cinco herramientas de pádel, todas sin registro.</p>
       </div>
     </div>
 
     <div class="tools-tabs reveal" role="tablist">
       <button class="chip is-on" role="tab" aria-selected="true" data-tab="marcador" data-i18n="tools.t1">🎾 Marcador en vivo</button>
-      <button class="chip" role="tab" aria-selected="false" data-tab="americano" data-i18n="tools.t2">🔄 Generador Americano</button>
+      <button class="chip" role="tab" aria-selected="false" data-tab="torneo" data-i18n="tools.t2">🔄 Generador de torneo</button>
       <button class="chip" role="tab" aria-selected="false" data-tab="nivel" data-i18n="tools.t3">📊 Test de nivel</button>
+      <button class="chip" role="tab" aria-selected="false" data-tab="pizarra" data-i18n="tools.t4">📐 Pizarra táctica</button>
+      <button class="chip" role="tab" aria-selected="false" data-tab="pala" data-i18n="tools.t5">🏓 Qué pala me pega</button>
     </div>
 
     <!-- MARCADOR -->
@@ -673,10 +746,10 @@ footer ul{list-style:none;padding:0;margin:0;display:grid;gap:.45rem;font-size:.
       </div>
     </div>
 
-    <!-- AMERICANO -->
-    <div class="tabpanel" id="tab-americano" role="tabpanel">
+    <!-- GENERADOR DE TORNEO -->
+    <div class="tabpanel" id="tab-torneo" role="tabpanel">
       <div class="card pad reveal">
-        <p class="lead" data-i18n="am.lead">Introduce los jugadores (uno por línea o separados por comas). Generamos las rondas de un Americano rotatorio: cada ronda cambian las parejas y los rivales.</p>
+        <p class="lead" data-i18n="am.lead">Introduce los jugadores (uno por línea o separados por comas). Generamos las rondas de un torneo rotatorio: cada ronda cambian las parejas y los rivales.</p>
         <div style="display:grid;grid-template-columns:1fr 260px;gap:1rem" class="am-grid">
           <div class="field">
             <label for="players" data-i18n="am.players">Jugadores (múltiplo de 4 recomendado)</label>
@@ -719,6 +792,46 @@ footer ul{list-style:none;padding:0;margin:0;display:grid;gap:.45rem;font-size:.
           <div style="display:flex;gap:.6rem;flex-wrap:wrap;margin-top:1rem">
             <button class="btn btn--ball btn--sm" id="qToSchool" data-i18n="q.toSchool">Ver grupos de mi nivel</button>
             <button class="btn btn--ghost btn--sm" id="qRetry" data-i18n="q.retry">Repetir test</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PIZARRA TÁCTICA -->
+    <div class="tabpanel" id="tab-pizarra" role="tabpanel">
+      <div class="card pad reveal">
+        <p class="lead" data-i18n="tb.lead">Pista de pádel a escala (20 × 10 m). Elige una jugada y mírala paso a paso, o arrastra a los jugadores y la bola para plantear la tuya. Con el modo lápiz puedes dibujar trayectorias encima.</p>
+        <div class="levels" id="playChips" role="group" aria-label="Jugadas"></div>
+        <div class="tactics">
+          <svg id="tbSvg" viewBox="0 0 1080 580" role="img" aria-label="Pizarra táctica de pádel"></svg>
+        </div>
+        <p class="tb-step" id="tbStep" aria-live="polite">—</p>
+        <div style="display:flex;flex-wrap:wrap;gap:.6rem;justify-content:center;margin-top:.4rem">
+          <button class="btn btn--ball btn--sm" id="tbPlay" data-i18n="tb.play">▶ Reproducir</button>
+          <button class="btn btn--ghost btn--sm" id="tbPrev" data-i18n="tb.prev">◀ Paso</button>
+          <button class="btn btn--ghost btn--sm" id="tbNext" data-i18n="tb.next">Paso ▶</button>
+          <button class="btn btn--ghost btn--sm" id="tbPen" aria-pressed="false" data-i18n="tb.pen">✏️ Lápiz</button>
+          <button class="btn btn--ghost btn--sm" id="tbClear" data-i18n="tb.clear">Borrar trazos</button>
+          <button class="btn btn--ghost btn--sm" id="tbReset" data-i18n="tb.reset">Reiniciar jugada</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SELECTOR DE PALA -->
+    <div class="tabpanel" id="tab-pala" role="tabpanel">
+      <div class="card pad reveal">
+        <p class="lead" data-i18n="pa.lead">Responde cinco cosas sobre cómo juegas y te decimos qué forma, balance, peso y dureza de goma te conviene. Cambia cualquier respuesta y la recomendación se recalcula al momento.</p>
+        <div class="pala-grid">
+          <div id="palaForm"></div>
+          <div class="pala-out">
+            <div class="shapes" id="palaShapes"></div>
+            <h3 id="palaTitle" style="margin:.4rem 0 .2rem">—</h3>
+            <p id="palaWhy" style="font-size:.92rem;color:var(--txt-soft)">—</p>
+            <div class="specs" id="palaSpecs"></div>
+            <div class="meter"><span data-i18n="pa.control">Control</span>
+              <div class="bar" style="margin:0"><i id="palaBar"></i></div>
+              <span data-i18n="pa.power">Potencia</span></div>
+            <a class="btn btn--ball btn--sm" id="palaWa" style="margin-top:1rem" target="_blank" rel="noopener" href="#" data-i18n="pa.wa">Probar palas en el pro shop</a>
           </div>
         </div>
       </div>
@@ -920,8 +1033,8 @@ footer ul{list-style:none;padding:0;margin:0;display:grid;gap:.45rem;font-size:.
             <text x="26" y="196" fill="#5f7096" font-family="Inter" font-size="11">CV-35</text>
             <text x="392" y="284" fill="#5f7096" font-family="Inter" font-size="11">La Pobla de Vallbona</text>
             <g transform="translate(250,150)">
-              <circle r="46" fill="rgba(214,242,75,.12)"><animate attributeName="r" values="34;58;34" dur="3s" repeatCount="indefinite"/><animate attributeName="opacity" values=".45;0;.45" dur="3s" repeatCount="indefinite"/></circle>
-              <circle r="13" fill="#d6f24b"/>
+              <circle r="46" fill="rgba(200,232,50,.12)"><animate attributeName="r" values="34;58;34" dur="3s" repeatCount="indefinite"/><animate attributeName="opacity" values=".45;0;.45" dur="3s" repeatCount="indefinite"/></circle>
+              <circle r="13" fill="#c8e832"/>
               <path d="M-13 0a13 13 0 0 1 26 0" fill="none" stroke="#0d1220" stroke-width="1.6"/>
               <text y="-26" text-anchor="middle" fill="#fff" font-family="Barlow Condensed" font-weight="800" font-size="16">FULL PADEL CLUB</text>
               <text y="34" text-anchor="middle" fill="#9fb0cc" font-family="Inter" font-size="10">Carrer de l'Aurora, 1</text>
@@ -939,7 +1052,9 @@ footer ul{list-style:none;padding:0;margin:0;display:grid;gap:.45rem;font-size:.
   <div class="wrap">
     <div class="foot-grid">
       <div>
-        <a class="logo" href="#top" style="color:#fff"><span class="dot"></span>FULL<b style="color:var(--ball)">PADEL</b></a>
+        <a href="#top" aria-label="Full Padel Club — inicio" style="display:inline-block;width:132px">
+          <svg viewBox="0 0 260 260" style="width:100%;height:auto;display:block;border-radius:18px" role="img" aria-label="Full Padel Club"><use href="#fpcLockup"/></svg>
+        </a>
         <p style="margin-top:.8rem;font-size:.92rem" data-i18n="ft.about">7 pistas indoor, escuela, competición y cafetería en La Pobla de Vallbona. Aquí se vive el pádel a FULL.</p>
         <div class="social">
           <a href="https://www.instagram.com/fullpadelclub/" target="_blank" rel="noopener" aria-label="Instagram">IG</a>
@@ -960,7 +1075,7 @@ footer ul{list-style:none;padding:0;margin:0;display:grid;gap:.45rem;font-size:.
         <li><a href="#ranking" data-i18n="nav.ranking">Ranking</a></li>
       </ul></div>
       <div><h4 data-i18n="ft.news">Newsletter</h4>
-        <p style="font-size:.9rem" data-i18n="ft.newsD">Torneos, americanos y ofertas de última hora.</p>
+        <p style="font-size:.9rem" data-i18n="ft.newsD">Torneos, partidas y ofertas de última hora.</p>
         <form id="newsForm" style="display:flex;gap:.4rem" novalidate>
           <input id="newsMail" type="email" placeholder="tu@email.com" required style="flex:1;min-width:0;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:12px;padding:.65rem .8rem;color:#fff">
           <button class="btn btn--ball btn--sm" type="submit">OK</button>
@@ -1001,8 +1116,9 @@ footer ul{list-style:none;padding:0;margin:0;display:grid;gap:.45rem;font-size:.
    Todo el comportamiento del sitio, sin dependencias externas.
    Secciones: 0 utilidades · 1 datos · 2 arranque/UI · 3 i18n · 4 hero canvas
               5 pistas · 6 reservas · 7 escuela · 8 torneos · 9 marcador
-              10 americano · 11 test de nivel · 12 ranking · 13 busco pareja
-              14 cafetería · 15 galería · 16 testimonios · 17 FAQ
+              10 torneo · 11 test de nivel · 11b pizarra · 11c pala
+              12 ranking · 13 busco pareja · 14 cafetería · 15 galería
+              16 testimonios · 17 FAQ
               18 formularios · 19 modales/cookies
    ========================================================================== */
 (function(){
@@ -1058,14 +1174,23 @@ const CLUB = {
 };
 
 const COURTS = [
-  {id:1,name:'Pista 1 · Central',   type:'Panorámica', x:16,  y:16,  w:120,h:88, desc:'Panorámica de cristal con grada. Aquí se juegan las finales del club y los cuadros FIP.'},
-  {id:2,name:'Pista 2',             type:'Muro',       x:150, y:16,  w:120,h:88, desc:'Pista de muro, ideal para entrenar el fondo y trabajar la pared.'},
-  {id:3,name:'Pista 3',             type:'Panorámica', x:284, y:16,  w:120,h:88, desc:'Panorámica con césped monofilamento nuevo. Bote rápido y bajo.'},
-  {id:4,name:'Pista 4',             type:'Panorámica', x:16,  y:118, w:120,h:88, desc:'La favorita de la escuela: buena luz y acceso directo desde vestuarios.'},
-  {id:5,name:'Pista 5',             type:'Muro',       x:150, y:118, w:120,h:88, desc:'Pista de muro con red profesional. Perfecta para partidos de nivel medio.'},
-  {id:6,name:'Pista 6',             type:'Panorámica', x:284, y:118, w:120,h:88, desc:'Panorámica junto a la cafetería: se ve el partido desde la terraza.'},
-  {id:7,name:'Pista 7 · Cristal',   type:'Cristal',    x:16,  y:216, w:254,h:68, desc:'Pista de cristal completa, la más silenciosa del club. Reservada para competición.'}
+  {id:1,name:'Pista 1',x:782,y:10, w:175,h:350,o:'v',desc:'Última pista de la fila, pegada a los aseos. La más cómoda si vienes justo de tiempo.'},
+  {id:2,name:'Pista 2',x:589,y:10, w:175,h:350,o:'v',desc:'En el centro de la fila superior, con buena visibilidad desde el pasillo.'},
+  {id:3,name:'Pista 3',x:396,y:10, w:175,h:350,o:'v',desc:'Pista central de la nave. Es la que usamos para las finales de la liga interna.'},
+  {id:4,name:'Pista 4',x:203,y:10, w:175,h:350,o:'v',desc:'Zona tranquila de la fila superior, la favorita de los grupos de la escuela.'},
+  {id:5,name:'Pista 5',x:10, y:10, w:175,h:350,o:'v',desc:'Al fondo de la nave, la más resguardada del paso y del ruido.'},
+  {id:6,name:'Pista 6',x:10, y:420,w:350,h:175,o:'h',desc:'Fila inferior, en horizontal. Acceso directo desde la entrada de la nave.'},
+  {id:7,name:'Pista 7',x:396,y:420,w:350,h:175,o:'h',desc:'Fila inferior, junto a la cafetería: se sigue el partido desde las mesas.'}
 ];
+
+/* Zonas de servicio de la nave (no reservables) */
+const ROOMS = [
+  {id:'wcM',x:975,y:10, w:137,h:155,label:'WC MUJERES',labelEn:'WOMEN WC',icon:'🚻',tone:'court'},
+  {id:'wcH',x:975,y:175,w:137,h:185,label:'WC HOMBRES',labelEn:'MEN WC',   icon:'🚻',tone:'court'},
+  {id:'caf',x:790,y:420,w:322,h:175,label:'CAFETERÍA', labelEn:'CAFÉ',     icon:'☕',tone:'ball',
+   sub:'Bar · Terraza · Pro Shop', subEn:'Bar · Terrace · Pro shop'}
+];
+
 
 const CLASSES = [
   {lvl:'iniciacion',name:'Iniciación adultos',days:'Lunes y miércoles',time:'19:00 – 20:30',coach:'Marta Císcar',price:45,spots:2,cap:4,fill:35,desc:'Primeros golpes, posición en pista y saque. Sin experiencia previa.'},
@@ -1084,8 +1209,8 @@ const EVENTS = [
   {name:'Full Pro Series FIP',date:'2026-11-14T09:00:00',cat:'FIP',spots:48,left:23,price:'60 € / pareja',
    desc:'Torneo internacional puntuable para el ranking FIP. Premios en metálico y cuadro final en la pista central.'},
   {name:'Full Padel Fest',date:'2026-09-20T10:00:00',cat:'FEST',spots:120,left:38,price:'25 € / jugador',
-   desc:'Nuestra fiesta del pádel: americano gigante, food trucks, música en directo y sorteos durante todo el día.'},
-  {name:'Americano nocturno',date:'2026-09-12T20:30:00',cat:'AM',spots:32,left:6,price:'12 € / jugador',
+   desc:'Nuestra fiesta del pádel: torneo gigante, food trucks, música en directo y sorteos durante todo el día.'},
+  {name:'Torneo nocturno',date:'2026-09-12T20:30:00',cat:'AM',spots:32,left:6,price:'12 € / jugador',
    desc:'Cada segundo viernes de mes. Cinco rondas rotatorias, cerveza incluida y ranking mensual.'},
   {name:'Liga interna — jornada 6',date:'2026-09-08T18:00:00',cat:'LIGA',spots:80,left:0,price:'Incluido con la cuota',
    desc:'Jornada de liga interna en las siete pistas. Consulta tu horario en el ranking del club.'}
@@ -1123,11 +1248,16 @@ const MENU = [
 ];
 
 const TESTIMONIALS = [
-  {q:'Las mejores pistas indoor de la comarca. Reservo desde el móvil y en dos toques tengo pista a las 22:00.',n:'Sergio B.',r:5,t:'Socio desde 2024'},
-  {q:'Empecé de cero en el grupo de iniciación y a los seis meses ya estaba jugando la liga interna. El nivel de los entrenadores es altísimo.',n:'Clara O.',r:5,t:'Alumna de la escuela'},
-  {q:'El americano de los viernes es un planazo. Juegas con gente nueva cada ronda y luego cenas en la cafetería.',n:'Nacho P.',r:5,t:'Jugador habitual'},
-  {q:'Organización impecable en el torneo FIP: horarios clavados, agua para los jugadores y pista central con grada llena.',n:'Ainhoa R.',r:4,t:'Competidora'},
-  {q:'Vengo con los peques a minipádel y me tomo el café viendo la clase desde la terraza. Un diez.',n:'Vicent B.',r:5,t:'Padre de la cantera'}
+  {q:'Las mejores pistas indoor de la comarca. Reservo desde el móvil y en dos toques tengo pista a las 22:00.',
+   qe:'The best indoor courts around. I book from my phone and in two taps I have a court at 10 pm.',n:'Sergio B.',r:5,t:'Socio desde 2024',te:'Member since 2024'},
+  {q:'Empecé de cero en el grupo de iniciación y a los seis meses ya estaba jugando la liga interna. El nivel de los entrenadores es altísimo.',
+   qe:'I started from zero in the beginners group and six months later I was playing the internal league. The coaching is outstanding.',n:'Clara O.',r:5,t:'Alumna de la escuela',te:'Academy student'},
+  {q:'El torneo de los viernes es un planazo. Juegas con gente nueva cada ronda y luego cenas en la cafetería.',
+   qe:'The Friday tournament is a great night out. New people every round and dinner in the café afterwards.',n:'Nacho P.',r:5,t:'Jugador habitual',te:'Regular player'},
+  {q:'Organización impecable en el torneo FIP: horarios clavados, agua para los jugadores y pista central con grada llena.',
+   qe:'Flawless organisation at the FIP event: schedules on time, water for players and a packed centre court.',n:'Ainhoa R.',r:4,t:'Competidora',te:'Competitor'},
+  {q:'Vengo con los peques a minipádel y me tomo el café viendo la clase desde la terraza. Un diez.',
+   qe:'I bring the kids to mini-padel and have my coffee watching the session from the terrace. Ten out of ten.',n:'Vicent B.',r:5,t:'Padre de la cantera',te:'Junior parent'}
 ];
 
 const FAQS = [
@@ -1136,7 +1266,7 @@ const FAQS = [
   {q:'¿Qué pasa si llueve?',a:'Nada: las siete pistas son indoor. Es la ventaja de jugar aquí en enero a las 23:00 o en agosto al mediodía.'},
   {q:'¿Con cuánta antelación puedo cancelar?',a:'Hasta 12 horas antes de la hora de juego sin coste. A partir de ahí se cobra el 50 % de la reserva, salvo que la pista se vuelva a ocupar.'},
   {q:'¿Tenéis vestuarios y taquillas?',a:'Sí, vestuarios con duchas de agua caliente, taquillas con llave y secadores. Recomendamos no dejar objetos de valor durante la noche.'},
-  {q:'¿Organizáis eventos de empresa?',a:'Por supuesto. Montamos americanos cerrados para empresas de 8 a 48 jugadores, con monitor, catering en la cafetería y clasificación en directo. Escríbenos por WhatsApp y te preparamos presupuesto.'},
+  {q:'¿Organizáis eventos de empresa?',a:'Por supuesto. Montamos torneos cerrados para empresas de 8 a 48 jugadores, con monitor, catering en la cafetería y clasificación en directo. Escríbenos por WhatsApp y te preparamos presupuesto.'},
   {q:'¿Cómo funciona la liga interna?',a:'Se juega por categorías (1ª, 2ª, 3ª y femenina) en jornadas quincenales. Tú acuerdas la hora con tu rival y reservas la pista con tarifa de liga. Los resultados actualizan el ranking cada lunes.'}
 ];
 
@@ -1150,10 +1280,10 @@ const I18N = {
   'hero.badge':'La Pobla de Vallbona · Valencia','hero.l1':'Play padel','hero.l2':'to the FULL',
   'hero.lead':'7 state-of-the-art indoor courts, an academy for every level, FIP and SNP tournaments, and a café where every match ends. Open daily from 08:00 to 23:30.',
   'hero.cta1':'Book now','hero.cta2':'Check my level','hero.s1':'Indoor courts','hero.s2':'Members','hero.s3':'Hours a day','hero.s4':'Google rating','hero.scroll':'Scroll',
-  'club.eyebrow':'The club','club.title':'Seven courts. No excuses.',
-  'club.lead':'Covered panoramic courts with next-generation turf and shadow-free LED lighting. Rain, sun or 11 pm: here you always play. Hover a court to see its live status.',
+  'club.eyebrow':'The club','club.title':'The floor plan',
+  'club.lead':'The whole warehouse is indoor: five courts along the top row (from court 1, next to the toilets, to court 5 at the far end) and two crosswise below, with the café beside court 7. Hover or tap a court on the plan to see its status and book it.',
   'club.cta':'See availability','club.free':'Free now','club.busy':'Busy','club.sel':'Selected','club.detail':'Court detail','club.bookThis':'Book this court',
-  'f1.t':'7 indoor courts','f1.d':'Covered, panoramic and with anti-glare LED.',
+  'f1.t':'7 indoor courts','f1.d':'All 7 covered: January or August, you play the same.',
   'f2.t':'Academy','f2.d':'From beginner to competition, with certified coaches.',
   'f3.t':'FIP & SNP events','f3.d':'Host venue of the national circuit and international stops.',
   'f4.t':'Café','f4.d':'Home cooking and a daily set menu at club prices.',
@@ -1171,11 +1301,15 @@ const I18N = {
   'ev.lead':'We host SNP 2025|2026, the Full Pro Series FIP and the Full Padel Fest. Pick an event to see the live countdown.',
   'ev.signup':'Sign me up','cd.d':'Days','cd.h':'Hours','cd.m':'Min','cd.s':'Sec',
   'tools.eyebrow':'Full Padel tools','tools.title':'The club, off the court too',
-  'tools.lead':'Official scoreboard with golden point, Americano round generator and a level test. All of it without signing up.',
-  'tools.t1':'🎾 Live scoreboard','tools.t2':'🔄 Americano generator','tools.t3':'📊 Level test',
+  'tools.lead':'Official scoreboard with golden point, rotating tournament generator, level test, tactics board and racket finder. Five padel tools, none of them needing an account.',
+  'tools.t1':'🎾 Live scoreboard','tools.t4':'📐 Tactics board','tools.t5':'🏓 Which racket suits me',
+  'tb.lead':'A padel court to scale (20 × 10 m). Pick a play and watch it step by step, or drag the players and the ball to set up your own. Pen mode lets you draw the trajectories on top.',
+  'tb.play':'▶ Play','tb.prev':'◀ Step','tb.next':'Step ▶','tb.pen':'✏️ Pen','tb.clear':'Clear drawing','tb.reset':'Restart play',
+  'pa.lead':'Answer five things about how you play and we tell you which shape, balance, weight and foam hardness suit you. Change any answer and the recommendation updates instantly.',
+  'pa.control':'Control','pa.power':'Power','pa.wa':'Try rackets at the pro shop','tools.t2':'🔄 Tournament generator','tools.t3':'📊 Level test',
   'sc.teamA':'Team A','sc.teamB':'Team B','sc.gold':'Deuce mode','sc.goldOn':'Golden point','sc.goldOff':'Advantages','sc.sets':'Match',
   'sc.undo':'↶ Undo','sc.reset':'Reset','sc.share':'Copy result','sc.keys':'Shortcuts: press <kbd>A</kbd> and <kbd>L</kbd> to add a point, <kbd>Z</kbd> to undo.',
-  'am.lead':'Enter the players (one per line or comma separated). We build the rounds of a rotating Americano: partners and opponents change every round.',
+  'am.lead':'Enter the players (one per line or comma separated). We build the rounds of a rotating tournament: partners and opponents change every round.',
   'am.players':'Players (a multiple of 4 works best)','am.courts':'Courts available','am.rounds':'Rounds','am.points':'Points per match','am.gen':'Generate draw','am.copy':'Copy draw',
   'q.back':'← Back','q.result':'Your result','q.toSchool':'See groups for my level','q.retry':'Retake test',
   'rk.eyebrow':'Internal league','rk.title':'Club ranking','rk.lead':'Click a column to sort and use the search box to find your partner. Updated every Monday.',
@@ -1193,7 +1327,7 @@ const I18N = {
   'ct.gdpr':'I have read and accept the privacy policy and the processing of my data.','ct.send':'Send message',
   'ct.addr':'Address','ct.tel':'Phone','ct.hours':'Opening hours','ct.hoursV':'Every day, 08:00 to 23:30','ct.wa':'Message us and we reply in minutes',
   'ft.about':'7 indoor courts, academy, competition and café in La Pobla de Vallbona. Padel to the FULL.',
-  'ft.club':'Club','ft.comp':'Competition','ft.news':'Newsletter','ft.newsD':'Tournaments, americanos and last-minute offers.',
+  'ft.club':'Club','ft.comp':'Competition','ft.news':'Newsletter','ft.newsD':'Tournaments, matches and last-minute offers.',
   'ft.rights':'All rights reserved','ft.legal':'Legal notice','ft.privacy':'Privacy','ft.cookies':'Cookies',
   'ck.txt':'We use first-party cookies to remember your bookings and preferences. Accept them or continue with the essential ones only.',
   'ck.ok':'Accept','ck.no':'Essential only'
@@ -1211,7 +1345,13 @@ function applyLang(lang){
   $$('[data-i18n]').forEach(n=>{ n.innerHTML = t(n.dataset.i18n); });
   $$('.lang button').forEach(b=> b.setAttribute('aria-pressed', String(b.dataset.lang===lang)));
   /* refrescar todo lo que se pinta con JS */
+  const keepCourt=$('#courtSel').value; buildCourtSelect(); $('#courtSel').value=keepCourt;
+  renderCourtMap(); selectCourt(activeCourt,false);
   renderSlots(); renderCart(); renderClasses(); renderEvents(); renderRanking(); renderMenu(); renderMM(); buildTicker();
+  renderFAQ(); renderGallery(); renderSlides();
+  renderPlayChips(); tbCaption(); renderPalaForm(); calcPala();
+  if($('#quizResult').hidden) renderQuiz(); else finishQuiz();
+  if($('#amOut').dataset.text) renderAmericano();
   updateOpenNow();
 }
 
@@ -1289,8 +1429,8 @@ if('IntersectionObserver' in window){
 /* ticker del hero */
 function buildTicker(){
   const items = LANG==='es'
-    ? ['7 pistas indoor','Abierto 08:00 – 23:30','Sede SNP 2025|2026','Full Pro Series FIP','Escuela todos los niveles','Americano cada viernes','Cafetería &amp; terraza','Parking gratuito']
-    : ['7 indoor courts','Open 08:00 – 23:30','SNP 2025|2026 host','Full Pro Series FIP','Academy for all levels','Americano every Friday','Café &amp; terrace','Free parking'];
+    ? ['7 pistas indoor','Abierto 08:00 – 23:30','Sede SNP 2025|2026','Full Pro Series FIP','Escuela todos los niveles','Torneo cada viernes','Cafetería &amp; terraza','Parking gratuito']
+    : ['7 indoor courts','Open 08:00 – 23:30','SNP 2025|2026 host','Full Pro Series FIP','Academy for all levels','Tournament every Friday','Café &amp; terrace','Free parking'];
   const row = items.map(i=>'<span>🎾 '+i+'</span>').join('');
   $('#tickerTrack').innerHTML = row+row;
 }
@@ -1322,7 +1462,7 @@ function buildTicker(){
   function drawBall(b){
     ctx.save(); ctx.translate(b.x,b.y); ctx.rotate(b.a);
     ctx.globalAlpha=b.o;
-    ctx.fillStyle='#d6f24b'; ctx.beginPath(); ctx.arc(0,0,b.r,0,7); ctx.fill();
+    ctx.fillStyle='#c8e832'; ctx.beginPath(); ctx.arc(0,0,b.r,0,7); ctx.fill();
     ctx.globalAlpha=b.o*1.7; ctx.strokeStyle='#0d1220'; ctx.lineWidth=Math.max(1,b.r*.10);
     ctx.beginPath(); ctx.arc(-b.r*1.05,0,b.r*1.28,-0.9,0.9); ctx.stroke();
     ctx.beginPath(); ctx.arc( b.r*1.05,0,b.r*1.28,Math.PI-0.9,Math.PI+0.9); ctx.stroke();
@@ -1366,6 +1506,27 @@ function courtBusyNow(id){
   const d=new Date();
   return seeded('now'+id+d.getFullYear()+d.getMonth()+d.getDate()+d.getHours()) < .55;
 }
+function courtLines(c){
+  /* red y líneas de saque a escala: la red parte la pista a lo largo y las
+     líneas de saque van a 3 m de cada fondo (pista real de 20 x 10 m) */
+  const L = c.o==='v' ? c.h : c.w;              /* eje largo, 20 m */
+  const S = L*0.305;                            /* 3,05 m desde el fondo   */
+  const half = L/2;
+  const p=[];
+  if(c.o==='v'){
+    p.push([c.x,c.y+half,c.x+c.w,c.y+half,2.5]);                 /* red */
+    p.push([c.x,c.y+S,c.x+c.w,c.y+S,1.2]);
+    p.push([c.x,c.y+c.h-S,c.x+c.w,c.y+c.h-S,1.2]);
+    p.push([c.x+c.w/2,c.y+S,c.x+c.w/2,c.y+c.h-S,1.2]);           /* central */
+  }else{
+    p.push([c.x+half,c.y,c.x+half,c.y+c.h,2.5]);
+    p.push([c.x+S,c.y,c.x+S,c.y+c.h,1.2]);
+    p.push([c.x+c.w-S,c.y,c.x+c.w-S,c.y+c.h,1.2]);
+    p.push([c.x+S,c.y+c.h/2,c.x+c.w-S,c.y+c.h/2,1.2]);
+  }
+  return p.map(l=>'<line x1="'+l[0]+'" y1="'+l[1]+'" x2="'+l[2]+'" y2="'+l[3]+
+    '" stroke="rgba(255,255,255,.55)" stroke-width="'+l[4]+'"/>').join('');
+}
 function renderCourtMap(){
   const layer=$('#courtsLayer'); layer.innerHTML='';
   COURTS.forEach(c=>{
@@ -1373,20 +1534,36 @@ function renderCourtMap(){
     const g=document.createElementNS('http://www.w3.org/2000/svg','g');
     g.setAttribute('class','court-shape'+(busy?' busy':''));
     g.setAttribute('tabindex','0'); g.setAttribute('role','button');
-    g.setAttribute('aria-label',c.name+' — '+(busy?'ocupada':'libre'));
+    g.setAttribute('aria-label',c.name+' — '+(busy?(LANG==='es'?'ocupada':'busy'):(LANG==='es'?'libre':'free')));
     g.dataset.id=c.id;
+    const cx=c.x+c.w/2, cy=c.y+c.h/2;
     g.innerHTML =
       '<rect class="bg" x="'+c.x+'" y="'+c.y+'" width="'+c.w+'" height="'+c.h+'" rx="8"/>'+
-      '<rect x="'+(c.x+7)+'" y="'+(c.y+7)+'" width="'+(c.w-14)+'" height="'+(c.h-14)+'" rx="4" fill="none" stroke="rgba(255,255,255,.35)"/>'+
-      '<line x1="'+c.x+'" y1="'+(c.y+c.h/2)+'" x2="'+(c.x+c.w)+'" y2="'+(c.y+c.h/2)+'" stroke="rgba(255,255,255,.5)" stroke-width="2"/>'+
-      '<text x="'+(c.x+c.w/2)+'" y="'+(c.y+c.h/2-6)+'" text-anchor="middle">'+c.id+'</text>'+
-      '<text x="'+(c.x+c.w/2)+'" y="'+(c.y+c.h/2+14)+'" text-anchor="middle" font-size="9" opacity=".85">'+(busy?(LANG==='es'?'OCUPADA':'BUSY'):(LANG==='es'?'LIBRE':'FREE'))+'</text>';
+      '<rect x="'+(c.x+8)+'" y="'+(c.y+8)+'" width="'+(c.w-16)+'" height="'+(c.h-16)+
+        '" rx="4" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="2"/>'+
+      courtLines(c)+
+      '<text x="'+cx+'" y="'+(cy+2)+'" text-anchor="middle" font-size="46">'+c.id+'</text>'+
+      '<text x="'+cx+'" y="'+(cy+26)+'" text-anchor="middle" font-size="15" opacity=".9">'+
+        (busy?(LANG==='es'?'OCUPADA':'BUSY'):(LANG==='es'?'LIBRE':'FREE'))+'</text>';
     const show=()=>selectCourt(c.id,false);
     g.addEventListener('mouseenter',show);
     g.addEventListener('focus',show);
     g.addEventListener('click',()=>selectCourt(c.id,true));
     g.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); selectCourt(c.id,true); } });
     layer.appendChild(g);
+  });
+  const rl=$('#roomsLayer'); rl.innerHTML='';
+  ROOMS.forEach(r=>{
+    const ball=r.tone==='ball';
+    const cx=r.x+r.w/2, cy=r.y+r.h/2;
+    rl.insertAdjacentHTML('beforeend',
+      '<g><rect x="'+r.x+'" y="'+r.y+'" width="'+r.w+'" height="'+r.h+'" rx="8" fill="'+
+        (ball?'var(--ball)':'var(--line)')+'" stroke="var(--line)" stroke-width="2"/>'+
+      '<text x="'+cx+'" y="'+(cy-8)+'" text-anchor="middle" font-size="26">'+r.icon+'</text>'+
+      '<text x="'+cx+'" y="'+(cy+18)+'" text-anchor="middle" font-family="Barlow Condensed" font-weight="800" font-size="18" fill="'+
+        (ball?'#10160a':'var(--txt)')+'">'+(LANG==='es'?r.label:r.labelEn)+'</text>'+
+      (r.sub?'<text x="'+cx+'" y="'+(cy+38)+'" text-anchor="middle" font-family="Inter" font-size="12" fill="'+
+        (ball?'#2c3410':'var(--txt-soft)')+'">'+(LANG==='es'?r.sub:r.subEn)+'</text>':'')+'</g>');
   });
 }
 let activeCourt=1;
@@ -1397,7 +1574,8 @@ function selectCourt(id,persist){
   const busy=courtBusyNow(id);
   $('#ciName').textContent=c.name;
   $('#ciDesc').textContent=c.desc;
-  $('#ciType').textContent=c.type;
+  $('#ciType').textContent = c.o==='v'
+    ? (LANG==='es'?'Fila superior':'Top row') : (LANG==='es'?'Fila inferior':'Bottom row');
   $('#ciStatus').textContent = busy?(LANG==='es'?'Ocupada ahora':'Busy now'):(LANG==='es'?'Libre ahora':'Free now');
   $('#ciStatus').style.background = busy?'#7d8698':'var(--ball)';
   $('#ciStatus').style.color = busy?'#fff':'#10160a';
@@ -1436,7 +1614,8 @@ function slotTaken(d,court,hour){
 
 function buildCourtSelect(){
   const s=$('#courtSel'); s.innerHTML='';
-  COURTS.forEach(c=> s.appendChild(el('option',{value:c.id}, c.name+' · '+c.type)));
+  COURTS.forEach(c=> s.appendChild(el('option',{value:c.id},
+    c.name+' · '+(c.o==='v'?(LANG==='es'?'fila superior':'top row'):(LANG==='es'?'fila inferior':'bottom row')))));
   s.value='1';
 }
 function buildDateStrip(){
@@ -1751,7 +1930,7 @@ addEventListener('keydown',e=>{
   else if(k==='z'&&M.hist.length){ restore(M.hist.pop()); paint(); }
 });
 
-/* ── 10. Generador de Americano ────────────────────────────────────────── */
+/* ── 10. Generador de torneo rotatorio ────────────────────────────────────────── */
 function parsePlayers(){
   return $('#players').value.split(/[,\n;]+/).map(s=>s.trim()).filter(Boolean);
 }
@@ -1806,7 +1985,7 @@ $('#genAm').addEventListener('click',renderAmericano);
 $('#copyAm').addEventListener('click',async()=>{
   const txt=$('#amOut').dataset.text;
   if(!txt){ toast(LANG==='es'?'Genera primero el cuadro.':'Generate the draw first.',true); return; }
-  toast(await copy('🎾 AMERICANO — FULL PADEL CLUB\n\n'+txt)?(LANG==='es'?'Cuadro copiado.':'Draw copied.'):(LANG==='es'?'No se pudo copiar.':'Copy failed.'));
+  toast(await copy('🎾 TORNEO — FULL PADEL CLUB\n\n'+txt)?(LANG==='es'?'Cuadro copiado.':'Draw copied.'):(LANG==='es'?'No se pudo copiar.':'Copy failed.'));
 });
 
 /* ── 11. Test de nivel ─────────────────────────────────────────────────── */
@@ -1817,7 +1996,7 @@ const QUIZ = {
   {q:'¿Cómo llevas la pared de fondo?',o:[['Se me va la bola siempre',0],['Devuelvo si viene cómoda',1],['Salgo de pared con seguridad',2],['Salgo de pared y ataco con contrapared',3]]},
   {q:'¿Con qué frecuencia juegas?',o:[['Nunca o casi nunca',0],['Una vez cada dos semanas',1],['Una o dos veces por semana',2],['Tres veces o más',3]]},
   {q:'¿Qué tal tu saque y tu subida a la red?',o:[['No sé por dónde sacar',0],['Saco, pero me quedo en el fondo',1],['Saco y subo a la red casi siempre',2],['Saco buscando la esquina y subo colocado',3]]},
-  {q:'¿Has jugado torneos o liga?',o:[['Nunca',0],['Algún americano suelto',1],['Liga interna del club',2],['Torneos federados o FIP',3]]}
+  {q:'¿Has jugado torneos o liga?',o:[['Nunca',0],['Algún torneo suelto',1],['Liga interna del club',2],['Torneos federados o FIP',3]]}
  ],
  en:[
   {q:'How long have you been playing padel?',o:[['Never played',0],['Less than 6 months',1],['Between 1 and 3 years',2],['More than 3 years',3]]},
@@ -1825,7 +2004,7 @@ const QUIZ = {
   {q:'How do you handle the back wall?',o:[['The ball always gets past me',0],['I return it if it comes easy',1],['I come off the wall confidently',2],['I come off the wall and attack the side wall',3]]},
   {q:'How often do you play?',o:[['Never or almost never',0],['Once every two weeks',1],['Once or twice a week',2],['Three times or more',3]]},
   {q:'How is your serve and your move to the net?',o:[['I do not know where to serve',0],['I serve but stay at the back',1],['I serve and come to the net most times',2],['I serve to the corner and take a good net position',3]]},
-  {q:'Have you played tournaments or a league?',o:[['Never',0],['The odd americano',1],['The club internal league',2],['Federated or FIP tournaments',3]]}
+  {q:'Have you played tournaments or a league?',o:[['Never',0],['The odd tournament',1],['The club internal league',2],['Federated or FIP tournaments',3]]}
  ]
 };
 const LEVELS = {
@@ -1833,14 +2012,14 @@ const LEVELS = {
   {max:4, n:'Nivel 1 · Iniciación', lvl:'iniciacion', a:'Estás empezando y eso es la mejor parte: lo vas a notar cada semana. Te recomendamos el grupo de Iniciación adultos, donde trabajamos posición, saque y los primeros golpes sin prisa.'},
   {max:9, n:'Nivel 2 · Iniciación avanzada', lvl:'iniciacion', a:'Ya te defiendes en un partido amistoso. Toca automatizar la salida de pared y empezar con la bandeja: el grupo de Iniciación de mañanas o Intermedio A te encajan.'},
   {max:13,n:'Nivel 3 · Intermedio', lvl:'intermedio', a:'Juegas partidos completos y entiendes la posición. Tu salto está en la bandeja profunda y en el juego por parejas: el grupo Intermedio A es tu sitio, y ya puedes apuntarte a la liga interna.'},
-  {max:16,n:'Nivel 4 · Avanzado', lvl:'avanzado', a:'Tienes golpes de ataque y lectura de partido. En el grupo Avanzado trabajamos remate x3, contrapared y patrones tácticos. Te esperamos también en los americanos del viernes.'},
+  {max:16,n:'Nivel 4 · Avanzado', lvl:'avanzado', a:'Tienes golpes de ataque y lectura de partido. En el grupo Avanzado trabajamos remate x3, contrapared y patrones tácticos. Te esperamos también en los torneos del viernes.'},
   {max:99,n:'Nivel 5 · Competición', lvl:'competicion', a:'Nivel de competición. El equipo de competición entrena tres días con preparación física incluida y disputa ligas FPCV y torneos FIP en nuestra pista central.'}
  ],
  en:[
   {max:4, n:'Level 1 · Beginner', lvl:'iniciacion', a:'You are starting out, which is the best part: you will feel the progress every week. Join the adult beginners group, where we work on position, serve and first strokes.'},
   {max:9, n:'Level 2 · Advanced beginner', lvl:'iniciacion', a:'You can hold a friendly match. Now it is about the back wall and your first bandeja: the morning beginners group or Intermediate A both fit.'},
   {max:13,n:'Level 3 · Intermediate', lvl:'intermedio', a:'You play full matches and understand court position. Your next jump is a deep bandeja and pair play: Intermediate A is your group, and you can enter the internal league.'},
-  {max:16,n:'Level 4 · Advanced', lvl:'avanzado', a:'You have attacking shots and read the match. In the Advanced group we work on the x3 smash, side-wall play and tactical patterns. See you at the Friday americanos too.'},
+  {max:16,n:'Level 4 · Advanced', lvl:'avanzado', a:'You have attacking shots and read the match. In the Advanced group we work on the x3 smash, side-wall play and tactical patterns. See you at the Friday tournaments too.'},
   {max:99,n:'Level 5 · Competition', lvl:'competicion', a:'Competition level. The competition squad trains three days a week with physical conditioning and plays FPCV leagues and FIP events on our centre court.'}
  ]
 };
@@ -1892,6 +2071,270 @@ $$('[data-tab]').forEach(b=> b.addEventListener('click',()=>{
   $$('.tabpanel').forEach(p=> p.classList.toggle('on', p.id==='tab-'+b.dataset.tab));
   watchReveals();
 }));
+
+
+/* ── 11b. Pizarra táctica ──────────────────────────────────────────────── */
+/* Coordenadas en metros sobre una pista reglamentaria de 20 x 10 m.
+   x = a lo largo (0 fondo azul, 20 fondo verde) · y = a lo ancho (0-10).   */
+const TB={ M:50, OX:40, OY:40 };                 /* 50 px por metro          */
+const mx = m => TB.OX + m*TB.M, my = m => TB.OY + m*TB.M;
+const PLAYS = [
+ {n:'Saque y subida', nEn:'Serve and volley', steps:[
+  {p:[[2,7],[2.5,3],[17,3],[11.5,7]], b:[2,7],   lob:false, s:'Saque desde el fondo, cruzado al cuadro contrario.', e:'Serve from the back, cross-court into the opposite box.'},
+  {p:[[5,7],[3.5,3],[16.5,3.4],[11.5,7]], b:[13.5,3.2], lob:false, s:'La bola bota antes de la línea de saque y el sacador ya sube.', e:'The ball lands before the service line and the server is already moving up.'},
+  {p:[[8.3,6.5],[8.3,3.5],[16,4],[11.5,7]], b:[7,5],  lob:false, s:'Resto bajo a los pies: primera volea de bloqueo.', e:'Low return at the feet: first blocking volley.'},
+  {p:[[8.5,6.5],[8.5,3.5],[16.5,5],[13,5]], b:[16,5], lob:false, s:'Volea profunda al centro y la pareja azul cierra la red.', e:'Deep volley down the middle and the blue pair takes the net.'}]},
+
+ {n:'Globo y contraataque', nEn:'Lob and counter', steps:[
+  {p:[[3,7],[3,3],[11.5,3],[11.5,7]], b:[4,6],  lob:false, s:'Los azules defienden desde el fondo, los verdes tienen la red.', e:'Blue defends from the back, green owns the net.'},
+  {p:[[3.5,6.5],[3,3],[11.5,3],[11.5,7]], b:[10,5], lob:true,  s:'Globo profundo por encima del jugador de red.', e:'Deep lob over the net player.'},
+  {p:[[6,6.5],[6,3.5],[16,3],[15,7]], b:[17.5,4], lob:true,  s:'Los verdes retroceden a por la bola: ya no dominan la red.', e:'Green drops back for the ball: the net is gone.'},
+  {p:[[8.4,6.5],[8.4,3.5],[17,3.5],[16,6.5]], b:[9,5], lob:false, s:'Los azules suben juntos y toman la posición de ataque.', e:'Blue moves up together and takes the attacking position.'}]},
+
+ {n:'Bandeja para mantener la red', nEn:'Bandeja to hold the net', steps:[
+  {p:[[3,7],[3,3],[11.5,3],[11.5,7]], b:[4,3],  lob:false, s:'Los verdes están en la red y les llega un globo.', e:'Green is at the net and a lob comes over.'},
+  {p:[[3,7],[3,3],[13.5,3],[11.5,7]], b:[12.5,3.2], lob:true, s:'El jugador retrocede en diagonal, sin darle la espalda a la red.', e:'The player steps back diagonally, never turning away from the net.'},
+  {p:[[5,7],[3.5,3],[13.5,3],[11.5,7]], b:[6,3], lob:false, s:'Bandeja cortada y cruzada: no es un remate, es un golpe de control.', e:'Sliced cross-court bandeja: not a smash, a control shot.'},
+  {p:[[3.5,7],[3.5,3],[11.5,3],[11.5,7]], b:[3,3.5], lob:false, s:'Los verdes recuperan la red y los azules vuelven al fondo.', e:'Green regains the net and blue is back at the fence.'}]},
+
+ {n:'Salida de pared', nEn:'Off the back wall', steps:[
+  {p:[[4,6],[4,3.5],[11.5,3],[11.5,7]], b:[7,6], lob:false, s:'Bola profunda a la esquina azul.', e:'Deep ball into the blue corner.'},
+  {p:[[2.5,7.5],[4,3.5],[11.5,3],[11.5,7]], b:[0.6,7.6], lob:false, s:'Se deja pasar la bola y se acompaña a la pared, sin pegarse a ella.', e:'Let the ball pass and follow it to the wall, without hugging it.'},
+  {p:[[3.2,6.6],[4,3.5],[11.5,3],[11.5,7]], b:[3,6.5], lob:false, s:'Bote en el cristal y golpeo de perfil, con el cuerpo ya girado.', e:'It comes off the glass and you hit sideways on, body already turned.'},
+  {p:[[3.5,6.5],[3.5,3.5],[13,3],[12,7]], b:[13,5], lob:true, s:'Salida en globo para recolocarse y volver a discutir la red.', e:'Lob your way out to reset and fight for the net again.'}]},
+
+ {n:'Remate por 3 metros (x3)', nEn:'Smash out (x3)', steps:[
+  {p:[[3,7],[3,3],[11.5,3],[11.5,7]], b:[5,7], lob:false, s:'Globo corto de los azules: bola de ataque para los verdes.', e:'Short lob from blue: an attacking ball for green.'},
+  {p:[[3,7],[3,3],[11.5,3],[13,7]], b:[12.5,6.8], lob:true, s:'El jugador se coloca debajo de la bola con el cuerpo de lado.', e:'The player gets under the ball with the body sideways.'},
+  {p:[[2,8.5],[3,3],[11.5,3],[13,7]], b:[6,8.5], lob:false, s:'Remate liftado contra el cristal lateral buscando que salga por 3 metros.', e:'Topspin smash into the side glass, aiming to send it out over the 3 m fence.'},
+  {p:[[1,9.6],[3,3],[11.5,3],[13,7]], b:[1,10.6], lob:false, s:'La bola sale de la pista: punto ganado por los verdes.', e:'The ball leaves the court: point to green.'}]}
+];
+let tbPlay=0, tbStep=0, tbAnim=null, tbPos=null, tbBall=null, tbPen=false, tbDraw=[];
+
+function tbInit(){
+  const svg=$('#tbSvg'); if(!svg) return;
+  const W=20*TB.M, H=10*TB.M;
+  svg.innerHTML =
+    '<rect x="0" y="0" width="1080" height="580" fill="#0a2c7a"/>'+
+    '<rect x="'+TB.OX+'" y="'+TB.OY+'" width="'+W+'" height="'+H+'" fill="#1d63d1" stroke="#e8f0ff" stroke-width="4"/>'+
+    /* líneas de saque a 3,05 m de cada fondo y línea central */
+    '<line x1="'+mx(3.05)+'" y1="'+my(0)+'" x2="'+mx(3.05)+'" y2="'+my(10)+'" stroke="#e8f0ff" stroke-width="3"/>'+
+    '<line x1="'+mx(16.95)+'" y1="'+my(0)+'" x2="'+mx(16.95)+'" y2="'+my(10)+'" stroke="#e8f0ff" stroke-width="3"/>'+
+    '<line x1="'+mx(3.05)+'" y1="'+my(5)+'" x2="'+mx(16.95)+'" y2="'+my(5)+'" stroke="#e8f0ff" stroke-width="3"/>'+
+    /* red */
+    '<line x1="'+mx(10)+'" y1="'+my(0)+'" x2="'+mx(10)+'" y2="'+my(10)+'" stroke="#0d1220" stroke-width="8"/>'+
+    '<line x1="'+mx(10)+'" y1="'+my(0)+'" x2="'+mx(10)+'" y2="'+my(10)+'" stroke="#ffffff" stroke-width="3" stroke-dasharray="3 6"/>'+
+    '<text x="'+mx(1)+'" y="'+(my(10)+30)+'" fill="#8fb0ee" font-family="Inter" font-size="15">20 m</text>'+
+    '<text x="'+(mx(0)-26)+'" y="'+my(5)+'" fill="#8fb0ee" font-family="Inter" font-size="15" transform="rotate(-90 '+(mx(0)-26)+' '+my(5)+')">10 m</text>'+
+    '<g id="tbInk"></g><g id="tbLayer"></g>';
+  svg.addEventListener('pointerdown',tbDown);
+  svg.addEventListener('pointermove',tbMove);
+  svg.addEventListener('pointerup',tbUp);
+  svg.addEventListener('pointerleave',tbUp);
+  renderPlayChips();
+  tbLoad(0);
+}
+function renderPlayChips(){
+  const box=$('#playChips'); box.innerHTML='';
+  PLAYS.forEach((pl,i)=>{
+    const b=el('button',{class:'chip'+(i===tbPlay?' is-on':''),'aria-pressed':String(i===tbPlay)},
+      (i+1)+'. '+(LANG==='es'?pl.n:pl.nEn));
+    b.addEventListener('click',()=>{ tbPlay=i; tbLoad(0); renderPlayChips(); });
+    box.appendChild(b);
+  });
+}
+function tbLoad(i){
+  cancelAnimationFrame(tbAnim); tbAnim=null;
+  $('#tbPlay').textContent = LANG==='es'?'▶ Reproducir':'▶ Play';
+  tbStep=i;
+  const st=PLAYS[tbPlay].steps[i];
+  tbPos=st.p.map(q=>q.slice()); tbBall=st.b.slice();
+  tbPaint(); tbCaption();
+}
+function tbCaption(){
+  const st=PLAYS[tbPlay].steps[tbStep];
+  $('#tbStep').textContent = (tbStep+1)+'/'+PLAYS[tbPlay].steps.length+' · '+(LANG==='es'?st.s:st.e);
+}
+function tbPaint(){
+  const L=$('#tbLayer'); if(!L) return;
+  const col=['#0d1220','#0d1220','#c8e832','#c8e832'];
+  const lab=['A1','A2','B1','B2'];
+  L.innerHTML = tbPos.map((q,i)=>
+    '<g class="tb-token" data-i="'+i+'" tabindex="0" role="button" aria-label="'+lab[i]+'">'+
+    '<circle cx="'+mx(q[0])+'" cy="'+my(q[1])+'" r="18" fill="'+(i<2?'#e8f0ff':'#c8e832')+'" stroke="'+col[i]+'" stroke-width="3"/>'+
+    '<text x="'+mx(q[0])+'" y="'+(my(q[1])+5)+'" text-anchor="middle" font-family="Barlow Condensed" font-weight="800" font-size="16" fill="#0d1220">'+lab[i]+'</text></g>').join('')+
+    '<g class="tb-token" data-i="ball" tabindex="0" role="button" aria-label="Bola">'+
+    '<circle cx="'+mx(tbBall[0])+'" cy="'+my(tbBall[1])+'" r="11" fill="#c8e832" stroke="#0d1220" stroke-width="2"/></g>';
+}
+/* interpolación entre pasos, con parábola cuando la jugada es un globo */
+function tbGo(dir){
+  const steps=PLAYS[tbPlay].steps;
+  const to=tbStep+dir;
+  if(to<0||to>=steps.length) return false;
+  const from={p:tbPos.map(q=>q.slice()),b:tbBall.slice()};
+  const nxt=steps[to];
+  const t0=performance.now(), dur=1100;
+  cancelAnimationFrame(tbAnim);
+  (function anim(now){
+    const k=clamp((now-t0)/dur,0,1), e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;
+    tbPos=from.p.map((q,i)=>[q[0]+(nxt.p[i][0]-q[0])*e, q[1]+(nxt.p[i][1]-q[1])*e]);
+    const arc = nxt.lob ? Math.sin(e*Math.PI)*1.1 : 0;     /* el globo sube */
+    tbBall=[from.b[0]+(nxt.b[0]-from.b[0])*e, from.b[1]+(nxt.b[1]-from.b[1])*e-arc];
+    tbPaint();
+    if(k<1) tbAnim=requestAnimationFrame(anim);
+    else{ tbStep=to; tbPos=nxt.p.map(q=>q.slice()); tbBall=nxt.b.slice(); tbPaint(); tbCaption(); tbAnim=null; }
+  })(t0);
+  return true;
+}
+function tbAuto(){
+  if(tbAnim){ cancelAnimationFrame(tbAnim); tbAnim=null; $('#tbPlay').textContent=LANG==='es'?'▶ Reproducir':'▶ Play'; return; }
+  $('#tbPlay').textContent=LANG==='es'?'⏸ Pausa':'⏸ Pause';
+  if(tbStep>=PLAYS[tbPlay].steps.length-1) tbLoad(0);
+  const chain=()=>{
+    if(!tbGo(1)){ $('#tbPlay').textContent=LANG==='es'?'▶ Reproducir':'▶ Play'; return; }
+    setTimeout(()=>{ if(tbStep<PLAYS[tbPlay].steps.length-1 && $('#tbPlay').textContent.indexOf('Paus')>-1) chain();
+      else $('#tbPlay').textContent=LANG==='es'?'▶ Reproducir':'▶ Play'; },1400);
+  };
+  chain();
+}
+/* arrastre de fichas y modo lápiz */
+let tbDragging=null, tbInk=null;
+function svgPt(e){
+  const svg=$('#tbSvg'), pt=svg.createSVGPoint();
+  pt.x=e.clientX; pt.y=e.clientY;
+  const p=pt.matrixTransform(svg.getScreenCTM().inverse());
+  return [(p.x-TB.OX)/TB.M,(p.y-TB.OY)/TB.M];
+}
+function tbDown(e){
+  const tok=e.target.closest('.tb-token');
+  if(tok && !tbPen){ tbDragging=tok.dataset.i; $('#tbSvg').setPointerCapture(e.pointerId); return; }
+  if(tbPen){
+    const m=svgPt(e);
+    tbInk={pts:[m]};
+    $('#tbSvg').setPointerCapture(e.pointerId);
+  }
+}
+function tbMove(e){
+  if(tbDragging!==null){
+    const m=svgPt(e);
+    const q=[clamp(m[0],-0.6,20.6),clamp(m[1],-0.6,10.6)];
+    if(tbDragging==='ball') tbBall=q; else tbPos[+tbDragging]=q;
+    tbPaint(); return;
+  }
+  if(tbInk){
+    tbInk.pts.push(svgPt(e));
+    $('#tbInk').innerHTML = tbDraw.concat([tbInk]).map(l=>
+      '<polyline points="'+l.pts.map(q=>mx(q[0])+','+my(q[1])).join(' ')+
+      '" fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity=".85"/>').join('');
+  }
+}
+function tbUp(){
+  tbDragging=null;
+  if(tbInk){ if(tbInk.pts.length>2) tbDraw.push(tbInk); tbInk=null; }
+}
+$('#tbPlay').addEventListener('click',tbAuto);
+$('#tbNext').addEventListener('click',()=>tbGo(1));
+$('#tbPrev').addEventListener('click',()=>tbGo(-1));
+$('#tbReset').addEventListener('click',()=>tbLoad(0));
+$('#tbPen').addEventListener('click',function(){
+  tbPen=!tbPen; this.setAttribute('aria-pressed',String(tbPen)); this.classList.toggle('is-on',tbPen);
+});
+$('#tbClear').addEventListener('click',()=>{ tbDraw=[]; $('#tbInk').innerHTML=''; });
+
+/* ── 11c. Selector de pala ─────────────────────────────────────────────── */
+const PALA_Q = [
+ {k:'nivel', es:'Tu nivel', en:'Your level',
+  o:[['Iniciación','Beginner',0],['Intermedio','Intermediate',1],['Avanzado','Advanced',2],['Competición','Competition',3]]},
+ {k:'estilo', es:'Cómo juegas', en:'How you play',
+  o:[['Defensivo','Defensive',0],['Polivalente','All-round',1.5],['Ofensivo','Attacking',3]]},
+ {k:'fuerza', es:'Fuerza de golpeo', en:'Hitting power',
+  o:[['Poca','Low',0],['Media','Medium',1],['Mucha','High',2]]},
+ {k:'codo', es:'¿Molestias de codo u hombro?', en:'Elbow or shoulder issues?',
+  o:[['No','No',0],['Alguna vez','Sometimes',1],['Sí, habituales','Yes, often',2]]},
+ {k:'freq', es:'Días que juegas por semana', en:'Days you play per week',
+  o:[['1','1',0],['2 o 3','2 or 3',1],['4 o más','4 or more',2]]}
+];
+let PALA = {nivel:1,estilo:1.5,fuerza:1,codo:0,freq:1};
+function renderPalaForm(){
+  const box=$('#palaForm'); if(!box) return;
+  box.innerHTML='';
+  PALA_Q.forEach(q=>{
+    const d=el('div',{class:'pala-q'},'<b>'+(LANG==='es'?q.es:q.en)+'</b>');
+    const opts=el('div',{class:'opts'});
+    q.o.forEach(([es,en,v])=>{
+      const on = PALA[q.k]===v;
+      const b=el('button',{class:'chip'+(on?' is-on':''),'aria-pressed':String(on),type:'button'},LANG==='es'?es:en);
+      b.addEventListener('click',()=>{ PALA[q.k]=v; renderPalaForm(); calcPala(); });
+      opts.appendChild(b);
+    });
+    d.appendChild(opts); box.appendChild(d);
+  });
+}
+const SHAPES = {
+  redonda:{es:'Redonda',en:'Round',
+    path:'M50 8c23 0 42 19 42 44s-19 44-42 44S8 77 8 52 27 8 50 8z'},
+  lagrima:{es:'Lágrima',en:'Teardrop',
+    path:'M50 8c24 0 42 17 42 40 0 22-18 30-30 42-6 6-8 8-12 8s-6-2-12-8C26 78 8 70 8 48 8 25 26 8 50 8z'},
+  diamante:{es:'Diamante',en:'Diamond',
+    path:'M50 8c25 0 42 17 42 34 0 20-20 30-31 45-5 7-7 9-11 9s-6-2-11-9C28 72 8 62 8 42 8 25 25 8 50 8z'}
+};
+function calcPala(){
+  const ataque = PALA.nivel + PALA.estilo + PALA.fuerza;      /* 0 – 8 */
+  let forma = ataque<2.6 ? 'redonda' : (ataque<5.2 ? 'lagrima' : 'diamante');
+  /* el codo manda sobre todo lo demás: nunca recomendamos diamante con molestias */
+  if(PALA.codo>=2) forma='redonda';
+  else if(PALA.codo===1 && forma==='diamante') forma='lagrima';
+
+  const balance = forma==='redonda' ? (LANG==='es'?'Bajo':'Low')
+                : forma==='lagrima' ? (LANG==='es'?'Medio':'Medium')
+                : (LANG==='es'?'Alto':'High');
+  const pesoBase = 355 + PALA.fuerza*5 + (forma==='diamante'?4:0) - (PALA.codo?4:0);
+  const peso = pesoBase+' – '+(pesoBase+8)+' g';
+  const goma = PALA.codo>=1 || PALA.fuerza===0 ? 'EVA Soft'
+             : (PALA.fuerza===2 && PALA.nivel>=2 ? 'EVA Hard' : 'EVA Medium');
+  const cara = PALA.nivel>=2 ? (LANG==='es'?'Carbono 12K/18K':'12K/18K carbon')
+                             : (LANG==='es'?'Fibra de vidrio':'Fibreglass');
+  const pot = Math.round(clamp(ataque/8*100,12,94));
+
+  const titles={redonda:[ 'Pala redonda de control','Round control racket'],
+                lagrima:['Pala en lágrima, polivalente','All-round teardrop racket'],
+                diamante:['Pala en diamante, de potencia','Diamond power racket']};
+  const why={
+   redonda:['Punto dulce grande y centrado: perdona los golpes descentrados y es la más amable con el codo. Ganas colocación y salida de bola, que es lo que decide los puntos hasta nivel intermedio.',
+            'Big, centred sweet spot: it forgives off-centre hits and is the kindest option for your elbow. You gain placement and control, which is what wins points up to intermediate level.'],
+   lagrima:['El equilibrio entre control y pegada. Punto dulce algo más alto que la redonda, sin castigar el brazo, y suficiente potencia para rematar y cerrar puntos en la red.',
+            'The balance between control and punch. Sweet spot slightly higher than a round racket, still arm-friendly, with enough power to smash and finish at the net.'],
+   diamante:['Punto dulce alto y pequeño: exige técnica y buen timing, pero da la máxima potencia en remate y bandeja. Solo compensa si golpeas limpio y no arrastras molestias.',
+             'High, small sweet spot: it demands technique and timing, but gives maximum power on the smash. Only worth it if you strike cleanly and have no arm issues.']
+  };
+  const consejo = PALA.codo>=1
+    ? (LANG==='es'?' Con molestias en el brazo, prioriza siempre goma blanda y peso bajo antes que potencia.'
+                  :' With arm issues, always put soft foam and low weight ahead of power.')
+    : (PALA.freq===2 ? (LANG==='es'?' Jugando 4 días o más, ten dos palas iguales rotando: duran bastante más.'
+                                   :' Playing 4+ days a week, rotate two identical rackets: they last much longer.') : '');
+
+  $('#palaShapes').innerHTML = Object.keys(SHAPES).map(k=>
+    '<figure class="'+(k===forma?'on':'')+'">'+
+    '<svg viewBox="0 0 100 130" aria-hidden="true">'+
+      '<path d="'+SHAPES[k].path+'" fill="'+(k===forma?'var(--ball)':'var(--line)')+'" stroke="var(--txt)" stroke-width="3"/>'+
+      '<rect x="43" y="96" width="14" height="26" rx="6" fill="var(--txt)"/>'+
+      '<g fill="var(--txt)" opacity=".45">'+
+        [[35,40],[50,36],[65,40],[35,58],[50,54],[65,58],[42,74],[58,74]].map(c=>'<circle cx="'+c[0]+'" cy="'+c[1]+'" r="3.4"/>').join('')+
+      '</g></svg>'+
+    '<figcaption>'+(LANG==='es'?SHAPES[k].es:SHAPES[k].en)+'</figcaption></figure>').join('');
+  $('#palaTitle').textContent = titles[forma][LANG==='es'?0:1];
+  $('#palaWhy').textContent = why[forma][LANG==='es'?0:1] + consejo;
+  $('#palaSpecs').innerHTML =
+    '<div><small>'+(LANG==='es'?'Balance':'Balance')+'</small><b>'+balance+'</b></div>'+
+    '<div><small>'+(LANG==='es'?'Peso':'Weight')+'</small><b>'+peso+'</b></div>'+
+    '<div><small>'+(LANG==='es'?'Goma':'Foam')+'</small><b>'+goma+'</b></div>'+
+    '<div><small>'+(LANG==='es'?'Cara':'Face')+'</small><b>'+cara+'</b></div>';
+  requestAnimationFrame(()=> $('#palaBar').style.width=pot+'%');
+  const msg=(LANG==='es'
+    ?'¡Hola! El selector me recomienda una pala '+titles[forma][0].toLowerCase()+' ('+balance.toLowerCase()+', '+peso+', '+goma+'). ¿Puedo probar alguna en el pro shop?'
+    :'Hi! The finder suggests a '+titles[forma][1].toLowerCase()+' ('+balance.toLowerCase()+', '+peso+', '+goma+'). Can I try some at the pro shop?');
+  $('#palaWa').href='https://wa.me/'+CLUB.wa+'?text='+encodeURIComponent(msg);
+}
 
 /* ── 12. Ranking ordenable ─────────────────────────────────────────────── */
 let rkSort={k:'pts',dir:'desc'};
@@ -2011,18 +2454,19 @@ $$('[data-cat]').forEach(b=> b.addEventListener('click',()=>{
 
 /* ── 15. Galería generativa (SVG, sin imágenes externas) ───────────────── */
 const GAL=[
-  {t:'Pista central',big:true,c:['#0b3ea6','#1d63d1']},
-  {t:'Escuela',c:['#d6f24b','#8fd94a']},
-  {t:'Torneo FIP',c:['#0d1220','#1d63d1']},
-  {t:'Cafetería',c:['#f59e0b','#d6f24b']},
-  {t:'Americano',c:['#1d63d1','#d6f24b']},
-  {t:'Cantera',big:true,c:['#0b3ea6','#d6f24b']}
+  {t:'Pista central',e:'Centre court',big:true,c:['#0b3ea6','#1d63d1']},
+  {t:'Escuela',e:'Academy',c:['#c8e832','#8fd94a']},
+  {t:'Torneo FIP',e:'FIP tournament',c:['#0d1220','#1d63d1']},
+  {t:'Cafetería',e:'Café',c:['#f59e0b','#c8e832']},
+  {t:'Noche de torneo',e:'Tournament night',c:['#1d63d1','#c8e832']},
+  {t:'Cantera',e:'Juniors',big:true,c:['#0b3ea6','#c8e832']}
 ];
 function renderGallery(){
   const box=$('#gallery'); if(!box) return;
   box.innerHTML='';
   GAL.forEach((g,i)=>{
-    const f=el('figure',{class:g.big?'big':'',tabindex:'0',role:'button','aria-label':g.t});
+    const gt = LANG==='es'?g.t:g.e;
+    const f=el('figure',{class:g.big?'big':'',tabindex:'0',role:'button','aria-label':gt});
     f.innerHTML=
       '<svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice">'+
         '<defs><linearGradient id="gg'+i+'" x1="0" y1="0" x2="1" y2="1">'+
@@ -2033,9 +2477,9 @@ function renderGallery(){
           '<line x1="40" y1="150" x2="360" y2="150"/>'+
           '<line x1="200" y1="90" x2="200" y2="210"/>'+
           '<line x1="40" y1="90" x2="360" y2="90"/><line x1="40" y1="210" x2="360" y2="210"/></g>'+
-        '<circle cx="'+(90+i*42)+'" cy="'+(110+((i*57)%110))+'" r="15" fill="#d6f24b" opacity=".92"/>'+
-      '</svg><figcaption>'+g.t+'</figcaption>';
-    const open=()=> openModal('<h3>'+g.t+'</h3>'+f.querySelector('svg').outerHTML.replace('<svg','<svg style="width:100%;border-radius:14px"')+
+        '<circle cx="'+(90+i*42)+'" cy="'+(110+((i*57)%110))+'" r="15" fill="#c8e832" opacity=".92"/>'+
+      '</svg><figcaption>'+gt+'</figcaption>';
+    const open=()=> openModal('<h3>'+gt+'</h3>'+f.querySelector('svg').outerHTML.replace('<svg','<svg style="width:100%;border-radius:14px"')+
       '<p class="lead" style="font-size:.92rem;margin-top:.8rem">'+(LANG==='es'
         ?'Las fotos reales del club están en nuestro Instagram, @fullpadelclub.'
         :'Real photos of the club live on our Instagram, @fullpadelclub.')+'</p>'+
@@ -2054,8 +2498,8 @@ function renderSlides(){
   TESTIMONIALS.forEach((t,i)=>{
     track.appendChild(el('div',{class:'slide'},
       '<div class="stars">'+'★'.repeat(t.r)+'☆'.repeat(5-t.r)+'</div>'+
-      '<q>“'+t.q+'”</q>'+
-      '<div class="who"><span class="avatar">'+t.n.slice(0,1)+'</span><span><b>'+t.n+'</b><br><small style="color:var(--txt-soft)">'+t.t+'</small></span></div>'));
+      '<q>“'+(LANG==='es'?t.q:t.qe)+'”</q>'+
+      '<div class="who"><span class="avatar">'+t.n.slice(0,1)+'</span><span><b>'+t.n+'</b><br><small style="color:var(--txt-soft)">'+(LANG==='es'?t.t:t.te)+'</small></span></div>'));
     const d=el('button',{'aria-label':'Opinión '+(i+1)});
     d.addEventListener('click',()=> go(i));
     dots.appendChild(d);
@@ -2084,7 +2528,7 @@ const FAQ_EN=[
   {q:'What if it rains?',a:'Nothing changes: all seven courts are indoor. That is the advantage of playing here at 11 pm in January or at noon in August.'},
   {q:'How far ahead can I cancel?',a:'Up to 12 hours before your slot at no cost. After that we charge 50% of the booking, unless the court gets taken again.'},
   {q:'Are there changing rooms and lockers?',a:'Yes: changing rooms with hot showers, lockers with keys and hairdryers. We recommend not leaving valuables overnight.'},
-  {q:'Do you run corporate events?',a:'Absolutely. We set up closed americanos for companies from 8 to 48 players, with a coach, catering in the café and a live leaderboard. Message us on WhatsApp for a quote.'},
+  {q:'Do you run corporate events?',a:'Absolutely. We set up closed tournaments for companies from 8 to 48 players, with a coach, catering in the café and a live leaderboard. Message us on WhatsApp for a quote.'},
   {q:'How does the internal league work?',a:'It runs by category (1st, 2nd, 3rd and women) in fortnightly rounds. You agree the time with your opponent and book the court at league rate. Results update the ranking every Monday.'}
 ];
 function renderFAQ(){
@@ -2205,6 +2649,9 @@ renderSlides();
 renderFAQ();
 renderQuiz();
 renderAmericano();
+tbInit();
+renderPalaForm();
+calcPala();
 buildTicker();
 updateOpenNow();
 setInterval(updateOpenNow,60000);
