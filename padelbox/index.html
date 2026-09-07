@@ -1,0 +1,2284 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Padelbox Club</title>
+<meta name="description" content="Padelbox — club de pádel y fitness: 4 pistas indoor, gimnasio, vestuarios y cafetería en la misma nave. Reserva pista y clase desde la misma pantalla.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23161327'/%3E%3Cpath d='M12 12 H66 L88 34 V88 H12 Z' fill='none' stroke='%235A31E8' stroke-width='11'/%3E%3Ccircle cx='56' cy='46' r='11' fill='%23FFB020'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+/* ==========================================================================
+   PADELBOX — club de pádel & fitness
+   La pista es una caja de cristal; el box es donde se entrena. Las dos mitades
+   del club en una palabra.
+   Identidad: violeta eléctrico + ámbar sobre berenjena.
+   Motivo: la esquina cortada = la esquina de la caja.
+   ========================================================================== */
+:root{
+  --brand:#5A31E8;  --brand-2:#7C5CFF;  --brand-deep:#3A1BAE;
+  --amber:#FFB020;  --amber-deep:#E08A00;
+  --ink:#161327;    --ink-2:#221C3D;
+  --paper:#F5F4FA;  --surface:#FFFFFF;  --surface-2:#EDEBF6;
+  --txt:#161327;    --txt-soft:#5B5477;
+  --line:#DDD9EC;
+  --ok:#17A673;     --warn:#E8940B;     --bad:#E23D53;
+  --cut:14px;
+  --r:16px;
+  --nav-h:74px;
+  --shadow:0 22px 45px -32px rgba(22,19,39,.65);
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --disp:"Bricolage Grotesque","DM Sans",system-ui,sans-serif;
+}
+:root:not([data-theme="light"]){}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#100D1C; --surface:#1A1630; --surface-2:#241E42;
+    --txt:#F0EEFA;  --txt-soft:#A79FC6; --line:#332B57;
+    --brand:#8267FF; --brand-2:#A491FF;
+    --shadow:0 24px 50px -30px #000;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#100D1C; --surface:#1A1630; --surface-2:#241E42;
+  --txt:#F0EEFA;  --txt-soft:#A79FC6; --line:#332B57;
+  --brand:#8267FF; --brand-2:#A491FF;
+  --shadow:0 24px 50px -30px #000;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; background:var(--paper); color:var(--txt);
+  font-family:"DM Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  font-size:16px; line-height:1.6; -webkit-font-smoothing:antialiased; overflow-x:hidden;
+}
+body.lock{overflow:hidden}
+h1,h2,h3,h4{font-family:var(--disp);font-weight:800;line-height:1.03;margin:0;text-wrap:balance;letter-spacing:-.02em}
+h1{font-size:clamp(2.1rem,8.4vw,5.4rem);overflow-wrap:break-word}
+h2{font-size:clamp(2rem,4.2vw,3.2rem)}
+h3{font-size:clamp(1.2rem,2vw,1.55rem)}
+p{margin:0 0 1rem}
+a{color:inherit;text-decoration:none}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--amber);outline-offset:3px}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.wrap{width:min(1240px,92vw);margin-inline:auto}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.skip{position:absolute;left:-999px;z-index:300;background:var(--amber);color:#161327;padding:.7rem 1.1rem;font-weight:700}
+.skip:focus{left:1rem;top:1rem}
+
+/* la esquina cortada, el gesto de la marca */
+.cut{clip-path:polygon(var(--cut) 0,100% 0,100% calc(100% - var(--cut)),calc(100% - var(--cut)) 100%,0 100%,0 var(--cut))}
+
+.eyebrow{display:inline-block;font-family:var(--mono);font-size:.72rem;font-weight:700;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--brand);border:1px solid var(--line);padding:.35rem .7rem;--cut:8px}
+.lead{color:var(--txt-soft);max-width:64ch}
+.section{padding:clamp(3.4rem,7vw,6rem) 0;position:relative}
+.section--tint{background:var(--surface-2)}
+.sec-head{display:flex;flex-wrap:wrap;gap:1.2rem;align-items:end;justify-content:space-between;margin-bottom:2.2rem}
+.sec-head p{margin:.7rem 0 0}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r)}
+.pad{padding:clamp(1rem,2.2vw,1.5rem)}
+.grid{display:grid;gap:1rem}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;border:0;cursor:pointer;
+  font-family:var(--disp);font-weight:800;font-size:1rem;letter-spacing:-.01em;white-space:nowrap;
+  padding:.85rem 1.5rem;transition:transform .16s,filter .16s,background .16s;--cut:12px}
+.btn:hover{transform:translateY(-2px)}
+.btn:active{transform:none}
+.btn--p{background:var(--brand);color:#fff}
+.btn--p:hover{filter:brightness(1.12)}
+.btn--a{background:var(--amber);color:#161327}
+.btn--a:hover{filter:brightness(1.06)}
+.btn--o{background:transparent;color:var(--txt);box-shadow:inset 0 0 0 2px var(--line);clip-path:none;border-radius:10px}
+.btn--o:hover{box-shadow:inset 0 0 0 2px var(--brand)}
+/* el hero siempre es oscuro, así que ahí el outline va en blanco */
+.hero .btn--o{color:#F0EEFA;box-shadow:inset 0 0 0 2px rgba(255,255,255,.28)}
+.hero .btn--o:hover{box-shadow:inset 0 0 0 2px var(--amber);color:var(--amber)}
+.btn--sm{padding:.55rem 1rem;font-size:.9rem;--cut:9px}
+.btn[disabled]{opacity:.4;cursor:not-allowed;transform:none}
+
+.chip{border:1px solid var(--line);background:var(--surface);padding:.45rem .9rem;border-radius:999px;
+  cursor:pointer;font-size:.88rem;font-weight:500;transition:.16s;color:var(--txt)}
+.chip:hover{border-color:var(--brand)}
+.chip[aria-pressed="true"],.chip.on{background:var(--brand);border-color:var(--brand);color:#fff}
+
+.field{display:flex;flex-direction:column;gap:.3rem;margin-bottom:.85rem}
+.field label{font-family:var(--mono);font-size:.68rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--txt-soft)}
+.field input,.field select,.field textarea{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:.7rem .85rem}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3px color-mix(in srgb,var(--brand) 22%,transparent)}
+.field .err{color:var(--bad);font-size:.78rem;min-height:1em}
+.field.bad input,.field.bad textarea{border-color:var(--bad)}
+
+/* estado semántico, separado de los colores de marca */
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:.4rem}
+.st-ok{color:var(--ok)}   .st-ok .dot{background:var(--ok)}
+.st-mid{color:var(--warn)}.st-mid .dot{background:var(--warn)}
+.st-no{color:var(--bad)}  .st-no .dot{background:var(--bad)}
+
+/* ---------- nav ---------- */
+#bar{position:fixed;top:0;left:0;height:3px;width:0;background:var(--amber);z-index:120}
+header.nav{position:fixed;inset:0 0 auto;height:var(--nav-h);z-index:110;display:flex;align-items:center;
+  background:color-mix(in srgb,var(--paper) 82%,transparent);backdrop-filter:blur(16px);border-bottom:1px solid transparent;transition:.25s}
+header.nav.stuck{border-bottom-color:var(--line)}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:1rem;width:min(1400px,95vw)}
+.brand{display:flex;align-items:center;gap:.6rem;flex:0 0 auto}
+.brand .mk{width:42px;height:42px;background:var(--ink);display:grid;place-items:center;--cut:11px;flex:0 0 auto}
+.brand .mk svg{width:26px;height:26px}
+.brand .wd{line-height:1;display:flex;flex-direction:column;gap:.2rem}
+.brand .wd b{font-family:var(--disp);font-weight:800;font-size:1.16rem;letter-spacing:-.03em;text-transform:uppercase}
+.brand .wd b i{font-style:normal;color:var(--amber)}
+.brand .wd>span{font-family:var(--mono);font-size:.56rem;letter-spacing:.28em;color:var(--txt-soft);text-transform:uppercase}
+.menu{display:flex;gap:.1rem;min-width:0;overflow:hidden}
+.menu a{padding:.5rem .62rem;font-size:.92rem;font-weight:500;white-space:nowrap;position:relative;border-radius:8px}
+.menu a::after{content:"";position:absolute;left:.62rem;right:.62rem;bottom:.3rem;height:2px;background:var(--amber);transform:scaleX(0);transform-origin:left;transition:transform .22s}
+.menu a:hover::after,.menu a.act::after{transform:scaleX(1)}
+.acts{display:flex;align-items:center;gap:.45rem;flex:0 0 auto}
+.ico{width:38px;height:38px;border-radius:10px;border:1px solid var(--line);background:transparent;display:grid;place-items:center;cursor:pointer;transition:.16s}
+.ico:hover{border-color:var(--brand)}
+.lang{display:flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.lang button{border:0;background:transparent;padding:.42rem .55rem;font-family:var(--mono);font-size:.72rem;font-weight:700;cursor:pointer}
+.lang button[aria-pressed="true"]{background:var(--brand);color:#fff}
+#burger{display:none}
+.drawer{position:fixed;inset:var(--nav-h) 0 0;background:var(--paper);z-index:105;transform:translateX(100%);
+  transition:transform .32s cubic-bezier(.4,0,.2,1);padding:1.4rem 6vw;overflow:auto}
+.drawer.open{transform:none}
+.drawer a{display:block;padding:.85rem 0;border-bottom:1px solid var(--line);font-family:var(--disp);font-weight:800;font-size:1.5rem}
+.drawer a.cta{background:var(--amber);color:#161327;border:0;text-align:center;padding:.9rem;margin-bottom:.7rem;--cut:12px}
+@media(max-width:1150px){ .menu{display:none} #burger{display:grid} }
+@media(max-width:600px){
+  .acts .btn{display:none}
+  .brand .mk{width:36px;height:36px} .brand .mk svg{width:22px;height:22px}
+  .brand .wd b{font-size:1rem} .lang button{padding:.38rem .42rem;font-size:.66rem} .ico{width:34px;height:34px}
+}
+
+/* ---------- hero ---------- */
+.hero{position:relative;padding:calc(var(--nav-h) + clamp(2.5rem,6vw,4.5rem)) 0 clamp(2.5rem,5vw,4rem);
+  background:var(--ink);color:#F0EEFA;overflow:hidden}
+.hero canvas{position:absolute;inset:0;width:100%;height:100%;opacity:.9}
+.hero .wrap{position:relative;z-index:2}
+.hero-split{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:clamp(1.5rem,4vw,3rem);align-items:center}
+@media(max-width:940px){.hero-split{grid-template-columns:1fr}}
+.hero h1 em{font-style:normal;color:var(--amber)}
+.hero .lead{color:#B9B0DE}
+.hero .kicker{font-family:var(--mono);font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:var(--amber);
+  border:1px solid rgba(255,176,32,.4);padding:.35rem .7rem;display:inline-block;--cut:8px}
+.hero-cta{display:flex;flex-wrap:wrap;gap:.7rem;margin-top:1.6rem}
+/* panel "el club ahora": la página abre mostrando estado real */
+.live{background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.14);border-radius:var(--r);padding:1.1rem}
+.live h4{font-size:.95rem;display:flex;justify-content:space-between;align-items:center;margin-bottom:.9rem;color:#fff}
+.live h4 time{font-family:var(--mono);font-size:.72rem;color:#A79FC6;font-weight:500}
+.live-row{display:flex;align-items:center;justify-content:space-between;gap:.8rem;padding:.62rem 0;border-top:1px solid rgba(255,255,255,.09)}
+.live-row:first-of-type{border-top:0}
+.live-row .k{font-size:.86rem;color:#B9B0DE}
+.live-row .v{font-family:var(--mono);font-weight:700;font-size:1.02rem;color:#fff}
+.gauge{height:6px;border-radius:99px;background:rgba(255,255,255,.14);overflow:hidden;flex:1;max-width:120px}
+.gauge i{display:block;height:100%;width:0;transition:width .9s cubic-bezier(.2,.8,.2,1)}
+.live .btn{width:100%;margin-top:.9rem}
+.marquee{margin-top:clamp(2rem,4vw,3rem);border-top:1px solid rgba(255,255,255,.14);border-bottom:1px solid rgba(255,255,255,.14);
+  overflow:hidden;white-space:nowrap;padding:.6rem 0}
+.marquee div{display:inline-block;animation:mq 28s linear infinite}
+.marquee span{padding:0 1.4rem;font-family:var(--mono);font-size:.76rem;letter-spacing:.16em;text-transform:uppercase;color:#A79FC6}
+.marquee b{color:var(--amber)}
+@keyframes mq{to{transform:translateX(-50%)}}
+
+/* ---------- plano de la nave ---------- */
+.plan{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:clamp(.8rem,2vw,1.3rem)}
+.plan svg{width:100%;height:auto;display:block}
+.zone{cursor:pointer}
+.zone rect.bg{transition:fill .2s,opacity .2s}
+.zone:hover rect.bg,.zone.sel rect.bg{opacity:1}
+.zone text{pointer-events:none;font-family:var(--disp);font-weight:800}
+.legend{display:flex;flex-wrap:wrap;gap:1.1rem;margin-top:.9rem;font-size:.83rem;color:var(--txt-soft)}
+.legend i{width:11px;height:11px;display:inline-block;margin-right:.35rem;border-radius:3px}
+.plan-info{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1rem;margin-top:1.2rem}
+
+/* ---------- reservas ---------- */
+.res{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:1.2rem;align-items:start}
+.res>*{min-width:0}
+@media(max-width:980px){.res{grid-template-columns:minmax(0,1fr)}}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:12px;padding:3px;background:var(--surface);margin-bottom:1rem}
+.seg button{border:0;background:transparent;padding:.5rem 1rem;border-radius:9px;cursor:pointer;font-weight:700;font-size:.9rem}
+.seg button[aria-pressed="true"]{background:var(--brand);color:#fff}
+.days{display:flex;gap:.45rem;overflow-x:auto;padding-bottom:.5rem}
+.day{flex:0 0 auto;min-width:70px;text-align:center;border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:.55rem .35rem;cursor:pointer;transition:.16s}
+.day small{display:block;font-family:var(--mono);font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--txt-soft)}
+.day b{display:block;font-family:var(--disp);font-size:1.4rem;line-height:1.1}
+.day[aria-pressed="true"]{background:var(--brand);color:#fff;border-color:var(--brand)}
+.day[aria-pressed="true"] small{color:#D6CCFF}
+.slots{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:.5rem;margin-top:1rem}
+.slot{position:relative;border:1px solid var(--line);background:var(--surface);border-radius:11px;padding:.55rem .35rem;
+  text-align:center;cursor:pointer;font-weight:700;font-size:.95rem;transition:.15s}
+.slot small{display:block;font-family:var(--mono);font-size:.68rem;font-weight:500;color:var(--txt-soft)}
+.slot:hover:not(.no){border-color:var(--brand);transform:translateY(-2px)}
+.slot.pick{background:var(--brand);border-color:var(--brand);color:#fff}
+.slot.pick small{color:#D6CCFF}
+.slot.no{opacity:.38;cursor:not-allowed;text-decoration:line-through}
+.slot .tag{position:absolute;top:-8px;right:-4px;background:var(--amber);color:#161327;font-family:var(--mono);
+  font-size:.55rem;font-weight:700;padding:.1rem .35rem;border-radius:4px}
+.cart{position:sticky;top:calc(var(--nav-h) + 14px)}
+.cart ul{list-style:none;margin:.7rem 0 0;padding:0;display:grid;gap:.45rem}
+.cart li{display:flex;justify-content:space-between;gap:.5rem;align-items:center;background:var(--paper);border-radius:10px;padding:.5rem .65rem;font-size:.86rem}
+.cart li button{border:0;background:none;color:var(--bad);cursor:pointer;font-size:1.1rem;line-height:1}
+.tot{display:flex;justify-content:space-between;align-items:baseline;border-top:1px dashed var(--line);margin-top:.85rem;padding-top:.85rem}
+.tot b{font-family:var(--disp);font-size:1.8rem}
+.void{border:1px dashed var(--line);border-radius:11px;padding:1.2rem .6rem;text-align:center;color:var(--txt-soft);font-size:.88rem}
+
+/* ---------- calculadora de cuota ---------- */
+/* rejilla de dos columnas usada en torneos y en "busco pareja" */
+.tr-grid{display:grid}
+.tr-grid>*{min-width:0}
+@media(max-width:820px){.tr-grid{grid-template-columns:minmax(0,1fr)!important}}
+.quota{display:grid;grid-template-columns:minmax(0,340px) minmax(0,1fr);gap:1.4rem;align-items:start}
+@media(max-width:860px){.quota{grid-template-columns:1fr}}
+.range{width:100%;accent-color:var(--brand)}
+.plans{display:grid;gap:.6rem}
+.plan-row{display:grid;grid-template-columns:1fr auto;gap:.6rem 1rem;align-items:center;border:1px solid var(--line);
+  background:var(--surface);border-radius:12px;padding:.75rem .9rem;transition:.2s}
+.plan-row.best{border-color:var(--brand);box-shadow:0 0 0 3px color-mix(in srgb,var(--brand) 16%,transparent)}
+.plan-row .nm{font-family:var(--disp);font-weight:800;font-size:1.05rem}
+.plan-row .de{font-size:.8rem;color:var(--txt-soft)}
+.plan-row .pr{font-family:var(--mono);font-weight:700;font-size:1.2rem;text-align:right;white-space:nowrap}
+.plan-row .track{grid-column:1/-1;height:8px;border-radius:99px;background:var(--surface-2);overflow:hidden}
+.plan-row .track i{display:block;height:100%;background:var(--txt-soft);width:0;transition:width .5s}
+.plan-row.best .track i{background:var(--brand)}
+.badge{font-family:var(--mono);font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  background:var(--amber);color:#161327;padding:.18rem .45rem;border-radius:4px}
+
+/* ---------- aforo del gimnasio ---------- */
+.occ{display:grid;grid-template-columns:repeat(16,1fr);gap:4px;align-items:end;height:150px;margin:1rem 0 .4rem}
+.occ .h{position:relative;background:var(--surface-2);border-radius:4px 4px 2px 2px;transition:.25s;cursor:default}
+.occ .h i{position:absolute;inset:auto 0 0 0;border-radius:4px 4px 2px 2px;transition:height .7s cubic-bezier(.2,.8,.2,1)}
+.occ .h.now{outline:2px solid var(--txt);outline-offset:2px}
+.occ-x{display:grid;grid-template-columns:repeat(16,1fr);gap:4px;font-family:var(--mono);font-size:.6rem;color:var(--txt-soft);text-align:center}
+.occ-x span:nth-child(even){visibility:hidden}
+@media(max-width:640px){.occ-x span:nth-child(4n+2),.occ-x span:nth-child(4n+3),.occ-x span:nth-child(4n+4){visibility:hidden}}
+
+/* ---------- pestañas de herramientas ---------- */
+.tabs{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:1.3rem}
+.tp{display:none}
+.tp.on{display:block;animation:fade .3s}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* marcador */
+.board{display:grid;grid-template-columns:1fr auto 1fr;gap:1rem;align-items:center;background:var(--ink);color:#fff;border-radius:var(--r);padding:clamp(1rem,3vw,1.9rem)}
+.side{text-align:center}
+.side .nm{font-family:var(--mono);font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:#B9B0DE}
+.side .pt{font-family:var(--disp);font-weight:800;font-size:clamp(3.2rem,11vw,5.6rem);line-height:1;color:var(--amber);font-variant-numeric:tabular-nums}
+.side.srv .nm::after{content:" ●";color:var(--amber)}
+.sets{display:flex;gap:.3rem;justify-content:center;margin-top:.3rem}
+.sets i{width:28px;height:32px;display:grid;place-items:center;background:rgba(255,255,255,.1);border-radius:6px;font-style:normal;font-family:var(--mono);font-weight:700}
+.sets i.w{background:var(--amber);color:#161327}
+.board .vs{font-family:var(--mono);color:#6E639B;font-size:.9rem}
+.clock{text-align:center;font-family:var(--mono);font-size:1.6rem;font-weight:700;margin-top:.6rem;color:#fff}
+.note{text-align:center;font-family:var(--mono);font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--amber);min-height:1.2em;margin-top:.5rem}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:.5rem;margin-top:1rem}
+.stats div{border:1px solid var(--line);border-radius:11px;padding:.55rem .7rem;background:var(--surface)}
+.stats small{display:block;font-family:var(--mono);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:var(--txt-soft)}
+.stats b{font-family:var(--mono);font-size:1.15rem}
+#log{max-height:140px;overflow:auto;font-size:.84rem;color:var(--txt-soft);margin-top:.9rem;border-top:1px dashed var(--line);padding-top:.7rem}
+#log div{padding:.14rem 0;border-bottom:1px dotted var(--line)}
+
+/* cuadro eliminatorio */
+.bracket{display:flex;gap:1.4rem;overflow-x:auto;padding:.4rem 0 1rem}
+.rnd{flex:0 0 210px;display:flex;flex-direction:column;justify-content:space-around;gap:.8rem}
+.rnd h5{font-family:var(--mono);font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--txt-soft);margin:0 0 .2rem}
+.tie{border:1px solid var(--line);border-radius:11px;overflow:hidden;background:var(--surface)}
+.tie button{display:flex;justify-content:space-between;width:100%;border:0;background:transparent;padding:.5rem .7rem;
+  cursor:pointer;font-size:.86rem;text-align:left;border-bottom:1px solid var(--line)}
+.tie button:last-child{border-bottom:0}
+.tie button:hover:not(:disabled){background:color-mix(in srgb,var(--brand) 12%,transparent)}
+.tie button.win{background:color-mix(in srgb,var(--ok) 16%,transparent);font-weight:700}
+.tie button:disabled{color:var(--txt-soft);cursor:default}
+.tie .s{font-family:var(--mono);font-size:.78rem;color:var(--txt-soft)}
+
+/* planificador semanal */
+.week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:.5rem;margin-top:1rem}
+@media(max-width:760px){.week{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.dayc{border:1px solid var(--line);border-radius:12px;padding:.65rem;background:var(--surface);min-height:118px;display:flex;flex-direction:column;gap:.3rem}
+.dayc h6{margin:0;font-family:var(--mono);font-size:.64rem;letter-spacing:.12em;text-transform:uppercase;color:var(--txt-soft)}
+.dayc .act{border-radius:8px;padding:.4rem .5rem;font-size:.78rem;font-weight:700;line-height:1.25}
+.act--p{background:color-mix(in srgb,var(--brand) 18%,transparent);color:var(--brand)}
+.act--g{background:color-mix(in srgb,var(--amber) 26%,transparent);color:var(--amber-deep)}
+.act--r{background:var(--surface-2);color:var(--txt-soft)}
+:root[data-theme="dark"] .act--g{color:var(--amber)}
+
+/* pizarra */
+.court-wrap{border-radius:var(--r);overflow:hidden;border:1px solid var(--line);margin-top:1rem;background:#241E42}
+.court-wrap svg{width:100%;height:auto;display:block;touch-action:none}
+.tok{cursor:grab}
+.step-txt{text-align:center;font-family:var(--disp);font-weight:800;font-size:1.1rem;margin:.9rem 0 .3rem}
+
+/* tablas, tarjetas y pie */
+.tblbox{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r);background:var(--surface)}
+table.t{width:100%;border-collapse:collapse;font-size:.89rem}
+table.t th,table.t td{padding:.6rem .7rem;border-bottom:1px solid var(--line);text-align:left}
+table.t th{font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;user-select:none;white-space:nowrap;color:var(--txt-soft)}
+table.t th[data-d="asc"]::after{content:" ▲";color:var(--brand)}
+table.t th[data-d="desc"]::after{content:" ▼";color:var(--brand)}
+table.t tbody tr:hover{background:color-mix(in srgb,var(--brand) 8%,transparent)}
+.rk{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:7px;background:var(--surface-2);font-family:var(--mono);font-weight:700;font-size:.76rem}
+.rk.p1{background:var(--amber);color:#161327}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(252px,1fr));gap:1rem}
+.item{border:1px solid var(--line);border-radius:var(--r);background:var(--surface);padding:1.1rem;transition:.2s}
+.item:hover{transform:translateY(-4px);box-shadow:var(--shadow);border-color:var(--brand)}
+.item .tg{font-family:var(--mono);font-size:.64rem;letter-spacing:.12em;text-transform:uppercase;color:var(--brand)}
+.item .pr{font-family:var(--disp);font-weight:800;font-size:1.6rem}
+.item .pr span{font-family:"DM Sans";font-size:.8rem;font-weight:400;color:var(--txt-soft)}
+.bar{height:6px;border-radius:99px;background:var(--surface-2);overflow:hidden;margin:.55rem 0}
+.bar i{display:block;height:100%;width:0;background:var(--brand);transition:width 1s cubic-bezier(.2,.8,.2,1)}
+
+.dish{display:flex;justify-content:space-between;gap:1rem;border:1px solid var(--line);border-radius:12px;padding:.8rem .95rem;background:var(--surface)}
+.dish b{font-family:var(--disp);font-weight:800;font-size:1.02rem;display:block}
+.dish small{color:var(--txt-soft);font-size:.82rem}
+.dish .e{font-family:var(--mono);font-weight:700;white-space:nowrap}
+
+.faq{display:grid;gap:.55rem;max-width:880px}
+.q{border:1px solid var(--line);border-radius:12px;background:var(--surface);overflow:hidden}
+.q>button{width:100%;display:flex;justify-content:space-between;gap:1rem;align-items:center;padding:.95rem 1.1rem;background:none;border:0;cursor:pointer;text-align:left;font-weight:700}
+.q .pm{width:24px;height:24px;border-radius:7px;background:var(--surface-2);display:grid;place-items:center;transition:.22s;flex:0 0 auto}
+.q.on .pm{background:var(--brand);color:#fff;transform:rotate(45deg)}
+.q .a{max-height:0;overflow:hidden;transition:max-height .35s;padding:0 1.1rem;color:var(--txt-soft)}
+.q.on .a{padding-bottom:1rem}
+
+.contact{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:1.4rem}
+@media(max-width:860px){.contact{grid-template-columns:1fr}}
+.row{display:flex;gap:.85rem;padding:.8rem 0;border-bottom:1px solid var(--line)}
+
+footer{background:var(--ink);color:#B9B0DE;padding:3.2rem 0 1.4rem}
+footer h4{color:#fff;margin-bottom:.7rem;font-size:1.05rem}
+footer ul{list-style:none;margin:0;padding:0;display:grid;gap:.4rem;font-size:.9rem}
+footer a:hover{color:var(--amber)}
+.fgrid{display:grid;grid-template-columns:1.5fr 1fr 1fr 1.3fr;gap:2rem}
+@media(max-width:860px){.fgrid{grid-template-columns:1fr 1fr}}
+@media(max-width:540px){.fgrid{grid-template-columns:1fr}}
+.copy{border-top:1px solid rgba(255,255,255,.12);margin-top:2.2rem;padding-top:1.1rem;font-size:.8rem;display:flex;flex-wrap:wrap;gap:.7rem;justify-content:space-between}
+
+.fab{position:fixed;right:16px;z-index:90;width:50px;height:50px;border-radius:50%;display:grid;place-items:center;border:0;cursor:pointer;box-shadow:var(--shadow);transition:.22s}
+#top{bottom:84px;background:var(--surface);border:1px solid var(--line);color:var(--txt);opacity:0;pointer-events:none}
+#top.on{opacity:1;pointer-events:auto}
+#wa{bottom:22px;background:#25D366;color:#fff}
+.fab:hover{transform:translateY(-3px)}
+
+.modal{position:fixed;inset:0;z-index:150;display:none;place-items:center;padding:1rem;background:rgba(16,13,28,.72);backdrop-filter:blur(4px)}
+.modal.on{display:grid}
+.mbox{background:var(--surface);border:1px solid var(--line);border-radius:18px;width:min(560px,96vw);max-height:88vh;overflow:auto;padding:1.5rem}
+.mbox .x{float:right;border:0;background:none;font-size:1.5rem;cursor:pointer;color:var(--txt-soft);line-height:1}
+#toasts{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);z-index:200;display:grid;gap:.5rem;width:min(420px,92vw)}
+.toast{background:var(--ink);color:#fff;border-left:4px solid var(--amber);border-radius:11px;padding:.75rem 1rem;font-size:.88rem}
+.toast.bad{border-left-color:var(--bad)}
+#ck{position:fixed;left:1rem;right:1rem;bottom:1rem;z-index:160;background:var(--surface);border:1px solid var(--line);
+  border-radius:14px;padding:.9rem 1.1rem;display:none;gap:.9rem;align-items:center;flex-wrap:wrap;max-width:700px;margin-inline:auto;box-shadow:var(--shadow)}
+#ck.on{display:flex}
+
+.rv{opacity:0;transform:translateY(20px);transition:opacity .6s,transform .6s}
+.rv.in{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){
+  .rv{opacity:1;transform:none;transition:none}
+  *,*::before,*::after{animation-duration:.001s!important;transition-duration:.05s!important}
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main" data-i18n="skip">Saltar al contenido</a>
+
+<!-- Marca PADELBOX: la caja con la esquina cortada y la bola saliendo de ella -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="mark" viewBox="0 0 100 100">
+    <path d="M9 9 H67 L91 33 V91 H9 Z" fill="none" stroke="#5A31E8" stroke-width="12" stroke-linejoin="miter"/>
+    <path d="M24 78 L44 58" fill="none" stroke="#FFB020" stroke-width="9" stroke-linecap="round"/>
+    <circle cx="57" cy="45" r="12" fill="#FFB020"/>
+  </symbol>
+  <symbol id="lockup" viewBox="0 0 280 280">
+    <rect width="280" height="280" rx="0" fill="#161327"/>
+    <path d="M280 0 L280 34 L246 0 Z" fill="#5A31E8"/>
+    <path d="M0 280 L34 280 L0 246 Z" fill="#FFB020"/>
+    <use href="#mark" x="84" y="38" width="112" height="112"/>
+    <text x="140" y="212" text-anchor="middle" font-family="Bricolage Grotesque,sans-serif" font-weight="800" font-size="46" letter-spacing="-1">
+      <tspan fill="#FFFFFF">PADEL</tspan><tspan fill="#FFB020">BOX</tspan></text>
+    <text x="140" y="242" text-anchor="middle" font-family="JetBrains Mono,monospace" font-weight="700" font-size="12" letter-spacing="7" fill="#8267FF">PADEL · FITNESS</text>
+  </symbol>
+</svg>
+
+<div id="bar" role="progressbar" aria-label="Progreso"></div>
+
+<header class="nav" id="nav">
+  <div class="wrap">
+    <a class="brand" href="#inicio" aria-label="Padelbox — inicio">
+      <span class="mk cut"><svg viewBox="0 0 100 100" aria-hidden="true"><use href="#mark"/></svg></span>
+      <span class="wd"><b>Padel<i>box</i></b><span>Padel · Fitness</span></span>
+    </a>
+    <nav class="menu" id="menu" aria-label="Principal">
+      <a href="#nave" data-i18n="n.club">La nave</a>
+      <a href="#reservas" data-i18n="n.book">Reservas</a>
+      <a href="#cuotas" data-i18n="n.plans">Cuotas</a>
+      <a href="#gimnasio" data-i18n="n.gym">Gimnasio</a>
+      <a href="#escuela" data-i18n="n.school">Escuela</a>
+      <a href="#tools" data-i18n="n.tools">Herramientas</a>
+      <a href="#ranking" data-i18n="n.rank">Ranking</a>
+      <a href="#contacto" data-i18n="n.contact">Contacto</a>
+    </nav>
+    <div class="acts">
+      <div class="lang" role="group" aria-label="Idioma">
+        <button type="button" data-lang="es" aria-pressed="true">ES</button>
+        <button type="button" data-lang="en" aria-pressed="false">EN</button>
+      </div>
+      <button class="ico" id="theme" type="button" aria-label="Cambiar tema">◐</button>
+      <a class="btn btn--a btn--sm cut" href="#reservas" data-i18n="n.cta">Reservar</a>
+      <button class="ico" id="burger" type="button" aria-label="Menú" aria-expanded="false">
+        <svg width="19" height="13" viewBox="0 0 19 13" fill="none" stroke="currentColor" stroke-width="2"><path d="M0 1h19M0 6.5h19M0 12h19"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<nav class="drawer" id="drawer" aria-label="Menú móvil">
+  <a href="#reservas" class="cta cut" data-i18n="n.cta">Reservar</a>
+  <a href="#nave" data-i18n="n.club">La nave</a>
+  <a href="#reservas" data-i18n="n.book">Reservas</a>
+  <a href="#cuotas" data-i18n="n.plans">Cuotas</a>
+  <a href="#gimnasio" data-i18n="n.gym">Gimnasio</a>
+  <a href="#escuela" data-i18n="n.school">Escuela</a>
+  <a href="#tools" data-i18n="n.tools">Herramientas</a>
+  <a href="#ranking" data-i18n="n.rank">Ranking</a>
+  <a href="#pareja" data-i18n="n.partner">Busco pareja</a>
+  <a href="#cafeteria" data-i18n="n.cafe">Cafetería</a>
+  <a href="#faq">FAQ</a>
+  <a href="#contacto" data-i18n="n.contact">Contacto</a>
+</nav>
+
+<main id="main">
+<!-- ══════════ HERO ══════════ -->
+<section class="hero" id="inicio">
+  <canvas id="hc" aria-hidden="true"></canvas>
+  <div class="wrap">
+    <div class="hero-split">
+      <div>
+        <span class="kicker cut" data-i18n="h.kick">Pádel + gimnasio · Todo bajo el mismo techo</span>
+        <h1 style="margin:1rem 0"><span data-i18n="h.t1">Del calentamiento</span><br><em data-i18n="h.t2">al último punto</em></h1>
+        <p class="lead" data-i18n="h.lead">Cuatro pistas indoor, un gimnasio de 560 m², vestuarios y cafetería en la misma nave. Entrenas, juegas, te duchas y te quedas a comer sin mover el coche.</p>
+        <div class="hero-cta">
+          <a class="btn btn--a cut" href="#reservas" data-i18n="h.cta1">Reservar pista o clase</a>
+          <a class="btn btn--o" href="#cuotas" data-i18n="h.cta2">Calcular mi cuota</a>
+        </div>
+      </div>
+
+      <!-- El club ahora: la página abre mostrando estado, no un formulario vacío -->
+      <aside class="live" aria-live="polite">
+        <h4><span data-i18n="h.now">El club ahora</span> <time id="clockNow">--:--</time></h4>
+        <div class="live-row"><span class="k" data-i18n="h.courts">Pistas libres</span>
+          <span style="display:flex;align-items:center;gap:.6rem"><span class="gauge"><i id="gCourts"></i></span><b class="v" id="vCourts">–</b></span></div>
+        <div class="live-row"><span class="k" data-i18n="h.gym">Aforo del gimnasio</span>
+          <span style="display:flex;align-items:center;gap:.6rem"><span class="gauge"><i id="gGym"></i></span><b class="v" id="vGym">–</b></span></div>
+        <div class="live-row"><span class="k" data-i18n="h.next">Próxima clase dirigida</span><b class="v" id="vNext">–</b></div>
+        <div class="live-row"><span class="k" data-i18n="h.open">Estado</span><b class="v" id="vOpen">–</b></div>
+        <a class="btn btn--p cut" href="#reservas" data-i18n="h.cta3">Ver huecos de hoy</a>
+      </aside>
+    </div>
+
+    <div class="marquee" aria-hidden="true"><div id="mq"></div></div>
+  </div>
+</section>
+
+<!-- ══════════ LA NAVE ══════════ -->
+<section class="section" id="nave">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <div>
+        <span class="eyebrow cut" data-i18n="nv.eye">La nave</span>
+        <h2 style="margin-top:.8rem" data-i18n="nv.t">Cuatro pistas, un gimnasio y una barra</h2>
+        <p class="lead" data-i18n="nv.lead">Todo en planta baja y sin escaleras: las cuatro pistas en línea, los vestuarios pegados a ellas, el gimnasio al fondo y la cafetería con vistas a la pista 4. Toca una zona del plano para ir a su sección.</p>
+      </div>
+    </div>
+
+    <div class="plan rv">
+      <svg viewBox="0 0 1000 700" role="img" aria-label="Plano de la nave: 4 pistas de pádel, vestuarios, gimnasio y cafetería">
+        <g id="zones"></g>
+        <text x="0" y="688" font-family="JetBrains Mono" font-size="14" fill="var(--txt-soft)" id="planFoot">1 840 m² · 4 pistas indoor · gimnasio 560 m² · acceso y aseos adaptados</text>
+      </svg>
+      <div class="legend">
+        <span class="st-ok"><i style="background:var(--ok)"></i><span data-i18n="nv.free">Pista libre</span></span>
+        <span class="st-no"><i style="background:var(--bad)"></i><span data-i18n="nv.busy">Pista ocupada</span></span>
+        <span><i style="background:var(--brand)"></i><span data-i18n="nv.sel">Seleccionada</span></span>
+        <span><i style="background:var(--amber)"></i><span data-i18n="nv.serv">Zonas de servicio</span></span>
+      </div>
+      <div class="plan-info">
+        <div class="panel pad" id="zoneCard">
+          <span class="eyebrow cut" data-i18n="nv.detail">Detalle</span>
+          <h3 id="zName" style="margin:.6rem 0 .3rem">—</h3>
+          <p id="zDesc" style="font-size:.92rem;color:var(--txt-soft);margin:0 0 .8rem">—</p>
+          <div id="zMeta" style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.9rem"></div>
+          <button class="btn btn--p btn--sm cut" id="zGo" data-i18n="nv.go">Ir a esta zona</button>
+        </div>
+        <div class="panel pad"><b class="num" style="font-size:2rem">4</b><br><span data-i18n="nv.f1">pistas panorámicas indoor, todas con cristal al fondo y LED antirreflejo.</span></div>
+        <div class="panel pad"><b class="num" style="font-size:2rem">560 m²</b><br><span data-i18n="nv.f2">de gimnasio: fuerza, cardio, zona funcional y sala de dirigidas.</span></div>
+        <div class="panel pad"><b class="num" style="font-size:2rem">07–24</b><br><span data-i18n="nv.f3">todos los días. Acceso con QR fuera del horario de recepción.</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ RESERVAS (pista + gimnasio en el mismo motor) ══════════ -->
+<section class="section section--tint" id="reservas">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <div>
+        <span class="eyebrow cut" data-i18n="r.eye">Reservas</span>
+        <h2 style="margin-top:.8rem" data-i18n="r.t">Pista y clase, en la misma pantalla</h2>
+        <p class="lead" data-i18n="r.lead">Cambia entre pádel y gimnasio sin salir de aquí. Puedes mezclar las dos cosas en la misma reserva: pista a las 19:00 y funcional a las 20:30 salen en el mismo carrito y en el mismo total.</p>
+      </div>
+    </div>
+
+    <div class="seg rv" role="group" aria-label="Tipo de reserva">
+      <button type="button" data-mode="padel" aria-pressed="true" data-i18n="r.mPadel">🎾 Pista de pádel</button>
+      <button type="button" data-mode="gym" aria-pressed="false" data-i18n="r.mGym">🏋️ Clase dirigida</button>
+    </div>
+
+    <div class="res">
+      <div class="panel pad rv">
+        <div style="display:flex;gap:.8rem;flex-wrap:wrap;align-items:end;margin-bottom:1rem" id="padelCtl">
+          <div class="field" style="margin:0;min-width:170px"><label for="court" data-i18n="r.court">Pista</label><select id="court"></select></div>
+          <div class="field" style="margin:0;min-width:130px"><label for="dur" data-i18n="r.dur">Duración</label>
+            <select id="dur"><option value="60">60 min</option><option value="90" selected>90 min</option><option value="120">120 min</option></select></div>
+        </div>
+        <div class="field" style="max-width:260px" id="rateCtl"><label for="rate" data-i18n="r.rate">Tarifa</label>
+          <select id="rate">
+            <option value="1" data-i18n="r.r1">Sin abono</option>
+            <option value="0.75" data-i18n="r.r2">Abono Pádel (−25 %)</option>
+            <option value="0.6" data-i18n="r.r3">Abono Total (−40 %)</option>
+          </select></div>
+
+        <div class="days" id="days" role="group" aria-label="Día"></div>
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:1.1rem">
+          <h3 id="slotT" style="font-size:1.1rem">—</h3>
+          <small class="num" id="slotC" style="color:var(--txt-soft)"></small>
+        </div>
+        <div class="slots" id="slots"></div>
+      </div>
+
+      <aside class="cart rv">
+        <div class="panel pad">
+          <h3 data-i18n="c.t">Tu reserva</h3>
+          <ul id="cartL"></ul>
+          <div class="void" id="cartE" data-i18n="c.empty">Aún no has elegido nada.</div>
+          <div class="tot"><span data-i18n="c.total">Total</span><b class="num" id="cartT">0,00 €</b></div>
+          <small id="cartS" style="color:var(--txt-soft);display:block;margin-top:.3rem"></small>
+          <button class="btn btn--a cut" style="width:100%;margin-top:.9rem" id="checkout" disabled data-i18n="c.go">Confirmar</button>
+          <button class="btn btn--o btn--sm" style="width:100%;margin-top:.5rem" id="clear" data-i18n="c.clear">Vaciar</button>
+          <p style="font-size:.76rem;color:var(--txt-soft);margin:.8rem 0 0" data-i18n="c.note">Se guarda en este navegador. La confirmación final es en recepción o por WhatsApp.</p>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ CUOTAS: calculadora con punto de cruce ══════════ -->
+<section class="section" id="cuotas">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <div>
+        <span class="eyebrow cut" data-i18n="q.eye">Cuotas</span>
+        <h2 style="margin-top:.8rem" data-i18n="q.t">¿Te sale a cuenta el abono?</h2>
+        <p class="lead" data-i18n="q.lead">Mueve los deslizadores con lo que juegas y entrenas al mes. Calculamos lo que pagarías con cada opción y te marcamos la más barata. Sin letra pequeña: el cálculo está a la vista.</p>
+      </div>
+    </div>
+    <div class="quota">
+      <div class="panel pad rv">
+        <div class="field">
+          <label for="qPadel"><span data-i18n="q.s1">Partidos de pádel al mes</span> — <b class="num" id="qPadelV">6</b></label>
+          <input class="range" type="range" id="qPadel" min="0" max="24" value="6">
+        </div>
+        <div class="field">
+          <label for="qGym"><span data-i18n="q.s2">Días de gimnasio al mes</span> — <b class="num" id="qGymV">8</b></label>
+          <input class="range" type="range" id="qGym" min="0" max="26" value="8">
+        </div>
+        <div class="field">
+          <label for="qClass"><span data-i18n="q.s3">Clases dirigidas al mes</span> — <b class="num" id="qClassV">4</b></label>
+          <input class="range" type="range" id="qClass" min="0" max="20" value="4">
+        </div>
+        <div class="field">
+          <label for="qShare" data-i18n="q.s4">Cómo repartís la pista</label>
+          <select id="qShare">
+            <option value="4" data-i18n="q.sh4">A escote entre 4 (pago 1/4)</option>
+            <option value="2" data-i18n="q.sh2">Entre 2 (pago la mitad)</option>
+            <option value="1" data-i18n="q.sh1">Pago yo la pista entera</option>
+          </select>
+        </div>
+        <p style="font-size:.8rem;color:var(--txt-soft);margin:0" data-i18n="q.note">Se calcula con tarifa media de pista (valle y punta mezclados) y 90 minutos por partido.</p>
+      </div>
+      <div class="rv">
+        <div class="plans" id="plans"></div>
+        <div class="panel pad" style="margin-top:1rem">
+          <h3 style="font-size:1.1rem" id="qVerdict">—</h3>
+          <p id="qWhy" style="font-size:.9rem;color:var(--txt-soft);margin:.4rem 0 0"></p>
+          <p id="qCross" style="font-size:.9rem;margin:.6rem 0 0"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ GIMNASIO ══════════ -->
+<section class="section section--tint" id="gimnasio">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <div>
+        <span class="eyebrow cut" data-i18n="g.eye">Gimnasio</span>
+        <h2 style="margin-top:.8rem" data-i18n="g.t">Entrena cuando esté vacío</h2>
+        <p class="lead" data-i18n="g.lead">Estos son los datos de aforo de la última semana, hora a hora. Pincha en un día para ver su curva y te decimos la franja más despejada.</p>
+      </div>
+      <div style="text-align:right">
+        <small style="color:var(--txt-soft);display:block" data-i18n="g.best">Mejor franja del día</small>
+        <b class="num" id="gBest" style="font-size:1.7rem">—</b>
+      </div>
+    </div>
+    <div class="panel pad rv">
+      <div class="tabs" id="gDays" role="group" aria-label="Día de la semana"></div>
+      <div class="occ" id="occ" role="img" aria-label="Aforo del gimnasio por horas"></div>
+      <div class="occ-x" id="occX"></div>
+      <div style="display:flex;flex-wrap:wrap;gap:1.2rem;margin-top:1rem;font-size:.83rem;color:var(--txt-soft)">
+        <span class="st-ok"><i class="dot"></i><span data-i18n="g.l1">Tranquilo (menos del 40 %)</span></span>
+        <span class="st-mid"><i class="dot"></i><span data-i18n="g.l2">Movido (40–75 %)</span></span>
+        <span class="st-no"><i class="dot"></i><span data-i18n="g.l3">Lleno (más del 75 %)</span></span>
+      </div>
+    </div>
+    <h3 style="margin:2rem 0 1rem" data-i18n="g.classes">Clases dirigidas de esta semana</h3>
+    <div class="cards" id="gymCards"></div>
+  </div>
+</section>
+
+<!-- ══════════ ESCUELA ══════════ -->
+<section class="section" id="escuela">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <div>
+        <span class="eyebrow cut" data-i18n="e.eye">Escuela de pádel</span>
+        <h2 style="margin-top:.8rem" data-i18n="e.t">Grupos de cuatro, nunca de seis</h2>
+        <p class="lead" data-i18n="e.lead">Cuatro alumnos por pista y entrenador titulado. Filtra por nivel para ver los grupos con plaza.</p>
+      </div>
+    </div>
+    <div class="tabs rv" role="group" aria-label="Nivel">
+      <button class="chip on" data-lvl="all" aria-pressed="true" data-i18n="e.all">Todos</button>
+      <button class="chip" data-lvl="iniciacion" aria-pressed="false" data-i18n="e.l1">Iniciación</button>
+      <button class="chip" data-lvl="intermedio" aria-pressed="false" data-i18n="e.l2">Intermedio</button>
+      <button class="chip" data-lvl="avanzado" aria-pressed="false" data-i18n="e.l3">Avanzado</button>
+      <button class="chip" data-lvl="infantil" aria-pressed="false" data-i18n="e.l4">Infantil</button>
+    </div>
+    <div class="cards" id="classes"></div>
+  </div>
+</section>
+
+<!-- ══════════ HERRAMIENTAS ══════════ -->
+<section class="section section--tint" id="tools">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <div>
+        <span class="eyebrow cut" data-i18n="t.eye">Herramientas del club</span>
+        <h2 style="margin-top:.8rem" data-i18n="t.t">Cuatro cosas que sí vas a usar</h2>
+        <p class="lead" data-i18n="t.lead">Marcador con cronómetro y estadísticas, generador de torneos con cuadro clicable, planificador semanal que mezcla pista y gimnasio, y pizarra táctica. Nada de esto pide registro.</p>
+      </div>
+    </div>
+    <div class="tabs rv" role="tablist">
+      <button class="chip on" role="tab" aria-selected="true" data-tab="marcador" data-i18n="t.1">🎾 Marcador</button>
+      <button class="chip" role="tab" aria-selected="false" data-tab="torneo" data-i18n="t.2">🏆 Torneos</button>
+      <button class="chip" role="tab" aria-selected="false" data-tab="plan" data-i18n="t.3">📅 Plan semanal</button>
+      <button class="chip" role="tab" aria-selected="false" data-tab="pizarra" data-i18n="t.4">📐 Pizarra táctica</button>
+    </div>
+
+    <!-- MARCADOR -->
+    <div class="tp on" id="tab-marcador" role="tabpanel">
+      <div class="panel pad rv">
+        <div style="display:flex;flex-wrap:wrap;gap:.7rem;align-items:end;margin-bottom:1rem">
+          <div class="field" style="margin:0"><label for="tA" data-i18n="m.a">Pareja A</label><input id="tA" value="Nosotros" maxlength="16"></div>
+          <div class="field" style="margin:0"><label for="tB" data-i18n="m.b">Pareja B</label><input id="tB" value="Ellos" maxlength="16"></div>
+          <div class="field" style="margin:0"><label for="gold" data-i18n="m.deuce">Iguales</label>
+            <select id="gold"><option value="gold" data-i18n="m.d1">Punto de oro</option><option value="adv" data-i18n="m.d2">Ventajas</option></select></div>
+          <div class="field" style="margin:0"><label for="bo" data-i18n="m.fmt">Formato</label>
+            <select id="bo"><option value="3" data-i18n="m.f3">Al mejor de 3 sets</option><option value="1" data-i18n="m.f1">1 set</option></select></div>
+        </div>
+        <div class="board">
+          <div class="side" id="sA"><div class="nm" id="nA">Nosotros</div><div class="pt" id="pA">0</div><div class="sets" id="setA"></div></div>
+          <div class="vs">VS</div>
+          <div class="side" id="sB"><div class="nm" id="nB">Ellos</div><div class="pt" id="pB">0</div><div class="sets" id="setB"></div></div>
+          <div class="clock num" id="clock" style="grid-column:1/-1">00:00</div>
+        </div>
+        <div class="note" id="note" aria-live="polite"></div>
+        <div style="display:flex;flex-wrap:wrap;gap:.55rem;justify-content:center;margin-top:.9rem">
+          <button class="btn btn--p btn--sm cut" data-pt="A">+ <span id="bA">Nosotros</span></button>
+          <button class="btn btn--a btn--sm cut" data-pt="B">+ <span id="bB">Ellos</span></button>
+          <button class="btn btn--o btn--sm" id="undo" data-i18n="m.undo">↶ Deshacer</button>
+          <button class="btn btn--o btn--sm" id="reset" data-i18n="m.reset">Reiniciar</button>
+          <button class="btn btn--o btn--sm" id="share" data-i18n="m.share">Copiar acta</button>
+        </div>
+        <div class="stats" id="stats"></div>
+        <p style="text-align:center;font-size:.78rem;color:var(--txt-soft);margin-top:.7rem" data-i18n="m.keys">Teclas: <kbd>A</kbd> y <kbd>L</kbd> suman punto, <kbd>Z</kbd> deshace.</p>
+        <div id="log" aria-live="polite"></div>
+      </div>
+    </div>
+
+    <!-- TORNEOS -->
+    <div class="tp" id="tab-torneo" role="tabpanel">
+      <div class="panel pad rv">
+        <p class="lead" data-i18n="tr.lead">Dos formatos. La <b>liguilla rotatoria</b> cambia parejas y rivales cada ronda; el <b>cuadro eliminatorio</b> se juega a una vida y avanzas ganadores pinchando en ellos.</p>
+        <div class="seg" role="group" aria-label="Formato">
+          <button type="button" data-fmt="liga" aria-pressed="true" data-i18n="tr.f1">Liguilla rotatoria</button>
+          <button type="button" data-fmt="cuadro" aria-pressed="false" data-i18n="tr.f2">Cuadro eliminatorio</button>
+        </div>
+        <div style="display:grid;grid-template-columns:minmax(0,1fr) 240px;gap:1.2rem" class="tr-grid">
+          <div class="field">
+            <label for="players" id="plLabel" data-i18n="tr.players">Jugadores, uno por línea o separados por comas</label>
+            <textarea id="players" rows="7">Ana, Bea, Carlos, David, Elena, Fran, Gemma, Hugo</textarea>
+            <span class="err" id="trErr"></span>
+          </div>
+          <div>
+            <div class="field" id="ctlCourts"><label for="trCourts" data-i18n="tr.courts">Pistas en juego</label>
+              <select id="trCourts"><option>1</option><option selected>2</option><option>3</option><option>4</option></select></div>
+            <div class="field" id="ctlRounds"><label for="trRounds" data-i18n="tr.rounds">Rondas</label>
+              <select id="trRounds"><option>3</option><option selected>5</option><option>7</option></select></div>
+            <div class="field" id="ctlPts"><label for="trPts" data-i18n="tr.pts">Puntos por partido</label>
+              <select id="trPts"><option>16</option><option selected>24</option><option>32</option></select></div>
+            <button class="btn btn--p cut" style="width:100%" id="trGen" data-i18n="tr.gen">Generar</button>
+            <button class="btn btn--o btn--sm" style="width:100%;margin-top:.5rem" id="trCopy" data-i18n="tr.copy">Copiar</button>
+            <button class="btn btn--o btn--sm" style="width:100%;margin-top:.5rem" id="trShuffle" data-i18n="tr.shuffle">Sortear orden</button>
+          </div>
+        </div>
+        <div id="trOut" style="margin-top:1.2rem"></div>
+      </div>
+    </div>
+
+    <!-- PLAN SEMANAL -->
+    <div class="tp" id="tab-plan" role="tabpanel">
+      <div class="panel pad rv">
+        <p class="lead" data-i18n="pl.lead">Dinos cuántos días tienes y qué buscas, y repartimos la semana entre pista, gimnasio y descanso, respetando 48 horas entre sesiones de fuerza del mismo grupo.</p>
+        <div style="display:flex;flex-wrap:wrap;gap:.8rem;align-items:end">
+          <div class="field" style="margin:0;min-width:140px"><label for="plDays" data-i18n="pl.days">Días libres</label>
+            <select id="plDays"><option>2</option><option>3</option><option selected>4</option><option>5</option><option>6</option></select></div>
+          <div class="field" style="margin:0;min-width:190px"><label for="plGoal" data-i18n="pl.goal">Objetivo</label>
+            <select id="plGoal">
+              <option value="juego" data-i18n="pl.g1">Mejorar mi pádel</option>
+              <option value="fuerza" data-i18n="pl.g2">Ganar fuerza</option>
+              <option value="peso" data-i18n="pl.g3">Perder grasa</option>
+              <option value="lesion" data-i18n="pl.g4">Volver de una lesión</option>
+            </select></div>
+          <div class="field" style="margin:0;min-width:150px"><label for="plLvl" data-i18n="pl.lvl">Nivel de pádel</label>
+            <select id="plLvl"><option data-i18n="e.l1">Iniciación</option><option selected data-i18n="e.l2">Intermedio</option><option data-i18n="e.l3">Avanzado</option></select></div>
+          <button class="btn btn--p btn--sm cut" id="plGen" data-i18n="pl.gen">Generar semana</button>
+          <button class="btn btn--o btn--sm" id="plCopy" data-i18n="pl.copy">Copiar plan</button>
+        </div>
+        <div class="week" id="week"></div>
+        <p id="plNote" style="font-size:.86rem;color:var(--txt-soft);margin-top:1rem"></p>
+      </div>
+    </div>
+
+    <!-- PIZARRA -->
+    <div class="tp" id="tab-pizarra" role="tabpanel">
+      <div class="panel pad rv">
+        <p class="lead" data-i18n="pz.lead">Pista a escala real (20 × 10 m). Elige una jugada y avánzala paso a paso, o arrastra jugadores y bola para plantear la tuya. El lápiz dibuja trayectorias encima.</p>
+        <div class="tabs" id="plays" role="group" aria-label="Jugadas"></div>
+        <div class="court-wrap"><svg id="pz" viewBox="0 0 1080 580" role="img" aria-label="Pizarra táctica"></svg></div>
+        <p class="step-txt" id="pzStep" aria-live="polite">—</p>
+        <div style="display:flex;flex-wrap:wrap;gap:.55rem;justify-content:center">
+          <button class="btn btn--a btn--sm cut" id="pzPlay" data-i18n="pz.play">▶ Reproducir</button>
+          <button class="btn btn--o btn--sm" id="pzPrev" data-i18n="pz.prev">◀ Paso</button>
+          <button class="btn btn--o btn--sm" id="pzNext" data-i18n="pz.next">Paso ▶</button>
+          <button class="btn btn--o btn--sm" id="pzPen" aria-pressed="false" data-i18n="pz.pen">✏️ Lápiz</button>
+          <button class="btn btn--o btn--sm" id="pzClear" data-i18n="pz.clear">Borrar trazos</button>
+          <button class="btn btn--o btn--sm" id="pzReset" data-i18n="pz.reset">Reiniciar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ RANKING ══════════ -->
+<section class="section" id="ranking">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <div>
+        <span class="eyebrow cut" data-i18n="rk.eye">Liga interna</span>
+        <h2 style="margin-top:.8rem" data-i18n="rk.t">Ranking del club</h2>
+        <p class="lead" data-i18n="rk.lead">Ordena por cualquier columna y busca a tu pareja. Se actualiza los lunes con los resultados de la semana.</p>
+      </div>
+      <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+        <input id="rkQ" placeholder="Buscar…" style="border:1px solid var(--line);border-radius:10px;padding:.55rem .85rem;background:var(--surface)">
+        <select id="rkC" style="border:1px solid var(--line);border-radius:10px;padding:.55rem .85rem;background:var(--surface)">
+          <option value="all" data-i18n="rk.all">Todas</option><option>1ª</option><option>2ª</option><option>3ª</option><option>Fem</option>
+        </select>
+      </div>
+    </div>
+    <div class="tblbox rv">
+      <table class="t" id="rkT">
+        <thead><tr>
+          <th data-k="pos">#</th><th data-k="name" data-s="1" data-i18n="rk.p">Jugador/a</th>
+          <th data-k="cat" data-s="1" data-i18n="rk.c">Cat.</th><th data-k="pj">PJ</th><th data-k="pg">PG</th>
+          <th data-k="ratio">%</th><th data-k="pts" data-i18n="rk.pts">Puntos</th><th data-k="form" data-s="1" data-i18n="rk.f">Forma</th>
+        </tr></thead><tbody id="rkB"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ BUSCO PAREJA ══════════ -->
+<section class="section section--tint" id="pareja">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <div>
+        <span class="eyebrow cut" data-i18n="p.eye">Comunidad</span>
+        <h2 style="margin-top:.8rem" data-i18n="p.t">Busco pareja</h2>
+        <p class="lead" data-i18n="p.lead">Publica cuándo puedes jugar y con qué nivel. Filtra los anuncios y contacta por WhatsApp.</p>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:minmax(0,320px) minmax(0,1fr);gap:1.3rem" class="tr-grid">
+      <form class="panel pad rv" id="mmF" novalidate>
+        <h3 style="font-size:1.1rem" data-i18n="p.pub">Publicar anuncio</h3>
+        <div class="field"><label for="mmN" data-i18n="p.name">Nombre</label><input id="mmN" required><span class="err"></span></div>
+        <div class="field"><label for="mmL" data-i18n="p.level">Nivel</label>
+          <select id="mmL"><option>Iniciación</option><option selected>Intermedio</option><option>Avanzado</option><option>Competición</option></select></div>
+        <div class="field"><label for="mmW" data-i18n="p.when">Franja</label>
+          <select id="mmW"><option data-i18n="p.w1">Mañanas</option><option data-i18n="p.w2">Mediodía</option><option selected data-i18n="p.w3">Tardes</option><option data-i18n="p.w4">Noches</option><option data-i18n="p.w5">Fin de semana</option></select></div>
+        <div class="field"><label for="mmM" data-i18n="p.msg">Mensaje</label><textarea id="mmM" rows="3" maxlength="140"></textarea></div>
+        <button class="btn btn--p cut" style="width:100%" data-i18n="p.send">Publicar</button>
+      </form>
+      <div class="rv">
+        <div class="tabs" role="group" aria-label="Filtrar">
+          <button class="chip on" data-mm="all" aria-pressed="true" data-i18n="e.all">Todos</button>
+          <button class="chip" data-mm="Iniciación" aria-pressed="false">Iniciación</button>
+          <button class="chip" data-mm="Intermedio" aria-pressed="false">Intermedio</button>
+          <button class="chip" data-mm="Avanzado" aria-pressed="false">Avanzado</button>
+          <button class="chip" data-mm="Competición" aria-pressed="false">Competición</button>
+        </div>
+        <div class="cards" id="mmL2"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ CAFETERÍA ══════════ -->
+<section class="section" id="cafeteria">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <div>
+        <span class="eyebrow cut" data-i18n="cf.eye">Cafetería</span>
+        <h2 style="margin-top:.8rem" data-i18n="cf.t">Se pide desde la pista</h2>
+        <p class="lead" data-i18n="cf.lead">Cocina de verdad, opciones altas en proteína y batidos de después de entrenar. Marca lo que quieras y llévate el pedido escrito.</p>
+      </div>
+      <div style="text-align:right">
+        <small style="color:var(--txt-soft);display:block" data-i18n="cf.sel">Tu pedido</small>
+        <b class="num" id="cfT" style="font-size:1.9rem">0,00 €</b>
+        <div><button class="btn btn--o btn--sm" id="cfSend" style="margin-top:.4rem" data-i18n="cf.order">Enviar a la barra</button></div>
+      </div>
+    </div>
+    <div class="tabs rv" role="group" aria-label="Filtrar carta">
+      <button class="chip on" data-cat="all" aria-pressed="true" data-i18n="e.all">Todo</button>
+      <button class="chip" data-cat="menu" aria-pressed="false" data-i18n="cf.c1">Menú</button>
+      <button class="chip" data-cat="prote" aria-pressed="false" data-i18n="cf.c2">Alto en proteína</button>
+      <button class="chip" data-cat="picar" aria-pressed="false" data-i18n="cf.c3">Para picar</button>
+      <button class="chip" data-cat="bebida" aria-pressed="false" data-i18n="cf.c4">Bebidas</button>
+    </div>
+    <div class="cards" id="menuGrid"></div>
+  </div>
+</section>
+
+<!-- ══════════ FAQ ══════════ -->
+<section class="section section--tint" id="faq">
+  <div class="wrap">
+    <div class="sec-head rv"><div><span class="eyebrow cut">FAQ</span><h2 style="margin-top:.8rem" data-i18n="f.t">Preguntas frecuentes</h2></div></div>
+    <div class="faq rv" id="faqL"></div>
+  </div>
+</section>
+
+<!-- ══════════ CONTACTO ══════════ -->
+<section class="section" id="contacto">
+  <div class="wrap">
+    <div class="sec-head rv"><div><span class="eyebrow cut" data-i18n="ct.eye">Contacto</span><h2 style="margin-top:.8rem" data-i18n="ct.t">Pásate a verlo</h2></div></div>
+    <div class="contact">
+      <form class="panel pad rv" id="cF" novalidate>
+        <div class="field"><label for="cN" data-i18n="ct.n">Nombre</label><input id="cN" required autocomplete="name"><span class="err"></span></div>
+        <div class="field"><label for="cM" data-i18n="ct.m">Email</label><input id="cM" type="email" required autocomplete="email"><span class="err"></span></div>
+        <div class="field"><label for="cP" data-i18n="ct.p">Teléfono</label><input id="cP" type="tel" autocomplete="tel"><span class="err"></span></div>
+        <div class="field"><label for="cT" data-i18n="ct.s">Motivo</label>
+          <select id="cT"><option data-i18n="ct.o1">Alta de abono</option><option data-i18n="ct.o2">Prueba gratuita del gimnasio</option><option data-i18n="ct.o3">Escuela de pádel</option><option data-i18n="ct.o4">Empresas y eventos</option><option data-i18n="ct.o5">Otros</option></select></div>
+        <div class="field"><label for="cX" data-i18n="ct.msg">Mensaje</label><textarea id="cX" rows="4" required></textarea><span class="err"></span></div>
+        <label style="display:flex;gap:.55rem;align-items:flex-start;font-size:.82rem;color:var(--txt-soft)">
+          <input type="checkbox" id="cG" required style="margin-top:.25rem"><span data-i18n="ct.gdpr">Acepto la política de privacidad y el tratamiento de mis datos.</span></label>
+        <button class="btn btn--a cut" style="width:100%;margin-top:.9rem" data-i18n="ct.send">Enviar</button>
+      </form>
+      <div class="rv">
+        <div class="panel pad" style="margin-bottom:1rem">
+          <div class="row"><span>📍</span><div><b data-i18n="ct.addr">Dónde</b><br><span data-i18n="ct.addrV">Polígono industrial, nave 14 · a 12 min del centro</span></div></div>
+          <div class="row"><span>🕖</span><div><b data-i18n="ct.hours">Horario</b><br><span data-i18n="ct.hoursV">Todos los días de 07:00 a 24:00</span> — <span id="openNow" style="font-weight:700"></span></div></div>
+          <div class="row"><span>🅿️</span><div><b data-i18n="ct.park">Parking</b><br><span data-i18n="ct.parkV">80 plazas propias y dos puntos de carga eléctrica</span></div></div>
+          <div class="row" style="border:0"><span>💬</span><div><b>WhatsApp</b><br><a href="#" id="waLink" data-i18n="ct.wa">Escríbenos y te contestamos en minutos</a></div></div>
+        </div>
+        <div class="panel" style="overflow:hidden;background:var(--ink)">
+          <svg viewBox="0 0 500 300" role="img" aria-label="Plano de situación">
+            <defs><pattern id="gp" width="42" height="42" patternUnits="userSpaceOnUse"><path d="M42 0H0v42" fill="none" stroke="rgba(255,255,255,.06)"/></pattern></defs>
+            <rect width="500" height="300" fill="#161327"/><rect width="500" height="300" fill="url(#gp)"/>
+            <path d="M-10 220 Q170 200 250 155 T520 80" stroke="#332B57" stroke-width="18" fill="none"/>
+            <path d="M110 -10 L145 310M375 -10 L345 310" stroke="#241E42" stroke-width="11" fill="none"/>
+            <g transform="translate(250,155)">
+              <circle r="44" fill="rgba(255,176,32,.13)"><animate attributeName="r" values="32;56;32" dur="3s" repeatCount="indefinite"/><animate attributeName="opacity" values=".5;0;.5" dur="3s" repeatCount="indefinite"/></circle>
+              <use href="#mark" x="-17" y="-17" width="34" height="34"/>
+              <text y="-30" text-anchor="middle" fill="#fff" font-family="Bricolage Grotesque" font-weight="800" font-size="17">PADELBOX</text>
+              <text y="36" text-anchor="middle" fill="#A79FC6" font-family="JetBrains Mono" font-size="10">NAVE 14 · POL. IND.</text>
+            </g>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="fgrid">
+      <div>
+        <a href="#inicio" style="display:inline-block;width:120px" aria-label="Padelbox Club">
+          <svg viewBox="0 0 280 280" style="width:100%;height:auto;display:block" role="img" aria-label="Padelbox Club"><use href="#lockup"/></svg></a>
+        <p style="margin-top:.9rem;font-size:.9rem" data-i18n="ft.about">Cuatro pistas, gimnasio, vestuarios y cafetería en la misma nave. Pádel y fitness sin cambiar de sitio.</p>
+      </div>
+      <div><h4 data-i18n="ft.club">Club</h4><ul>
+        <li><a href="#nave" data-i18n="n.club">La nave</a></li><li><a href="#reservas" data-i18n="n.book">Reservas</a></li>
+        <li><a href="#gimnasio" data-i18n="n.gym">Gimnasio</a></li><li><a href="#cafeteria" data-i18n="n.cafe">Cafetería</a></li></ul></div>
+      <div><h4 data-i18n="ft.play">Juega</h4><ul>
+        <li><a href="#escuela" data-i18n="n.school">Escuela</a></li><li><a href="#ranking" data-i18n="n.rank">Liga interna</a></li>
+        <li><a href="#pareja" data-i18n="n.partner">Busco pareja</a></li><li><a href="#tools" data-i18n="n.tools">Herramientas</a></li></ul></div>
+      <div><h4 data-i18n="ft.news">Novedades</h4>
+        <p style="font-size:.88rem" data-i18n="ft.newsD">Torneos, plazas sueltas y horarios nuevos del gimnasio.</p>
+        <form id="nF" style="display:flex;gap:.4rem" novalidate>
+          <input id="nM" type="email" placeholder="tu@email.com" required style="flex:1;min-width:0;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:10px;padding:.6rem .75rem;color:#fff">
+          <button class="btn btn--a btn--sm cut" type="submit">OK</button></form>
+        <small id="nMsg" style="display:block;margin-top:.4rem;min-height:1.2em"></small></div>
+    </div>
+    <div class="copy">
+      <span>© <span id="yr"></span> Padelbox Club · <span data-i18n="ft.rights">Todos los derechos reservados</span></span>
+      <span><a href="#" data-modal="legal" data-i18n="ft.legal">Aviso legal</a> · <a href="#" data-modal="privacy" data-i18n="ft.priv">Privacidad</a> · <a href="#" data-modal="cookies">Cookies</a></span>
+    </div>
+  </div>
+</footer>
+
+<button class="fab" id="top" aria-label="Arriba">↑</button>
+<a class="fab" id="wa" href="#" target="_blank" rel="noopener" aria-label="WhatsApp">
+  <svg width="25" height="25" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15l-1.3 4.8 4.9-1.3A10 10 0 1 0 12 2Zm5.8 14.2c-.2.7-1.4 1.3-2 1.4-.5.1-1.2.1-1.9-.1-.4-.1-1-.3-1.8-.6-3.1-1.3-5.1-4.5-5.3-4.7-.1-.2-1.2-1.6-1.2-3.1s.8-2.2 1-2.5c.3-.3.6-.4.8-.4h.6c.2 0 .4 0 .7.5l.9 2.2c.1.2.1.4 0 .6l-.4.6-.3.3c-.1.1-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.1 1 2.1 1.3 2.4 1.5.3.1.5.1.6-.1l.9-1c.2-.2.4-.2.6-.1l2.1 1c.3.1.5.2.5.4.1.1.1.7-.1 1.4Z"/></svg></a>
+
+<div class="modal" id="modal" role="dialog" aria-modal="true"><div class="mbox"><button class="x" id="mx" aria-label="Cerrar">×</button><div id="mbody"></div></div></div>
+<div id="toasts" aria-live="polite"></div>
+<div id="ck" role="region" aria-label="Cookies">
+  <span style="flex:1;min-width:210px;font-size:.88rem" data-i18n="ck.t">Solo usamos almacenamiento propio para recordar tu reserva, tu idioma y tu tema. Ni analítica ni terceros.</span>
+  <button class="btn btn--p btn--sm cut" id="ckOk" data-i18n="ck.ok">Vale</button>
+</div>
+
+<script>
+/* ==========================================================================
+   PADELBOX — club de pádel & fitness · app.js
+   0 utilidades · 1 datos · 2 i18n · 3 UI · 4 hero · 5 plano · 6 reservas
+   7 cuotas · 8 aforo · 9 escuela · 10 marcador · 11 torneos · 12 plan
+   13 pizarra · 14 ranking · 15 pareja · 16 cafetería · 17 FAQ · 18 formularios
+   ========================================================================== */
+(function(){
+'use strict';
+const $=(s,c)=>(c||document).querySelector(s), $$=(s,c)=>Array.from((c||document).querySelectorAll(s));
+const el=(t,a,h)=>{const n=document.createElement(t);if(a)for(const k in a)k==='class'?n.className=a[k]:n.setAttribute(k,a[k]);if(h!=null)n.innerHTML=h;return n;};
+const eur=n=>(Math.round(n*100)/100).toLocaleString('es-ES',{minimumFractionDigits:2,maximumFractionDigits:2})+' €';
+const pad=n=>String(n).padStart(2,'0');
+const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
+const store={
+  get(k,f){try{const v=localStorage.getItem('abp.'+k);return v===null?f:JSON.parse(v);}catch(e){return f;}},
+  set(k,v){try{localStorage.setItem('abp.'+k,JSON.stringify(v));}catch(e){}}
+};
+/* hash determinista: la disponibilidad no cambia al navegar */
+function seed(str){let h=2166136261;for(let i=0;i<str.length;i++){h^=str.charCodeAt(i);h=Math.imul(h,16777619);}return((h>>>0)%1000)/1000;}
+function toast(m,bad){const t=el('div',{class:'toast'+(bad?' bad':'')},m);$('#toasts').appendChild(t);
+  setTimeout(()=>{t.style.transition='opacity .35s';t.style.opacity=0;setTimeout(()=>t.remove(),350);},3600);}
+async function copy(txt){
+  try{await navigator.clipboard.writeText(txt);return true;}catch(e){
+    const a=el('textarea');a.value=txt;a.style.position='fixed';a.style.opacity=0;document.body.appendChild(a);a.select();
+    let ok=false;try{ok=document.execCommand('copy');}catch(_){}a.remove();return ok;}
+}
+
+/* ── 1. Datos ──────────────────────────────────────────────────────────── */
+const CLUB={wa:'34600000000',open:7,close:24,
+  padel:{60:18,90:25,120:32},          /* tarifa media de pista */
+  peak:1.22, gymDay:8, classOne:9};
+
+const COURTS=[
+  {id:1,name:'Pista 1',x:10, y:10,w:175,h:350,desc:'La primera al entrar, pegada a recepción. Es la que más rota: perfecta si vienes sin reserva.'},
+  {id:2,name:'Pista 2',x:203,y:10,w:175,h:350,desc:'Pista de la escuela por las tardes. Cristal al fondo y a los laterales.'},
+  {id:3,name:'Pista 3',x:396,y:10,w:175,h:350,desc:'La más silenciosa: queda lejos de la sala de dirigidas y de la barra.'},
+  {id:4,name:'Pista 4',x:589,y:10,w:175,h:350,desc:'Pista central del club, con grada corrida y vistas desde la cafetería. Aquí se juegan las finales.'}
+];
+const ZONES=[
+  {id:'vm',x:782,y:10, w:208,h:168,ic:'🚿',es:'Vestuario mujeres',en:'Women changing room',
+   d:'Doce duchas, taquillas con código y secadores. Acceso directo desde las pistas.',
+   de:'Twelve showers, keypad lockers and hairdryers. Direct access from the courts.',go:'#nave'},
+  {id:'vh',x:782,y:192,w:208,h:168,ic:'🚿',es:'Vestuario hombres',en:'Men changing room',
+   d:'Doce duchas, taquillas con código y zona de secado de ropa deportiva.',
+   de:'Twelve showers, keypad lockers and a drying area for kit.',go:'#nave'},
+  {id:'gym',x:10,y:420,w:560,h:200,ic:'🏋️',es:'Gimnasio · 560 m²',en:'Gym · 560 m²',
+   d:'Peso libre, máquinas guiadas, cardio y una sala aparte para las clases dirigidas. Abierto de 07:00 a 24:00.',
+   de:'Free weights, machines, cardio and a separate studio for classes. Open 07:00 to 24:00.',go:'#gimnasio'},
+  {id:'caf',x:588,y:420,w:402,h:200,ic:'☕',es:'Cafetería y terraza',en:'Café and terrace',
+   d:'Cocina propia, batidos de después de entrenar y una barra desde la que se ve la pista 4.',
+   de:'Own kitchen, post-workout shakes and a bar overlooking court 4.',go:'#cafeteria'}
+];
+
+/* clases dirigidas: alimentan el motor de reservas y las tarjetas del gimnasio */
+const GYM=[
+  {n:'Funcional',ne:'Functional',h:9.5, dur:50,room:'Sala 1',coach:'Nuria',cap:16,lvl:'Todos',kcal:520,days:[1,3,5]},
+  {n:'Fuerza guiada',ne:'Guided strength',h:11,dur:60,room:'Peso libre',coach:'Iván',cap:10,lvl:'Iniciación',kcal:400,days:[2,4]},
+  {n:'Core y movilidad',ne:'Core & mobility',h:13,dur:45,room:'Sala 2',coach:'Nuria',cap:14,lvl:'Todos',kcal:280,days:[1,2,3,4,5]},
+  {n:'Prevención de codo',ne:'Elbow prevention',h:17.5,dur:45,room:'Sala 2',coach:'Fisio Sara',cap:8,lvl:'Todos',kcal:220,days:[2,4]},
+  {n:'HIIT',ne:'HIIT',h:19,dur:45,room:'Sala 1',coach:'Iván',cap:18,lvl:'Avanzado',kcal:610,days:[1,3,5]},
+  {n:'Fuerza para pádel',ne:'Strength for padel',h:20,dur:60,room:'Peso libre',coach:'Iván',cap:12,lvl:'Intermedio',kcal:480,days:[1,2,4]},
+  {n:'Estiramientos',ne:'Stretching',h:21.5,dur:40,room:'Sala 2',coach:'Nuria',cap:20,lvl:'Todos',kcal:150,days:[3,5,0]},
+  {n:'Cardio suave',ne:'Easy cardio',h:8, dur:45,room:'Cardio',coach:'Sara',cap:12,lvl:'Todos',kcal:330,days:[6,0]}
+];
+
+const PLANS=[
+  {id:'no', es:'Sin abono',      en:'Pay as you go',   fee:0,  padel:1,   gym:'pago', cls:'pago',
+   d:'Pagas solo lo que usas.',                     de:'You pay only for what you use.'},
+  {id:'pad',es:'Abono Pádel',    en:'Padel pass',      fee:29, padel:0.75,gym:'pago', cls:'pago',
+   d:'25 % menos en pista y reserva con 14 días.',  de:'25% off court time and 14-day booking window.'},
+  {id:'gym',es:'Abono Gimnasio', en:'Gym pass',        fee:35, padel:1,   gym:'inc',  cls:'inc',
+   d:'Gimnasio y dirigidas sin límite.',            de:'Unlimited gym and classes.'},
+  {id:'tot',es:'Abono Total',    en:'Full pass',       fee:49, padel:0.6, gym:'inc',  cls:'inc',
+   d:'Todo incluido y 40 % menos en pista.',        de:'Everything included and 40% off court time.'}
+];
+
+const CLASSES=[
+  {lvl:'iniciacion',n:'Iniciación adultos',ne:'Adult beginners',days:'Lunes y miércoles',daysE:'Mon & Wed',time:'19:00 – 20:30',coach:'Marta',price:45,spots:2,fill:35,d:'Posición, saque y primeros golpes. Sin experiencia previa.',de:'Position, serve and first strokes. No experience needed.'},
+  {lvl:'iniciacion',n:'Iniciación mañanas',ne:'Morning beginners',days:'Martes y jueves',daysE:'Tue & Thu',time:'10:00 – 11:30',coach:'Álex',price:42,spots:3,fill:28,d:'Grupo tranquilo, mucha repetición y poco partido.',de:'Calm group, lots of repetition, little match play.'},
+  {lvl:'intermedio',n:'Intermedio',ne:'Intermediate',days:'Lunes y miércoles',daysE:'Mon & Wed',time:'20:30 – 22:00',coach:'Javi',price:52,spots:1,fill:58,d:'Bandeja, víbora y la transición de fondo a red.',de:'Bandeja, víbora and the move from baseline to net.'},
+  {lvl:'intermedio',n:'Intermedio femenino',ne:'Women intermediate',days:'Martes y jueves',daysE:'Tue & Thu',time:'19:30 – 21:00',coach:'Marta',price:52,spots:2,fill:52,d:'Grupo 100 % femenino con trabajo táctico por parejas.',de:'All-women group with tactical pair work.'},
+  {lvl:'avanzado',n:'Avanzado',ne:'Advanced',days:'Martes y jueves',daysE:'Tue & Thu',time:'21:00 – 22:30',coach:'Javi',price:58,spots:1,fill:74,d:'Remate x3, contrapared y lectura de partido.',de:'x3 smash, side-wall play and match reading.'},
+  {lvl:'avanzado',n:'Competición',ne:'Competition squad',days:'Lunes, miércoles y viernes',daysE:'Mon, Wed & Fri',time:'21:00 – 23:00',coach:'Javi',price:75,spots:0,fill:100,d:'Táctica y físico combinados con el gimnasio del club.',de:'Tactics plus conditioning in the club gym.'},
+  {lvl:'infantil',n:'Minipádel 6-9',ne:'Mini padel 6-9',days:'Viernes',daysE:'Friday',time:'17:30 – 18:30',coach:'Álex',price:35,spots:4,fill:24,d:'Juego, coordinación y pistas adaptadas.',de:'Games, coordination and adapted courts.'},
+  {lvl:'infantil',n:'Cantera 10-15',ne:'Juniors 10-15',days:'Martes y jueves',daysE:'Tue & Thu',time:'18:00 – 19:30',coach:'Marta',price:48,spots:2,fill:62,d:'Técnica de base y competición por equipos.',de:'Core technique and team competition.'}
+];
+
+const RANKING=[
+  {name:'Javi Ferrer',cat:'1ª',pj:24,pg:20,pts:1840,form:'VVVDV'},
+  {name:'Marta Císcar',cat:'Fem',pj:26,pg:21,pts:1755,form:'VVVVD'},
+  {name:'Dani Marí',cat:'1ª',pj:22,pg:17,pts:1690,form:'VVDVV'},
+  {name:'Álex Ribes',cat:'2ª',pj:20,pg:14,pts:1466,form:'DVVDV'},
+  {name:'Laura Sanchis',cat:'Fem',pj:19,pg:13,pts:1402,form:'VDVVD'},
+  {name:'Sergio Bou',cat:'2ª',pj:23,pg:14,pts:1388,form:'VDDVV'},
+  {name:'Nacho Peris',cat:'2ª',pj:18,pg:11,pts:1240,form:'DVDVV'},
+  {name:'Clara Ortiz',cat:'Fem',pj:21,pg:12,pts:1198,form:'VVDDV'},
+  {name:'Vicent Bosch',cat:'3ª',pj:17,pg:9, pts:1044,form:'DDVVD'},
+  {name:'Rubén Gil',cat:'3ª',pj:16,pg:8, pts:988, form:'VDDVD'},
+  {name:'Ainhoa Ruiz',cat:'Fem',pj:15,pg:7,pts:934, form:'DVDDV'},
+  {name:'Toni Esteve',cat:'3ª',pj:14,pg:5, pts:812, form:'DDVDD'}
+];
+
+const MENU=[
+  {c:'menu',n:'Menú del día',ne:'Menu of the day',d:'Primero, segundo, bebida y postre',de:'Starter, main, drink and dessert',p:12.50},
+  {c:'menu',n:'Menú deportista',ne:'Athlete menu',d:'Proteína, arroz o pasta, verdura y fruta',de:'Protein, rice or pasta, veg and fruit',p:13.90},
+  {c:'prote',n:'Bowl de pollo',ne:'Chicken bowl',d:'48 g de proteína · arroz, pollo, aguacate y edamame',de:'48 g protein · rice, chicken, avocado, edamame',p:11.20},
+  {c:'prote',n:'Tortilla de claras',ne:'Egg white omelette',d:'32 g de proteína · con pavo y espinacas',de:'32 g protein · turkey and spinach',p:7.40},
+  {c:'prote',n:'Batido post-entreno',ne:'Post-workout shake',d:'30 g de proteína · plátano, cacao y avena',de:'30 g protein · banana, cocoa and oats',p:4.80},
+  {c:'picar',n:'Bravas de la casa',ne:'House bravas',d:'Alioli y salsa brava picante',de:'Aioli and spicy brava sauce',p:6.50},
+  {c:'picar',n:'Nachos del club',ne:'Club nachos',d:'Queso fundido, jalapeños y guacamole',de:'Melted cheese, jalapeños and guacamole',p:8.20},
+  {c:'picar',n:'Bocata de lomo',ne:'Pork loin roll',d:'Con queso, tomate y aceite de oliva',de:'Cheese, tomato and olive oil',p:5.90},
+  {c:'bebida',n:'Caña',ne:'Draught beer',d:'La de después del partido',de:'The one after the match',p:2.20},
+  {c:'bebida',n:'Isotónica 500 ml',ne:'Sports drink 500 ml',d:'Reposición de sales',de:'Electrolyte replacement',p:2.40},
+  {c:'bebida',n:'Café solo o cortado',ne:'Espresso or cortado',d:'Tueste natural',de:'Natural roast',p:1.40},
+  {c:'bebida',n:'Agua 1 L',ne:'Water 1 L',d:'Fría, de la nevera de pista',de:'Cold, from the courtside fridge',p:1.60}
+];
+
+const FAQ_ES=[
+  {q:'¿Puedo entrenar en el gimnasio antes de jugar?',a:'Para eso está montado así. Con el Abono Total entras al gimnasio, reservas pista y usas el mismo vestuario sin pagar nada aparte. Mucha gente hace fuerza a las 19:00 y juega a las 20:30.'},
+  {q:'¿Hace falta abono para reservar pista?',a:'No. Cualquiera puede reservar pagando la tarifa sin abono. Los abonos te dan descuento, reserva anticipada y, en el caso del Total, el gimnasio incluido.'},
+  {q:'¿Qué pasa si llueve?',a:'Nada: las cuatro pistas son indoor y el gimnasio también. Aquí llueve fuera.'},
+  {q:'¿Cuánta antelación necesito para cancelar?',a:'Doce horas antes sin coste. A partir de ahí se cobra la mitad, salvo que la pista se vuelva a ocupar. Las clases dirigidas se cancelan hasta dos horas antes.'},
+  {q:'¿Hay taquillas y duchas?',a:'Sí, en los dos vestuarios: taquillas con código, duchas de agua caliente y secadores. No hace falta traer candado.'},
+  {q:'¿Alquiláis palas?',a:'Palas de alquiler por 4 € el partido y botes de bolas nuevos en recepción. Si estás mirando pala, los entrenadores te dejan probar modelos antes de comprar.'},
+  {q:'¿Puedo entrar fuera del horario de recepción?',a:'Sí. Los abonados entran con un QR de un solo uso desde las 07:00 hasta las 24:00, aunque no haya nadie en el mostrador.'},
+  {q:'¿Organizáis torneos de empresa?',a:'Montamos torneos cerrados de 8 a 32 jugadores con monitor, cuadro en pantalla y catering en la cafetería. Escríbenos y te pasamos presupuesto.'}
+];
+const FAQ_EN=[
+  {q:'Can I train in the gym before playing?',a:'That is exactly why it is set up this way. With the Full pass you use the gym, book a court and share the same changing room at no extra cost. Plenty of members lift at 7 pm and play at 8:30.'},
+  {q:'Do I need a pass to book a court?',a:'No. Anyone can book at the pay-as-you-go rate. Passes give you a discount, an earlier booking window and, with the Full pass, the gym included.'},
+  {q:'What if it rains?',a:'Nothing changes: all four courts are indoor, and so is the gym. It rains outside.'},
+  {q:'How far ahead can I cancel?',a:'Twelve hours before, free of charge. After that we charge half, unless the court gets taken again. Classes can be cancelled up to two hours before.'},
+  {q:'Are there lockers and showers?',a:'Yes, in both changing rooms: keypad lockers, hot showers and hairdryers. No need to bring a padlock.'},
+  {q:'Do you rent rackets?',a:'Rental rackets at €4 per match and fresh ball tubes at reception. If you are shopping for a racket, the coaches let you try models first.'},
+  {q:'Can I get in outside reception hours?',a:'Yes. Pass holders use a single-use QR code from 07:00 to 24:00, even when nobody is at the desk.'},
+  {q:'Do you run corporate tournaments?',a:'We set up closed tournaments for 8 to 32 players with a coach, the draw on screen and catering in the café. Message us for a quote.'}
+];
+
+/* ── 2. Diccionario ES/EN ──────────────────────────────────────────────── */
+const EN={
+ 'skip':'Skip to content',
+ 'n.club':'The unit','n.book':'Booking','n.plans':'Passes','n.gym':'Gym','n.school':'Academy','n.tools':'Tools',
+ 'n.rank':'Ranking','n.contact':'Contact','n.cta':'Book','n.partner':'Find a partner','n.cafe':'Café',
+ 'h.kick':'Padel + gym · all under one roof','h.t1':'From the warm-up','h.t2':'to the last point',
+ 'h.lead':'Four indoor courts, a 560 m² gym, changing rooms and a café in the same unit. Train, play, shower and stay for lunch without moving the car.',
+ 'h.cta1':'Book a court or class','h.cta2':'Work out my pass','h.cta3':'See today’s slots',
+ 'h.now':'The club right now','h.courts':'Courts free','h.gym':'Gym occupancy','h.next':'Next class','h.open':'Status',
+ 'nv.eye':'The unit','nv.t':'Four courts, a gym and a bar',
+ 'nv.lead':'All on one level, no stairs: the four courts in a row, changing rooms right beside them, the gym at the back and the café looking onto court 4. Tap a zone on the plan to jump to its section.',
+ 'nv.free':'Court free','nv.busy':'Court busy','nv.sel':'Selected','nv.serv':'Service areas','nv.detail':'Detail','nv.go':'Go to this zone',
+ 'nv.f1':'panoramic indoor courts, all with glass at the back and anti-glare LED.',
+ 'nv.f2':'of gym: strength, cardio, functional area and a class studio.',
+ 'nv.f3':'every day. QR entry outside reception hours.',
+ 'r.eye':'Booking','r.t':'Court and class on one screen',
+ 'r.lead':'Switch between padel and gym without leaving this page. You can mix both in one booking: a court at 7 pm and a functional class at 8:30 land in the same cart and the same total.',
+ 'r.mPadel':'🎾 Padel court','r.mGym':'🏋️ Gym class','r.court':'Court','r.dur':'Duration','r.rate':'Rate',
+ 'r.r1':'No pass','r.r2':'Padel pass (−25%)','r.r3':'Full pass (−40%)',
+ 'c.t':'Your booking','c.empty':'Nothing picked yet.','c.total':'Total','c.go':'Confirm','c.clear':'Clear',
+ 'c.note':'Saved in this browser. Final confirmation is at reception or on WhatsApp.',
+ 'q.eye':'Passes','q.t':'Is a pass worth it for you?',
+ 'q.lead':'Move the sliders to match what you actually play and train. We work out what each option would cost you and mark the cheapest. No small print: the maths is on screen.',
+ 'q.s1':'Padel matches per month','q.s2':'Gym days per month','q.s3':'Classes per month','q.s4':'How you split the court',
+ 'q.sh4':'Split four ways (I pay 1/4)','q.sh2':'Split two ways (I pay half)','q.sh1':'I pay for the whole court',
+ 'q.note':'Calculated on the average court rate (off-peak and peak mixed) and 90-minute matches.',
+ 'g.eye':'Gym','g.t':'Train when it is empty',
+ 'g.lead':'This is last week’s occupancy, hour by hour. Pick a day to see its curve and we tell you the quietest slot.',
+ 'g.best':'Quietest slot today','g.l1':'Quiet (under 40%)','g.l2':'Busy (40–75%)','g.l3':'Packed (over 75%)','g.classes':'This week’s classes',
+ 'e.eye':'Padel academy','e.t':'Groups of four, never six',
+ 'e.lead':'Four players per court and a qualified coach. Filter by level to see groups with spots.',
+ 'e.all':'All','e.l1':'Beginner','e.l2':'Intermediate','e.l3':'Advanced','e.l4':'Juniors',
+ 't.eye':'Club tools','t.t':'Four things you will actually use',
+ 't.lead':'Scoreboard with a clock and stats, tournament generator with a clickable draw, a weekly planner that mixes court and gym, and a tactics board. None of it asks you to sign up.',
+ 't.1':'🎾 Scoreboard','t.2':'🏆 Tournaments','t.3':'📅 Weekly plan','t.4':'📐 Tactics board',
+ 'm.a':'Team A','m.b':'Team B','m.deuce':'Deuce','m.d1':'Golden point','m.d2':'Advantages','m.fmt':'Format',
+ 'm.f3':'Best of 3 sets','m.f1':'1 set','m.undo':'↶ Undo','m.reset':'Reset','m.share':'Copy match report',
+ 'm.keys':'Keys: <kbd>A</kbd> and <kbd>L</kbd> add a point, <kbd>Z</kbd> undoes.',
+ 'tr.lead':'Two formats. The <b>rotating league</b> changes partners and opponents every round; the <b>knockout draw</b> is single elimination and you advance winners by clicking them.',
+ 'tr.f1':'Rotating league','tr.f2':'Knockout draw','tr.players':'Players, one per line or comma separated',
+ 'tr.courts':'Courts in play','tr.rounds':'Rounds','tr.pts':'Points per match','tr.gen':'Generate','tr.copy':'Copy','tr.shuffle':'Shuffle order',
+ 'pl.lead':'Tell us how many days you have and what you are after, and we split the week between court, gym and rest, keeping 48 hours between strength sessions for the same muscle group.',
+ 'pl.days':'Free days','pl.goal':'Goal','pl.g1':'Improve my padel','pl.g2':'Get stronger','pl.g3':'Lose fat','pl.g4':'Come back from injury',
+ 'pl.lvl':'Padel level','pl.gen':'Build my week','pl.copy':'Copy plan',
+ 'pz.lead':'Court to scale (20 × 10 m). Pick a play and step through it, or drag players and ball to set up your own. The pen draws trajectories on top.',
+ 'pz.play':'▶ Play','pz.prev':'◀ Step','pz.next':'Step ▶','pz.pen':'✏️ Pen','pz.clear':'Clear drawing','pz.reset':'Reset',
+ 'rk.eye':'Internal league','rk.t':'Club ranking','rk.lead':'Sort by any column and search for your partner. Updated on Mondays with the week’s results.',
+ 'rk.all':'All','rk.p':'Player','rk.c':'Cat.','rk.pts':'Points','rk.f':'Form',
+ 'p.eye':'Community','p.t':'Find a partner','p.lead':'Post when you can play and at what level. Filter the ads and get in touch on WhatsApp.',
+ 'p.pub':'Post an ad','p.name':'Name','p.level':'Level','p.when':'Time slot','p.msg':'Message','p.send':'Publish',
+ 'p.w1':'Mornings','p.w2':'Midday','p.w3':'Evenings','p.w4':'Nights','p.w5':'Weekends',
+ 'cf.eye':'Café','cf.t':'Order it from the court',
+ 'cf.lead':'Real cooking, high-protein options and post-workout shakes. Tick what you want and take the order in writing.',
+ 'cf.sel':'Your order','cf.order':'Send to the bar','cf.c1':'Set menu','cf.c2':'High protein','cf.c3':'To share','cf.c4':'Drinks',
+ 'f.t':'Frequently asked questions','ct.eye':'Contact','ct.t':'Come and see it',
+ 'ct.n':'Name','ct.m':'Email','ct.p':'Phone','ct.s':'Subject','ct.msg':'Message',
+ 'ct.o1':'Join with a pass','ct.o2':'Free gym trial','ct.o3':'Padel academy','ct.o4':'Corporate & events','ct.o5':'Other',
+ 'ct.gdpr':'I accept the privacy policy and the processing of my data.','ct.send':'Send',
+ 'ct.addr':'Where','ct.addrV':'Industrial estate, unit 14 · 12 min from the centre',
+ 'ct.hours':'Opening hours','ct.hoursV':'Every day from 07:00 to 24:00',
+ 'ct.park':'Parking','ct.parkV':'80 of our own spaces and two EV chargers','ct.wa':'Message us and we reply within minutes',
+ 'ft.about':'Four courts, a gym, changing rooms and a café in the same unit. Padel and fitness without changing venue.',
+ 'ft.club':'Club','ft.play':'Play','ft.news':'What’s on','ft.newsD':'Tournaments, spare places and new gym timetables.',
+ 'ft.rights':'All rights reserved','ft.legal':'Legal notice','ft.priv':'Privacy',
+ 'ck.t':'We only use first-party storage to remember your booking, your language and your theme. No analytics, no third parties.','ck.ok':'Got it'
+};
+let LANG=store.get('lang','es');
+const ES={};
+const t=k=>LANG==='es'?(ES[k]!==undefined?ES[k]:k):(EN[k]!==undefined?EN[k]:(ES[k]||k));
+function captureES(){$$('[data-i18n]').forEach(n=>ES[n.dataset.i18n]=n.innerHTML);}
+function applyLang(l){
+  LANG=l; store.set('lang',l); document.documentElement.lang=l;
+  $$('[data-i18n]').forEach(n=>n.innerHTML=t(n.dataset.i18n));
+  $$('.lang button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.lang===l)));
+  const keep=$('#court').value; buildCourts(); $('#court').value=keep;
+  drawPlan(); pickZone(activeZone,false); buildDays(); drawSlots(); drawCart(); calcQuota();
+  drawGymDays(); drawOcc(); drawGymCards(); drawClasses(); drawRanking(); drawMM(); drawMenu(); drawFaq();
+  drawPlays(); pzCaption(); paint(); buildMarquee(); liveNow(); drawWeek(); if($('#trOut').dataset.k) genTournament();
+}
+
+/* ── 3. UI base ────────────────────────────────────────────────────────── */
+$('#yr').textContent=new Date().getFullYear();
+const WA='https://wa.me/'+CLUB.wa;
+$('#wa').href=WA; $('#waLink').href=WA;
+
+const saved=store.get('theme',null), dark=matchMedia('(prefers-color-scheme:dark)').matches;
+function setTheme(m){document.documentElement.setAttribute('data-theme',m);$('#theme').textContent=m==='dark'?'☀':'◐';store.set('theme',m);}
+setTheme(saved||(dark?'dark':'light'));
+$('#theme').addEventListener('click',()=>setTheme(document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark'));
+
+const burger=$('#burger'), drawer=$('#drawer');
+burger.addEventListener('click',()=>{const o=drawer.classList.toggle('open');burger.setAttribute('aria-expanded',String(o));document.body.classList.toggle('lock',o);});
+$$('#drawer a').forEach(a=>a.addEventListener('click',()=>{drawer.classList.remove('open');burger.setAttribute('aria-expanded','false');document.body.classList.remove('lock');}));
+
+const secs=$$('main section[id]');
+let tick=false;
+function onScroll(){
+  const y=scrollY,h=document.documentElement.scrollHeight-innerHeight;
+  $('#bar').style.width=(h>0?y/h*100:0)+'%';
+  $('#nav').classList.toggle('stuck',y>8);
+  $('#top').classList.toggle('on',y>600);
+  let cur=''; secs.forEach(s=>{if(y>=s.offsetTop-140)cur=s.id;});
+  $$('#menu a').forEach(a=>a.classList.toggle('act',a.getAttribute('href')==='#'+cur));
+  tick=false;
+}
+addEventListener('scroll',()=>{if(!tick){requestAnimationFrame(onScroll);tick=true;}},{passive:true});
+$('#top').addEventListener('click',()=>scrollTo({top:0,behavior:'smooth'}));
+
+const io='IntersectionObserver' in window?new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting){x.target.classList.add('in');io.unobserve(x.target);}});},{threshold:.1,rootMargin:'0px 0px -50px'}):null;
+const watch=()=>$$('.rv:not(.in)').forEach(n=>io?io.observe(n):n.classList.add('in'));
+
+function buildMarquee(){
+  const it=LANG==='es'
+    ?['4 pistas indoor','Gimnasio 560 m²','Abierto <b>07:00 – 24:00</b>','Vestuarios con taquilla','Clases dirigidas cada día','Liga interna','Cafetería y terraza','Entrada con QR']
+    :['4 indoor courts','560 m² gym','Open <b>07:00 – 24:00</b>','Changing rooms with lockers','Classes every day','Internal league','Café and terrace','QR entry'];
+  const row=it.map(x=>'<span>'+x+'</span>').join('');
+  $('#mq').innerHTML=row+row;
+}
+
+/* ── 4. Hero: la bola rebotando dentro de la caja ──────────────────────── */
+(function hero(){
+  const cv=$('#hc'); if(!cv) return;
+  const ctx=cv.getContext('2d'); const red=matchMedia('(prefers-reduced-motion:reduce)').matches;
+  let W,H,dpr,balls=[],raf;
+  function size(){dpr=Math.min(devicePixelRatio||1,2);W=cv.clientWidth;H=cv.clientHeight;cv.width=W*dpr;cv.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);}
+  function seedBalls(){
+    balls=[];
+    const n=W<700?4:8;
+    for(let i=0;i<n;i++) balls.push({x:Math.random()*W,y:Math.random()*H,
+      vx:(Math.random()<.5?-1:1)*(.5+Math.random()*.9), vy:(Math.random()<.5?-1:1)*(.5+Math.random()*.9),
+      r:5+Math.random()*7, tr:[]});
+  }
+  function frame(){
+    ctx.clearRect(0,0,W,H);
+    /* la caja: rectángulo con la esquina cortada, el gesto de la marca */
+    const m=Math.min(W,H)*.07, c=Math.min(W,H)*.12;
+    ctx.strokeStyle='rgba(255,255,255,.07)'; ctx.lineWidth=2;
+    ctx.beginPath();
+    ctx.moveTo(m+c,m); ctx.lineTo(W-m,m); ctx.lineTo(W-m,H-m-c); ctx.lineTo(W-m-c,H-m);
+    ctx.lineTo(m,H-m); ctx.lineTo(m,m+c); ctx.closePath(); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(W/2,m); ctx.lineTo(W/2,H-m); ctx.stroke();
+    balls.forEach(b=>{
+      b.x+=b.vx; b.y+=b.vy;
+      if(b.x<m+b.r||b.x>W-m-b.r) b.vx*=-1;         /* rebota en las paredes */
+      if(b.y<m+b.r||b.y>H-m-b.r) b.vy*=-1;
+      b.x=clamp(b.x,m+b.r,W-m-b.r); b.y=clamp(b.y,m+b.r,H-m-b.r);
+      b.tr.push([b.x,b.y]); if(b.tr.length>18) b.tr.shift();
+      ctx.beginPath();
+      b.tr.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));
+      ctx.strokeStyle='rgba(124,92,255,.30)'; ctx.lineWidth=2; ctx.stroke();
+      ctx.beginPath(); ctx.arc(b.x,b.y,b.r,0,7); ctx.fillStyle='rgba(255,176,32,.55)'; ctx.fill();
+    });
+    raf=requestAnimationFrame(frame);
+  }
+  function start(){size();seedBalls();cancelAnimationFrame(raf);if(red){ctx.clearRect(0,0,W,H);}else frame();}
+  addEventListener('resize',start);
+  document.addEventListener('visibilitychange',()=>{if(document.hidden)cancelAnimationFrame(raf);else if(!red)frame();});
+  start();
+})();
+
+/* ── 5. Plano de la nave ───────────────────────────────────────────────── */
+let activeZone='c1';
+function courtBusy(id){const d=new Date();return seed('now'+id+d.getFullYear()+d.getMonth()+d.getDate()+d.getHours())<.5;}
+function courtLines(c){
+  const S=c.h*0.305, half=c.h/2;
+  return [[c.x,c.y+half,c.x+c.w,c.y+half,2.6],[c.x,c.y+S,c.x+c.w,c.y+S,1.3],
+          [c.x,c.y+c.h-S,c.x+c.w,c.y+c.h-S,1.3],[c.x+c.w/2,c.y+S,c.x+c.w/2,c.y+c.h-S,1.3]]
+    .map(l=>'<line x1="'+l[0]+'" y1="'+l[1]+'" x2="'+l[2]+'" y2="'+l[3]+'" stroke="rgba(255,255,255,.5)" stroke-width="'+l[4]+'"/>').join('');
+}
+function drawPlan(){
+  const g=$('#zones'); g.innerHTML='';
+  COURTS.forEach(c=>{
+    const busy=courtBusy(c.id), sel=activeZone==='c'+c.id;
+    const fill=sel?'var(--brand)':(busy?'var(--bad)':'var(--ok)');
+    const n=document.createElementNS('http://www.w3.org/2000/svg','g');
+    n.setAttribute('class','zone'+(sel?' sel':'')); n.setAttribute('tabindex','0'); n.setAttribute('role','button');
+    n.setAttribute('aria-label',c.name+' — '+(busy?(LANG==='es'?'ocupada':'busy'):(LANG==='es'?'libre':'free')));
+    n.dataset.z='c'+c.id;
+    n.innerHTML='<rect class="bg" x="'+c.x+'" y="'+c.y+'" width="'+c.w+'" height="'+c.h+'" rx="10" fill="'+fill+'" opacity="'+(sel?1:.88)+'"/>'+
+      '<rect x="'+(c.x+9)+'" y="'+(c.y+9)+'" width="'+(c.w-18)+'" height="'+(c.h-18)+'" rx="5" fill="none" stroke="rgba(255,255,255,.42)" stroke-width="2"/>'+
+      courtLines(c)+
+      '<text x="'+(c.x+c.w/2)+'" y="'+(c.y+c.h/2+4)+'" text-anchor="middle" font-size="52" fill="#fff">'+c.id+'</text>'+
+      '<text x="'+(c.x+c.w/2)+'" y="'+(c.y+c.h/2+30)+'" text-anchor="middle" font-size="15" font-family="JetBrains Mono" fill="#fff" opacity=".92">'+
+        (busy?(LANG==='es'?'OCUPADA':'BUSY'):(LANG==='es'?'LIBRE':'FREE'))+'</text>';
+    wireZone(n,'c'+c.id); g.appendChild(n);
+  });
+  ZONES.forEach(z=>{
+    const sel=activeZone===z.id;
+    const n=document.createElementNS('http://www.w3.org/2000/svg','g');
+    n.setAttribute('class','zone'+(sel?' sel':'')); n.setAttribute('tabindex','0'); n.setAttribute('role','button');
+    n.setAttribute('aria-label',LANG==='es'?z.es:z.en); n.dataset.z=z.id;
+    const cx=z.x+z.w/2, cy=z.y+z.h/2;
+    n.innerHTML='<rect class="bg" x="'+z.x+'" y="'+z.y+'" width="'+z.w+'" height="'+z.h+'" rx="10" fill="'+
+        (sel?'var(--brand)':'var(--amber)')+'" opacity="'+(sel?1:.9)+'"/>'+
+      '<text x="'+cx+'" y="'+(cy-16)+'" text-anchor="middle" font-size="30">'+z.ic+'</text>'+
+      /* solo partimos la etiqueta en dos líneas si la caja es estrecha */
+      (z.w>300?[(LANG==='es'?z.es:z.en).toUpperCase()]
+              :(LANG==='es'?z.es:z.en).toUpperCase().split(/ (?=[^ ]*$)/)).map((w,i)=>
+        '<text x="'+cx+'" y="'+(cy+16+i*24)+'" text-anchor="middle" font-size="'+(z.w>300?21:17)+'" fill="'+
+        (sel?'#fff':'#161327')+'">'+w+'</text>').join('');
+    wireZone(n,z.id); g.appendChild(n);
+  });
+}
+function wireZone(n,id){
+  const show=()=>pickZone(id,false);
+  n.addEventListener('mouseenter',show); n.addEventListener('focus',show);
+  n.addEventListener('click',()=>pickZone(id,true));
+  n.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();pickZone(id,true);}});
+}
+function pickZone(id,go){
+  activeZone=id;
+  const court=id[0]==='c'&&COURTS.find(c=>'c'+c.id===id);
+  const zone=ZONES.find(z=>z.id===id);
+  drawPlan();
+  if(court){
+    const busy=courtBusy(court.id);
+    $('#zName').textContent=court.name;
+    $('#zDesc').textContent=court.desc;
+    $('#zMeta').innerHTML='<span class="badge" style="background:'+(busy?'var(--bad)':'var(--ok)')+';color:#fff">'+
+        (busy?(LANG==='es'?'Ocupada ahora':'Busy now'):(LANG==='es'?'Libre ahora':'Free now'))+'</span>'+
+      '<span class="badge" style="background:var(--surface-2);color:var(--txt)">'+eur(CLUB.padel[90])+' / 90 min</span>'+
+      '<span class="badge" style="background:var(--surface-2);color:var(--txt)">20 × 10 m</span>';
+    $('#zGo').textContent=LANG==='es'?'Reservar esta pista':'Book this court';
+    $('#zGo').onclick=()=>{setMode('padel');$('#court').value=String(court.id);drawSlots();$('#reservas').scrollIntoView({behavior:'smooth'});};
+  }else if(zone){
+    $('#zName').textContent=LANG==='es'?zone.es:zone.en;
+    $('#zDesc').textContent=LANG==='es'?zone.d:zone.de;
+    $('#zMeta').innerHTML='<span class="badge">'+(LANG==='es'?'Zona de servicio':'Service area')+'</span>';
+    $('#zGo').textContent=LANG==='es'?'Ir a esta zona':'Go to this zone';
+    $('#zGo').onclick=()=>$(zone.go).scrollIntoView({behavior:'smooth'});
+  }
+  if(go&&zone) $(zone.go).scrollIntoView({behavior:'smooth'});
+}
+
+/* ── 6. Reservas: pádel y gimnasio en el mismo carrito ─────────────────── */
+const D_ES=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'], D_EN=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const M_ES=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+const M_EN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+let mode='padel', selDate=new Date(); selDate.setHours(0,0,0,0);
+let cart=store.get('cart',[]);
+const dk=d=>d.toISOString().slice(0,10);
+const isPeak=(d,h)=>{const w=d.getDay();return (w===0||w===6)?(h>=10&&h<21):(h>=18&&h<22);};
+function courtPrice(d,h,dur,rate){return CLUB.padel[dur]*(isPeak(d,h)?CLUB.peak:1)*rate;}
+function taken(d,court,h){
+  const now=new Date(), abs=new Date(d); abs.setHours(Math.floor(h),(h%1)*60,0,0);
+  if(abs<now) return true;
+  if(cart.some(i=>i.date===dk(d)&&i.court===court&&i.h===h)) return false;
+  return seed(dk(d)+court+h)<(isPeak(d,h)?.58:.28);
+}
+function buildCourts(){
+  const s=$('#court'); s.innerHTML='';
+  COURTS.forEach(c=>s.appendChild(el('option',{value:c.id},c.name)));
+  s.value='1';
+}
+function buildDays(){
+  const box=$('#days'); box.innerHTML='';
+  const t0=new Date(); t0.setHours(0,0,0,0);
+  for(let i=0;i<14;i++){
+    const d=new Date(t0); d.setDate(t0.getDate()+i);
+    const b=el('button',{class:'day',type:'button','aria-pressed':String(dk(d)===dk(selDate))});
+    b.innerHTML='<small>'+(i===0?(LANG==='es'?'Hoy':'Today'):(LANG==='es'?D_ES:D_EN)[d.getDay()])+'</small><b>'+d.getDate()+
+      '</b><small>'+(LANG==='es'?M_ES:M_EN)[d.getMonth()]+'</small>';
+    b.addEventListener('click',()=>{selDate=d;buildDays();drawSlots();});
+    box.appendChild(b);
+  }
+}
+function setMode(m){
+  mode=m;
+  $$('[data-mode]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mode===m)));
+  $('#padelCtl').style.display=m==='padel'?'flex':'none';
+  drawSlots();
+}
+$$('[data-mode]').forEach(b=>b.addEventListener('click',()=>setMode(b.dataset.mode)));
+function gymOfDay(d){
+  return GYM.filter(g=>g.days.includes(d.getDay())).sort((a,b)=>a.h-b.h);
+}
+function drawSlots(){
+  const box=$('#slots'); box.innerHTML='';
+  const rate=+$('#rate').value;
+  const dn=(LANG==='es'?D_ES:D_EN)[selDate.getDay()], mn=(LANG==='es'?M_ES:M_EN)[selDate.getMonth()];
+  if(mode==='padel'){
+    const court=+$('#court').value, dur=+$('#dur').value, step=dur/60;
+    let free=0;
+    for(let h=CLUB.open;h+step<=CLUB.close+0.001;h+=step){
+      const no=taken(selDate,court,h); if(!no) free++;
+      const end=h+step, lb=pad(Math.floor(h))+':'+pad(Math.round(h%1*60)), le=pad(Math.floor(end))+':'+pad(Math.round(end%1*60));
+      const inC=cart.some(i=>i.date===dk(selDate)&&i.court===court&&i.h===h&&i.dur===dur);
+      const p=courtPrice(selDate,h,dur,rate);
+      const b=el('button',{class:'slot'+(no?' no':'')+(inC?' pick':''),type:'button','aria-pressed':String(inC),
+        'aria-label':lb+'–'+le+' '+eur(p)});
+      b.innerHTML=(isPeak(selDate,h)?'<span class="tag">PUNTA</span>':'')+lb+'<small>'+le+' · '+eur(p)+'</small>';
+      if(no) b.disabled=true; else b.addEventListener('click',()=>addPadel(court,h,dur,p,lb,le));
+      box.appendChild(b);
+    }
+    $('#slotT').textContent=dn+' '+selDate.getDate()+' '+mn+' · '+(COURTS.find(c=>c.id===court)||{}).name;
+    $('#slotC').textContent=free+' '+(LANG==='es'?'huecos libres':'free slots');
+    if(!free) box.appendChild(el('div',{class:'void'},LANG==='es'?'Sin huecos en esta pista. Prueba otra pista u otro día.':'No slots on this court. Try another court or day.'));
+  }else{
+    const list=gymOfDay(selDate);
+    const inc=rate<1&&$('#rate').value==='0.6';
+    list.forEach(g=>{
+      const key=g.n+g.h, id='g'+key;
+      const gone=Math.round(g.cap*seed(dk(selDate)+key));
+      const left=Math.max(0,g.cap-gone);
+      const inC=cart.some(i=>i.id===id&&i.date===dk(selDate));
+      const p=inc?0:CLUB.classOne;
+      const lb=pad(Math.floor(g.h))+':'+pad(Math.round(g.h%1*60));
+      const b=el('button',{class:'slot'+(left?'':' no')+(inC?' pick':''),type:'button',style:'text-align:left;padding:.6rem .7rem'});
+      b.innerHTML='<span class="tag" style="position:static;display:inline-block;margin-bottom:.2rem">'+lb+'</span><br>'+
+        (LANG==='es'?g.n:g.ne)+'<small>'+g.dur+' min · '+g.room+' · '+
+        (left?left+' '+(LANG==='es'?'plazas':'spots'):(LANG==='es'?'completa':'full'))+' · '+(p?eur(p):(LANG==='es'?'incluida':'included'))+'</small>';
+      if(!left) b.disabled=true;
+      else b.addEventListener('click',()=>addGym(id,g,p,lb));
+      box.appendChild(b);
+    });
+    $('#slotT').textContent=dn+' '+selDate.getDate()+' '+mn+' · '+(LANG==='es'?'clases dirigidas':'gym classes');
+    $('#slotC').textContent=list.length+' '+(LANG==='es'?'clases':'classes');
+    if(!list.length) box.appendChild(el('div',{class:'void'},LANG==='es'?'Este día no hay dirigidas. El gimnasio sigue abierto de 07:00 a 24:00.':'No classes today. The gym is still open 07:00–24:00.'));
+  }
+}
+function addPadel(court,h,dur,price,lb,le){
+  const i=cart.findIndex(x=>x.date===dk(selDate)&&x.court===court&&x.h===h&&x.dur===dur);
+  if(i>=0) cart.splice(i,1);
+  else{
+    if(cart.length>=8){toast(LANG==='es'?'Máximo 8 líneas por reserva.':'Max 8 lines per booking.',true);return;}
+    cart.push({t:'padel',date:dk(selDate),court,h,dur,price,lb,le,peak:isPeak(selDate,h),
+      name:(COURTS.find(c=>c.id===court)||{}).name});
+    toast((LANG==='es'?'Añadido: ':'Added: ')+lb+' · '+(COURTS.find(c=>c.id===court)||{}).name);
+  }
+  store.set('cart',cart); drawSlots(); drawCart();
+}
+function addGym(id,g,price,lb){
+  const i=cart.findIndex(x=>x.id===id&&x.date===dk(selDate));
+  if(i>=0) cart.splice(i,1);
+  else{
+    cart.push({t:'gym',id,date:dk(selDate),h:g.h,lb,dur:g.dur,price,name:g.n,nameE:g.ne,room:g.room});
+    toast((LANG==='es'?'Añadido: ':'Added: ')+lb+' · '+g.n);
+  }
+  store.set('cart',cart); drawSlots(); drawCart();
+}
+function drawCart(){
+  const L=$('#cartL'); L.innerHTML='';
+  let total=0, padelN=0, gymN=0;
+  cart.forEach((it,idx)=>{
+    total+=it.price; it.t==='padel'?padelN++:gymN++;
+    const d=new Date(it.date+'T00:00:00'), dn=(LANG==='es'?D_ES:D_EN)[d.getDay()];
+    const nm=it.t==='padel'?it.name:(LANG==='es'?it.name:it.nameE);
+    const li=el('li',null,'<span><b>'+dn+' '+d.getDate()+'</b> · '+it.lb+'<br><small style="color:var(--txt-soft)">'+
+      (it.t==='padel'?'🎾 ':'🏋️ ')+nm+' · '+it.dur+' min'+(it.peak?' · PUNTA':'')+'</small></span>'+
+      '<span style="display:flex;align-items:center;gap:.5rem"><b class="num">'+(it.price?eur(it.price):'—')+
+      '</b><button aria-label="Quitar">×</button></span>');
+    $('button',li).addEventListener('click',()=>{cart.splice(idx,1);store.set('cart',cart);drawSlots();drawCart();});
+    L.appendChild(li);
+  });
+  $('#cartE').style.display=cart.length?'none':'block';
+  $('#cartT').textContent=eur(total);
+  $('#checkout').disabled=!cart.length;
+  $('#cartS').textContent=cart.length
+    ?(LANG==='es'?padelN+' de pista · '+gymN+' de gimnasio':padelN+' court · '+gymN+' gym'):'';
+}
+['#court','#dur','#rate'].forEach(sel=>$(sel).addEventListener('change',()=>{
+  if(sel==='#court') pickZone('c'+$('#court').value,false);
+  if(sel!=='#court'){
+    const rate=+$('#rate').value, inc=$('#rate').value==='0.6';
+    cart.forEach(it=>{ it.price = it.t==='padel'
+      ? CLUB.padel[it.dur]*(it.peak?CLUB.peak:1)*rate : (inc?0:CLUB.classOne); });
+    store.set('cart',cart);
+  }
+  drawSlots(); drawCart();
+}));
+$('#clear').addEventListener('click',()=>{cart=[];store.set('cart',cart);drawSlots();drawCart();toast(LANG==='es'?'Reserva vaciada.':'Booking cleared.');});
+$('#checkout').addEventListener('click',()=>{
+  const total=cart.reduce((s,i)=>s+i.price,0);
+  const lines=cart.map(i=>{const d=new Date(i.date+'T00:00:00');
+    const nm=i.t==='padel'?i.name:(LANG==='es'?i.name:i.nameE);
+    return (i.t==='padel'?'🎾 ':'🏋️ ')+pad(d.getDate())+'/'+pad(d.getMonth()+1)+' '+i.lb+' · '+nm+' ('+i.dur+' min) — '+(i.price?eur(i.price):(LANG==='es'?'incluida':'included'));}).join('\n');
+  const msg='¡Hola Padelbox! Quiero confirmar:\n'+lines+'\nTOTAL: '+eur(total);
+  openModal('<h3>'+(LANG==='es'?'Resumen de tu reserva':'Booking summary')+'</h3>'+
+    '<p style="color:var(--txt-soft);font-size:.92rem">'+(LANG==='es'
+      ?'Repasa las líneas y confirma por WhatsApp. Recepción te contesta en unos minutos.'
+      :'Check the lines and confirm on WhatsApp. Reception replies within minutes.')+'</p>'+
+    '<pre style="white-space:pre-wrap;background:var(--paper);padding:1rem;border-radius:11px;font-size:.85rem;font-family:var(--mono)">'+lines.replace(/</g,'&lt;')+'</pre>'+
+    '<div style="display:flex;justify-content:space-between;align-items:baseline"><span>Total</span><b class="num" style="font-size:1.6rem">'+eur(total)+'</b></div>'+
+    '<div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:1rem">'+
+      '<a class="btn btn--a cut" target="_blank" rel="noopener" href="'+WA+'?text='+encodeURIComponent(msg)+'">WhatsApp</a>'+
+      '<button class="btn btn--o" id="cpB">'+(LANG==='es'?'Copiar resumen':'Copy summary')+'</button></div>');
+  $('#cpB').addEventListener('click',async()=>toast(await copy(msg)?(LANG==='es'?'Copiado.':'Copied.'):(LANG==='es'?'No se pudo copiar.':'Copy failed.')));
+});
+
+/* ── 7. Calculadora de cuota, con punto de cruce ───────────────────────── */
+function planCost(plan,padel,gym,cls,share){
+  const court = CLUB.padel[90]*1.08;            /* media de valle y punta */
+  let c = plan.fee;
+  c += padel * (court*plan.padel/share);
+  c += plan.gym==='inc' ? 0 : gym*CLUB.gymDay;
+  c += plan.cls==='inc' ? 0 : cls*CLUB.classOne;
+  return c;
+}
+function calcQuota(){
+  const padel=+$('#qPadel').value, gym=+$('#qGym').value, cls=+$('#qClass').value, share=+$('#qShare').value;
+  $('#qPadelV').textContent=padel; $('#qGymV').textContent=gym; $('#qClassV').textContent=cls;
+  const rows=PLANS.map(p=>({p,c:planCost(p,padel,gym,cls,share)}));
+  const min=Math.min(...rows.map(r=>r.c)), max=Math.max(...rows.map(r=>r.c),1);
+  $('#plans').innerHTML=rows.map(r=>
+    '<div class="plan-row'+(r.c===min?' best':'')+'">'+
+      '<div><span class="nm">'+(LANG==='es'?r.p.es:r.p.en)+(r.c===min?' <span class="badge">'+(LANG==='es'?'La más barata':'Cheapest')+'</span>':'')+
+      '</span><br><span class="de">'+(LANG==='es'?r.p.d:r.p.de)+(r.p.fee?' · '+eur(r.p.fee)+(LANG==='es'?'/mes':'/mo'):'')+'</span></div>'+
+      '<div class="pr">'+eur(r.c)+'</div>'+
+      '<div class="track"><i style="width:'+Math.round(r.c/max*100)+'%"></i></div></div>').join('');
+  const best=rows.find(r=>r.c===min).p, worst=rows.find(r=>r.p.id==='no');
+  const save=worst.c!==undefined?0:0;
+  const diff=rows.find(r=>r.p.id==='no').c-min;
+  $('#qVerdict').textContent=(LANG==='es'?'Te sale mejor el ':'Your best option is the ')+(LANG==='es'?best.es:best.en);
+  $('#qWhy').textContent = best.id==='no'
+    ? (LANG==='es'?'Con este uso no llegas a amortizar ninguna cuota: pagar por sesión te sale más barato.'
+                  :'At this usage none of the passes pays for itself: paying per session is cheaper.')
+    : (LANG==='es'?'Te ahorras '+eur(diff)+' al mes frente a pagar suelto, es decir '+eur(diff*12)+' al año.'
+                  :'You save '+eur(diff)+' a month against paying per session, which is '+eur(diff*12)+' a year.');
+  /* punto de cruce: ¿a partir de cuántos partidos cambia la recomendación? */
+  let cross=null, cur=null;
+  for(let n=0;n<=30;n++){
+    const b=PLANS.map(p=>({p,c:planCost(p,n,gym,cls,share)})).sort((a,b2)=>a.c-b2.c)[0].p.id;
+    if(cur===null) cur=b;
+    else if(b!==cur){ cross={n,from:cur,to:b}; break; }
+  }
+  $('#qCross').innerHTML = cross
+    ? (LANG==='es'
+        ?'Punto de cruce: con tus días de gimnasio, a partir de <b>'+cross.n+' partidos al mes</b> deja de compensar el <b>'+
+          (PLANS.find(p=>p.id===cross.from).es)+'</b> y pasa a interesarte el <b>'+(PLANS.find(p=>p.id===cross.to).es)+'</b>.'
+        :'Crossover: with your gym days, from <b>'+cross.n+' matches a month</b> the <b>'+
+          (PLANS.find(p=>p.id===cross.from).en)+'</b> stops paying off and the <b>'+(PLANS.find(p=>p.id===cross.to).en)+'</b> takes over.')
+    : (LANG==='es'?'Con estos días de gimnasio, la recomendación no cambia por muchos partidos que juegues.'
+                  :'With these gym days, the recommendation does not change however much you play.');
+}
+['#qPadel','#qGym','#qClass','#qShare'].forEach(s=>$(s).addEventListener('input',calcQuota));
+
+/* ── 8. Aforo del gimnasio ─────────────────────────────────────────────── */
+const HOURS=[7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22];
+let occDay=new Date().getDay();
+/* curva típica: pico de mañana, valle de mediodía y pico grande de tarde */
+function occAt(day,h){
+  const we=(day===0||day===6);
+  const morning=Math.exp(-Math.pow(h-(we?11:9),2)/(we?9:4))*(we?62:70);
+  const evening=we?0:Math.exp(-Math.pow(h-19.5,2)/4.2)*95;
+  const noise=seed('occ'+day+h)*14-7;
+  return Math.round(clamp(morning+evening+noise+(we?18:8),4,99));
+}
+function occTone(v){return v<40?'var(--ok)':v<75?'var(--warn)':'var(--bad)';}
+function drawGymDays(){
+  const box=$('#gDays'); box.innerHTML='';
+  [1,2,3,4,5,6,0].forEach(d=>{
+    const b=el('button',{class:'chip'+(d===occDay?' on':''),'aria-pressed':String(d===occDay)},(LANG==='es'?D_ES:D_EN)[d]);
+    b.addEventListener('click',()=>{occDay=d;drawGymDays();drawOcc();});
+    box.appendChild(b);
+  });
+}
+function drawOcc(){
+  const nowH=new Date().getHours(), isToday=occDay===new Date().getDay();
+  const vals=HOURS.map(h=>occAt(occDay,h));
+  $('#occ').innerHTML=HOURS.map((h,i)=>
+    '<div class="h'+(isToday&&h===nowH?' now':'')+'" style="height:100%" title="'+pad(h)+':00 · '+vals[i]+'%">'+
+    '<i style="height:0;background:'+occTone(vals[i])+'"></i></div>').join('');
+  requestAnimationFrame(()=>$$('#occ .h i').forEach((n,i)=>n.style.height=vals[i]+'%'));
+  $('#occX').innerHTML=HOURS.map(h=>'<span>'+pad(h)+'</span>').join('');
+  /* mejor franja: la hora más vacía a partir de ahora si es hoy */
+  const from=isToday?Math.max(0,HOURS.indexOf(nowH)):0;
+  const pool=vals.map((v,i)=>({v,i})).filter(x=>x.i>=(from<0?0:from));
+  const best=(pool.length?pool:vals.map((v,i)=>({v,i}))).sort((a,b)=>a.v-b.v)[0];
+  $('#gBest').textContent=pad(HOURS[best.i])+':00 · '+best.v+'%';
+  $('#gBest').style.color=occTone(best.v);
+}
+function drawGymCards(){
+  const box=$('#gymCards'); box.innerHTML='';
+  GYM.forEach(g=>{
+    const days=g.days.map(d=>(LANG==='es'?D_ES:D_EN)[d]).join(' · ');
+    const c=el('div',{class:'item'},
+      '<span class="tg">'+g.room+' · '+g.lvl+'</span>'+
+      '<h3 style="margin:.25rem 0 .35rem">'+(LANG==='es'?g.n:g.ne)+'</h3>'+
+      '<div class="num" style="font-size:.84rem;color:var(--txt-soft)">'+days+' · '+pad(Math.floor(g.h))+':'+pad(Math.round(g.h%1*60))+' · '+g.dur+' min</div>'+
+      '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:.7rem">'+
+        '<span class="num" style="font-size:.86rem">👤 '+g.coach+'</span>'+
+        '<span class="num" style="font-size:.86rem">🔥 '+g.kcal+' kcal</span></div>'+
+      '<button class="btn btn--o btn--sm" style="width:100%;margin-top:.8rem">'+(LANG==='es'?'Apuntarme':'Book a spot')+'</button>');
+    $('button',c).addEventListener('click',()=>{
+      setMode('gym');
+      const today=new Date(); today.setHours(0,0,0,0);
+      for(let i=0;i<14;i++){const d=new Date(today);d.setDate(today.getDate()+i);
+        if(g.days.includes(d.getDay())){selDate=d;break;}}
+      buildDays(); drawSlots(); $('#reservas').scrollIntoView({behavior:'smooth'});
+    });
+    box.appendChild(c);
+  });
+}
+
+/* ── 9. Escuela ────────────────────────────────────────────────────────── */
+let lvl='all';
+function drawClasses(){
+  const box=$('#classes'); box.innerHTML='';
+  const list=CLASSES.filter(c=>lvl==='all'||c.lvl===lvl);
+  if(!list.length){box.appendChild(el('div',{class:'void'},LANG==='es'?'Sin grupos en este nivel.':'No groups at this level.'));return;}
+  list.forEach(c=>{
+    const full=c.spots===0;
+    const n=el('div',{class:'item'},
+      '<span class="tg">'+c.lvl+'</span><h3 style="margin:.25rem 0 .4rem">'+(LANG==='es'?c.n:c.ne)+'</h3>'+
+      '<p style="font-size:.88rem;color:var(--txt-soft);margin:0 0 .6rem">'+(LANG==='es'?c.d:c.de)+'</p>'+
+      '<div class="num" style="font-size:.82rem;display:grid;gap:.15rem;margin-bottom:.5rem">'+
+        '<span>'+(LANG==='es'?c.days:c.daysE)+'</span><span>'+c.time+'</span><span>👤 '+c.coach+'</span></div>'+
+      '<div class="bar"><i data-w="'+c.fill+'"></i></div>'+
+      '<div style="display:flex;justify-content:space-between;align-items:center">'+
+        '<span class="pr">'+c.price+' €<span> /'+(LANG==='es'?'mes':'mo')+'</span></span>'+
+        '<span class="badge" style="'+(full?'background:var(--surface-2);color:var(--txt-soft)':'')+'">'+
+          (full?(LANG==='es'?'Lista de espera':'Waiting list'):c.spots+' '+(LANG==='es'?'plazas':'spots'))+'</span></div>'+
+      '<button class="btn '+(full?'btn--o':'btn--p cut')+' btn--sm" style="width:100%;margin-top:.8rem">'+
+        (full?(LANG==='es'?'Apuntarme a la lista':'Join the list'):(LANG==='es'?'Reservar plaza':'Book a spot'))+'</button>');
+    $('button',n).addEventListener('click',()=>{
+      const msg=(LANG==='es'?'¡Hola! Me interesa el grupo "':'Hi! I am interested in "')+(LANG==='es'?c.n:c.ne)+'" ('+(LANG==='es'?c.days:c.daysE)+', '+c.time+').';
+      window.open(WA+'?text='+encodeURIComponent(msg),'_blank','noopener');
+    });
+    box.appendChild(n);
+  });
+  requestAnimationFrame(()=>$$('#classes .bar i').forEach(i=>i.style.width=i.dataset.w+'%'));
+}
+$$('[data-lvl]').forEach(b=>b.addEventListener('click',()=>{
+  lvl=b.dataset.lvl;
+  $$('[data-lvl]').forEach(x=>{x.classList.toggle('on',x===b);x.setAttribute('aria-pressed',String(x===b));});
+  drawClasses();
+}));
+
+/* ── 10. Marcador con cronómetro y estadísticas ────────────────────────── */
+const PTS=['0','15','30','40'];
+const M={a:0,b:0,ga:0,gb:0,sa:[],sb:[],srv:'A',tb:false,over:false,hist:[],
+         t0:null,ms:0,won:{A:0,B:0},gp:{played:0,A:0,B:0},games:{A:0,B:0}};
+const snap=()=>JSON.stringify({a:M.a,b:M.b,ga:M.ga,gb:M.gb,sa:M.sa,sb:M.sb,srv:M.srv,tb:M.tb,over:M.over,won:M.won,gp:M.gp,games:M.games});
+const names=()=>({A:$('#tA').value||'A',B:$('#tB').value||'B'});
+const toWin=()=>+$('#bo').value===1?1:2;
+function log(x){$('#log').prepend(el('div',null,'<span class="num" style="color:var(--txt-soft)">'+
+  new Date().toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'})+'</span> · '+x));}
+function point(who){
+  if(M.over) return;
+  if(!M.t0){M.t0=Date.now();}
+  M.hist.push(snap());
+  M.won[who]++;
+  const n=names(), me=who==='A'?'a':'b', you=who==='A'?'b':'a';
+  if(M.tb){
+    M[me]++;
+    if(M[me]>=7&&M[me]-M[you]>=2) return set(who);
+    if((M.a+M.b)%2===1) M.srv=M.srv==='A'?'B':'A';
+    return paint();
+  }
+  if(M[me]>=3&&M[you]>=3){
+    if($('#gold').value==='gold'){
+      M.gp.played++; M.gp[who]++;
+      log('🥇 '+(LANG==='es'?'Punto de oro para ':'Golden point to ')+n[who]);
+      return game(who);
+    }
+    if(M[me]===M[you]){M[me]=4;return paint();}
+    if(M[me]===4) return game(who);
+    M.a=3;M.b=3;return paint();
+  }
+  M[me]++;
+  if(M[me]>3) return game(who);
+  paint();
+}
+function game(who){
+  const n=names(), g=who==='A'?'ga':'gb', o=who==='A'?'gb':'ga';
+  M[g]++; M.games[who]++; M.a=0; M.b=0; M.srv=M.srv==='A'?'B':'A';
+  log('🎾 '+(LANG==='es'?'Juego para ':'Game to ')+n[who]+' ('+M.ga+'-'+M.gb+')');
+  if(M[g]>=6&&M[g]-M[o]>=2) return set(who);
+  if(M.ga===6&&M.gb===6){M.tb=true;log('🔥 Tie-break');}
+  if(M[g]===7) return set(who);
+  paint();
+}
+function set(who){
+  const n=names();
+  M.sa.push(M.tb?(who==='A'?7:6):M.ga); M.sb.push(M.tb?(who==='B'?7:6):M.gb);
+  M.ga=M.gb=M.a=M.b=0; M.tb=false;
+  log('🏁 '+(LANG==='es'?'Set para ':'Set to ')+n[who]);
+  const wa=M.sa.filter((v,i)=>v>M.sb[i]).length, wb=M.sb.filter((v,i)=>v>M.sa[i]).length;
+  if(wa>=toWin()||wb>=toWin()){
+    M.over=true;
+    log('🏆 '+(LANG==='es'?'Partido para ':'Match to ')+(wa>wb?n.A:n.B));
+    toast('🏆 '+(LANG==='es'?'Partido para ':'Match to ')+(wa>wb?n.A:n.B));
+  }
+  paint();
+}
+function paint(){
+  const n=names();
+  $('#nA').textContent=n.A; $('#nB').textContent=n.B; $('#bA').textContent=n.A; $('#bB').textContent=n.B;
+  $('#pA').textContent=M.tb?M.a:(M.a===4?'AD':PTS[Math.min(M.a,3)]);
+  $('#pB').textContent=M.tb?M.b:(M.b===4?'AD':PTS[Math.min(M.b,3)]);
+  const box=(arr,oth,cur)=>arr.map((v,i)=>'<i class="'+(v>oth[i]?'w':'')+'">'+v+'</i>').join('')+'<i>'+cur+'</i>';
+  $('#setA').innerHTML=box(M.sa,M.sb,M.ga); $('#setB').innerHTML=box(M.sb,M.sa,M.gb);
+  $('#sA').classList.toggle('srv',M.srv==='A'&&!M.over);
+  $('#sB').classList.toggle('srv',M.srv==='B'&&!M.over);
+  let nt='';
+  if(M.over) nt=LANG==='es'?'Partido finalizado':'Match finished';
+  else if(M.tb) nt='TIE-BREAK';
+  else if(M.a>=3&&M.b>=3&&M.a===M.b) nt=$('#gold').value==='gold'?(LANG==='es'?'⚡ Punto de oro':'⚡ Golden point'):(LANG==='es'?'Iguales':'Deuce');
+  else if(M.a===4||M.b===4) nt=(LANG==='es'?'Ventaja ':'Advantage ')+(M.a===4?n.A:n.B);
+  else if((M.a===3&&M.b<3)||(M.b===3&&M.a<3)) nt=LANG==='es'?'Punto de juego':'Game point';
+  $('#note').textContent=nt;
+  $$('[data-pt]').forEach(b=>b.disabled=M.over);
+  const tot=M.won.A+M.won.B;
+  $('#stats').innerHTML=
+    '<div><small>'+(LANG==='es'?'Puntos jugados':'Points played')+'</small><b>'+tot+'</b></div>'+
+    '<div><small>'+(LANG==='es'?'% ganados A':'% won A')+'</small><b>'+(tot?Math.round(M.won.A/tot*100):0)+' %</b></div>'+
+    '<div><small>'+(LANG==='es'?'Juegos':'Games')+'</small><b>'+M.games.A+' – '+M.games.B+'</b></div>'+
+    '<div><small>'+(LANG==='es'?'Puntos de oro':'Golden points')+'</small><b>'+M.gp.A+' – '+M.gp.B+'</b></div>';
+}
+setInterval(()=>{
+  if(M.t0&&!M.over) M.ms=Date.now()-M.t0;
+  const s=Math.floor(M.ms/1000);
+  const c=$('#clock'); if(c) c.textContent=pad(Math.floor(s/60))+':'+pad(s%60);
+},500);
+$$('[data-pt]').forEach(b=>b.addEventListener('click',()=>point(b.dataset.pt)));
+$('#undo').addEventListener('click',()=>{if(M.hist.length){Object.assign(M,JSON.parse(M.hist.pop()));paint();}});
+$('#reset').addEventListener('click',()=>{
+  Object.assign(M,{a:0,b:0,ga:0,gb:0,sa:[],sb:[],srv:'A',tb:false,over:false,hist:[],t0:null,ms:0,
+    won:{A:0,B:0},gp:{played:0,A:0,B:0},games:{A:0,B:0}});
+  $('#log').innerHTML=''; $('#clock').textContent='00:00'; paint();
+});
+$('#share').addEventListener('click',async()=>{
+  const n=names(), sets=M.sa.map((v,i)=>v+'-'+M.sb[i]).concat(M.ga+'-'+M.gb).join(' ');
+  const s=Math.floor(M.ms/1000);
+  const txt='🎾 PADELBOX\n'+n.A+' vs '+n.B+'\n'+sets+'\n'+
+    (LANG==='es'?'Duración: ':'Duration: ')+pad(Math.floor(s/60))+':'+pad(s%60)+'\n'+
+    (LANG==='es'?'Puntos: ':'Points: ')+M.won.A+'-'+M.won.B+' · '+(LANG==='es'?'oro: ':'golden: ')+M.gp.A+'-'+M.gp.B;
+  toast(await copy(txt)?(LANG==='es'?'Acta copiada.':'Report copied.'):(LANG==='es'?'No se pudo copiar.':'Copy failed.'));
+});
+['#tA','#tB','#gold','#bo'].forEach(s=>$(s).addEventListener('input',paint));
+addEventListener('keydown',e=>{
+  if(/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName))return;
+  const k=e.key.toLowerCase();
+  if(k==='a')point('A'); else if(k==='l')point('B');
+  else if(k==='z'&&M.hist.length){Object.assign(M,JSON.parse(M.hist.pop()));paint();}
+});
+
+/* ── 11. Torneos: liguilla rotatoria y cuadro eliminatorio ─────────────── */
+let trFmt='liga', bracket=null;
+const parsePlayers=()=>$('#players').value.split(/[,\n;]+/).map(s=>s.trim()).filter(Boolean);
+$$('[data-fmt]').forEach(b=>b.addEventListener('click',()=>{
+  trFmt=b.dataset.fmt;
+  $$('[data-fmt]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));
+  ['#ctlRounds','#ctlPts','#ctlCourts'].forEach(id=>$(id).style.display=trFmt==='liga'?'flex':'none');
+  $('#ctlCourts').style.display='flex';
+  genTournament();
+}));
+/* liguilla: fijo al primero y giro al resto, así rotan compañeros y rivales */
+function league(players,rounds,courts){
+  const p=players.slice();
+  while(p.length%4!==0) p.push('BYE '+p.length);
+  const arr=p.slice(), out=[];
+  for(let r=0;r<rounds;r++){
+    const o=arr.slice(), ms=[];
+    for(let i=0;i+3<o.length;i+=4) ms.push({t1:[o[i],o[i+3]],t2:[o[i+1],o[i+2]]});
+    ms.forEach((m,i)=>m.court=i<courts?i+1:null);
+    out.push(ms);
+    const head=arr.shift(); arr.push(arr.shift()); arr.push(arr.shift()); arr.unshift(head);
+  }
+  return out;
+}
+/* cuadro: relleno con BYE hasta la potencia de 2 y siembro 1 vs último */
+function makeBracket(players){
+  const n=players.length;
+  let size=1; while(size<n) size*=2;
+  const seeded=players.slice();
+  while(seeded.length<size) seeded.push(null);
+  const first=[];
+  for(let i=0;i<size/2;i++) first.push({a:seeded[i],b:seeded[size-1-i],w:null});
+  const rounds=[first];
+  let cnt=size/2;
+  while(cnt>1){ cnt/=2; rounds.push(Array.from({length:cnt},()=>({a:null,b:null,w:null}))); }
+  /* los BYE pasan solos */
+  first.forEach(m=>{ if(m.a&&!m.b) m.w=m.a; if(!m.a&&m.b) m.w=m.b; });
+  propagate(rounds);
+  return rounds;
+}
+function propagate(rounds){
+  for(let r=0;r<rounds.length-1;r++){
+    rounds[r].forEach((m,i)=>{
+      const nx=rounds[r+1][Math.floor(i/2)];
+      if(i%2===0) nx.a=m.w; else nx.b=m.w;
+    });
+    rounds[r+1].forEach(m=>{ if(m.a&&!m.b&&rounds[r].length>1) m.w=m.w||null; });
+  }
+}
+function roundName(i,total){
+  const left=total-i;
+  if(LANG==='es') return left===1?'Final':left===2?'Semifinales':left===3?'Cuartos':'Ronda '+(i+1);
+  return left===1?'Final':left===2?'Semi-finals':left===3?'Quarter-finals':'Round '+(i+1);
+}
+function drawBracket(){
+  const box=$('#trOut');
+  box.innerHTML='<div class="bracket">'+bracket.map((rnd,ri)=>
+    '<div class="rnd"><h5>'+roundName(ri,bracket.length)+'</h5>'+rnd.map((m,mi)=>
+      '<div class="tie">'+['a','b'].map(k=>{
+        const nm=m[k];
+        const won=m.w&&m.w===nm;
+        return '<button data-r="'+ri+'" data-m="'+mi+'" data-k="'+k+'"'+(nm?'':' disabled')+
+          ' class="'+(won?'win':'')+'"><span>'+(nm||'—')+'</span><span class="s">'+(won?'✓':'')+'</span></button>';
+      }).join('')+'</div>').join('')+'</div>').join('')+'</div>';
+  const champ=bracket[bracket.length-1][0].w;
+  box.insertAdjacentHTML('beforeend', champ
+    ? '<div class="panel pad" style="margin-top:.6rem;border-color:var(--amber)"><b class="num">🏆 '+
+      (LANG==='es'?'Campeón/a: ':'Champion: ')+champ+'</b></div>'
+    : '<p style="font-size:.86rem;color:var(--txt-soft)">'+(LANG==='es'
+        ?'Pincha en el ganador de cada cruce y avanzará solo a la siguiente ronda.'
+        :'Click the winner of each tie and they move on automatically.')+'</p>');
+  $$('#trOut .tie button').forEach(b=>b.addEventListener('click',()=>{
+    const m=bracket[+b.dataset.r][+b.dataset.m];
+    const nm=m[b.dataset.k];
+    m.w = m.w===nm ? null : nm;
+    /* al cambiar un resultado, limpio lo que dependía de él */
+    for(let r=+b.dataset.r+1;r<bracket.length;r++) bracket[r].forEach(x=>{x.a=null;x.b=null;x.w=null;});
+    propagate(bracket);
+    drawBracket();
+  }));
+  box.dataset.k='1';
+}
+function genTournament(){
+  const players=parsePlayers(), err=$('#trErr'), box=$('#trOut');
+  if(trFmt==='liga'){
+    if(players.length<4){err.textContent=LANG==='es'?'Hacen falta al menos 4 jugadores.':'At least 4 players needed.';box.innerHTML='';return;}
+    err.textContent=players.length%4?(LANG==='es'?'Aviso: no es múltiplo de 4, se añaden descansos.':'Note: not a multiple of 4, byes added.'):'';
+    const rounds=+$('#trRounds').value, courts=+$('#trCourts').value, pts=+$('#trPts').value;
+    const draw=league(players,rounds,courts);
+    box.innerHTML='<div class="cards">'+draw.map((ms,r)=>
+      '<div class="panel pad"><span class="eyebrow cut">'+(LANG==='es'?'Ronda ':'Round ')+(r+1)+' · '+pts+' '+(LANG==='es'?'pts':'pts')+'</span>'+
+      ms.map(m=>'<div style="display:flex;justify-content:space-between;gap:.6rem;padding:.5rem 0;border-bottom:1px dashed var(--line);font-size:.88rem">'+
+        '<span><b>'+m.t1.join(' + ')+'</b><br><small style="color:var(--txt-soft)">vs</small><br><b>'+m.t2.join(' + ')+'</b></span>'+
+        '<span class="badge" style="align-self:center;'+(m.court?'':'background:var(--surface-2);color:var(--txt-soft)')+'">'+
+        (m.court?(LANG==='es'?'Pista ':'Court ')+m.court:(LANG==='es'?'Descansa':'Rest'))+'</span></div>').join('')+
+      '</div>').join('')+'</div>';
+    box.dataset.k=draw.map((ms,r)=>(LANG==='es'?'RONDA ':'ROUND ')+(r+1)+'\n'+ms.map(m=>
+      (m.court?(LANG==='es'?'Pista ':'Court ')+m.court:(LANG==='es'?'Descansa':'Rest'))+': '+m.t1.join(' + ')+' vs '+m.t2.join(' + ')).join('\n')).join('\n\n');
+  }else{
+    if(players.length<2){err.textContent=LANG==='es'?'Hacen falta al menos 2 participantes.':'At least 2 entries needed.';box.innerHTML='';return;}
+    err.textContent = (players.length&(players.length-1))
+      ? (LANG==='es'?'Aviso: no es potencia de 2, algunos pasan directos de ronda.':'Note: not a power of two, some get a bye.') : '';
+    bracket=makeBracket(players);
+    drawBracket();
+  }
+}
+$('#trGen').addEventListener('click',genTournament);
+$('#trShuffle').addEventListener('click',()=>{
+  const p=parsePlayers();
+  for(let i=p.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[p[i],p[j]]=[p[j],p[i]];}
+  $('#players').value=p.join(', '); genTournament();
+  toast(LANG==='es'?'Orden sorteado.':'Order shuffled.');
+});
+$('#trCopy').addEventListener('click',async()=>{
+  let txt;
+  if(trFmt==='liga') txt=$('#trOut').dataset.k;
+  else if(bracket) txt=bracket.map((r,i)=>roundName(i,bracket.length)+'\n'+r.map(m=>
+    (m.a||'—')+' vs '+(m.b||'—')+(m.w?'  → '+m.w:'')).join('\n')).join('\n\n');
+  if(!txt||txt==='1'){toast(LANG==='es'?'Genera primero el cuadro.':'Generate the draw first.',true);return;}
+  toast(await copy('🏆 PADELBOX\n\n'+txt)?(LANG==='es'?'Copiado.':'Copied.'):(LANG==='es'?'No se pudo copiar.':'Copy failed.'));
+});
+
+/* ── 12. Planificador semanal pádel + gimnasio ─────────────────────────── */
+const PLAN_SETS={
+  juego:[['p','Partido de pádel','Padel match'],['g','Fuerza para pádel','Strength for padel'],
+         ['p','Clase de pádel','Padel lesson'],['g','Core y movilidad','Core & mobility'],
+         ['p','Partido de pádel','Padel match'],['g','Cardio suave','Easy cardio']],
+  fuerza:[['g','Fuerza · tren inferior','Strength · lower body'],['p','Partido de pádel','Padel match'],
+          ['g','Fuerza · tren superior','Strength · upper body'],['g','Core y movilidad','Core & mobility'],
+          ['p','Partido de pádel','Padel match'],['g','Fuerza · cuerpo entero','Strength · full body']],
+  peso:[['g','HIIT','HIIT'],['p','Partido de pádel','Padel match'],['g','Fuerza · cuerpo entero','Strength · full body'],
+        ['g','Cardio suave','Easy cardio'],['p','Partido de pádel','Padel match'],['g','Funcional','Functional']],
+  lesion:[['g','Movilidad y core','Mobility & core'],['g','Prevención de codo','Elbow prevention'],
+          ['p','Pádel suave, 60 min','Easy padel, 60 min'],['g','Fuerza guiada','Guided strength'],
+          ['g','Cardio suave','Easy cardio'],['p','Partido de pádel','Padel match']]
+};
+function drawWeek(){
+  const days=+$('#plDays').value, goal=$('#plGoal').value;
+  const names=LANG==='es'?['Lun','Mar','Mié','Jue','Vie','Sáb','Dom']:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  /* reparto los días activos lo más separados posible para no encadenar sesiones */
+  const idx=[]; for(let i=0;i<days;i++) idx.push(Math.round(i*7/days));
+  const set=PLAN_SETS[goal];
+  const week=Array(7).fill(null);
+  idx.forEach((d,i)=>week[Math.min(d,6)]=set[i%set.length]);
+  $('#week').innerHTML=names.map((n,i)=>{
+    const s=week[i];
+    const cls=!s?'act--r':(s[0]==='p'?'act--p':'act--g');
+    const txt=!s?(LANG==='es'?'Descanso':'Rest'):(LANG==='es'?s[1]:s[2]);
+    const extra=!s?'':(s[0]==='p'?'🎾':'🏋️');
+    return '<div class="dayc"><h6>'+n+'</h6><div class="act '+cls+'">'+extra+' '+txt+'</div>'+
+      (s?'<small class="num" style="color:var(--txt-soft);font-size:.68rem;margin-top:auto">'+
+        (s[0]==='p'?'90 min · '+(LANG==='es'?'pista':'court'):'45–60 min · '+(LANG==='es'?'gimnasio':'gym'))+'</small>':'')+'</div>';
+  }).join('');
+  const notes={
+    juego:['Todo gira alrededor de la pista: el gimnasio va el día siguiente a jugar, nunca justo antes, para no llegar cargado al partido.',
+           'Everything revolves around the court: gym work goes the day after playing, never right before, so you do not arrive at a match already tired.'],
+    fuerza:['Tren inferior y superior van separados por al menos 48 horas. El pádel cuenta como impacto, así que no lo pegamos a la sesión de piernas.',
+            'Lower and upper body are at least 48 hours apart. Padel counts as impact work, so we keep it away from leg day.'],
+    peso:['Alternamos alta intensidad y sesiones suaves. El pádel ya es cardio: por eso solo queda un HIIT a la semana.',
+          'We alternate high intensity with easy sessions. Padel is cardio already, which is why there is only one HIIT a week.'],
+    lesion:['Empezamos por movilidad y prevención de codo, y solo hay un pádel corto. Sube la carga cuando lleves dos semanas sin molestias.',
+            'We start with mobility and elbow prevention, with a single short padel session. Add load once you go two weeks pain-free.']
+  };
+  $('#plNote').textContent=notes[goal][LANG==='es'?0:1];
+  $('#week').dataset.k=names.map((n,i)=>n+': '+(week[i]?(LANG==='es'?week[i][1]:week[i][2]):(LANG==='es'?'Descanso':'Rest'))).join('\n');
+}
+['#plDays','#plGoal','#plLvl'].forEach(s=>$(s).addEventListener('change',drawWeek));
+$('#plGen').addEventListener('click',drawWeek);
+$('#plCopy').addEventListener('click',async()=>{
+  const k=$('#week').dataset.k;
+  toast(await copy('📅 PADELBOX — '+(LANG==='es'?'mi semana':'my week')+'\n\n'+k)
+    ?(LANG==='es'?'Plan copiado.':'Plan copied.'):(LANG==='es'?'No se pudo copiar.':'Copy failed.'));
+});
+
+/* ── 13. Pizarra táctica ───────────────────────────────────────────────── */
+const PZ={M:50,OX:40,OY:40};
+const mx=m=>PZ.OX+m*PZ.M, my=m=>PZ.OY+m*PZ.M;
+const PLAYS=[
+ {n:'Saque y subida',ne:'Serve and volley',s:[
+  {p:[[2,7],[2.5,3],[17,3],[11.5,7]],b:[2,7],lob:0,es:'Saque cruzado al cuadro contrario, desde detrás de la línea.',en:'Cross-court serve into the opposite box, from behind the line.'},
+  {p:[[5,7],[3.5,3],[16.5,3.4],[11.5,7]],b:[13.5,3.2],lob:0,es:'La bola bota antes de la línea de saque y el sacador ya sube.',en:'The ball lands before the service line and the server is already moving up.'},
+  {p:[[8.3,6.5],[8.3,3.5],[16,4],[11.5,7]],b:[7,5],lob:0,es:'Resto a los pies: primera volea de bloqueo, sin buscar el punto.',en:'Return at the feet: a blocking first volley, not a winner.'},
+  {p:[[8.5,6.5],[8.5,3.5],[16.5,5],[13,5]],b:[16,5],lob:0,es:'Volea profunda al centro y la pareja azul cierra la red.',en:'Deep volley down the middle and the blue pair takes the net.'}]},
+ {n:'Globo y contraataque',ne:'Lob and counter',s:[
+  {p:[[3,7],[3,3],[11.5,3],[11.5,7]],b:[4,6],lob:0,es:'Los azules defienden del fondo, los ámbar tienen la red.',en:'Blue defends from the back, amber owns the net.'},
+  {p:[[3.5,6.5],[3,3],[11.5,3],[11.5,7]],b:[10,5],lob:1,es:'Globo profundo por encima del jugador de red.',en:'Deep lob over the net player.'},
+  {p:[[6,6.5],[6,3.5],[16,3],[15,7]],b:[17.5,4],lob:1,es:'Los ámbar retroceden a por la bola: ya no dominan la red.',en:'Amber drops back for the ball: the net is gone.'},
+  {p:[[8.4,6.5],[8.4,3.5],[17,3.5],[16,6.5]],b:[9,5],lob:0,es:'Los azules suben juntos y toman la posición de ataque.',en:'Blue moves up together into the attacking position.'}]},
+ {n:'Bandeja para mantener la red',ne:'Bandeja to hold the net',s:[
+  {p:[[3,7],[3,3],[11.5,3],[11.5,7]],b:[4,3],lob:0,es:'Los ámbar están en la red y les llega un globo.',en:'Amber is at the net and a lob comes over.'},
+  {p:[[3,7],[3,3],[13.5,3],[11.5,7]],b:[12.5,3.2],lob:1,es:'Retroceso en diagonal, sin darle nunca la espalda a la red.',en:'Step back diagonally, never turning your back on the net.'},
+  {p:[[5,7],[3.5,3],[13.5,3],[11.5,7]],b:[6,3],lob:0,es:'Bandeja cortada y cruzada: no es un remate, es control.',en:'Sliced cross-court bandeja: not a smash, control.'},
+  {p:[[3.5,7],[3.5,3],[11.5,3],[11.5,7]],b:[3,3.5],lob:0,es:'Los ámbar recuperan la red y los azules vuelven al fondo.',en:'Amber regains the net and blue is back at the fence.'}]},
+ {n:'Salida de pared',ne:'Off the back wall',s:[
+  {p:[[4,6],[4,3.5],[11.5,3],[11.5,7]],b:[7,6],lob:0,es:'Bola profunda a la esquina azul.',en:'Deep ball into the blue corner.'},
+  {p:[[2.5,7.5],[4,3.5],[11.5,3],[11.5,7]],b:[0.6,7.6],lob:0,es:'Dejas pasar la bola y la acompañas, sin pegarte al cristal.',en:'Let the ball pass and follow it, without hugging the glass.'},
+  {p:[[3.2,6.6],[4,3.5],[11.5,3],[11.5,7]],b:[3,6.5],lob:0,es:'Bote en el cristal y golpeo de perfil, con el cuerpo ya girado.',en:'Off the glass and hit sideways on, body already turned.'},
+  {p:[[3.5,6.5],[3.5,3.5],[13,3],[12,7]],b:[13,5],lob:1,es:'Salida en globo para recolocarse y volver a discutir la red.',en:'Lob your way out to reset and fight for the net again.'}]},
+ {n:'Remate por 3 metros',ne:'Smash out (x3)',s:[
+  {p:[[3,7],[3,3],[11.5,3],[11.5,7]],b:[5,7],lob:0,es:'Globo corto de los azules: bola de ataque para los ámbar.',en:'Short lob from blue: an attacking ball for amber.'},
+  {p:[[3,7],[3,3],[11.5,3],[13,7]],b:[12.5,6.8],lob:1,es:'El jugador se coloca debajo de la bola, de lado.',en:'The player gets under the ball, sideways on.'},
+  {p:[[2,8.5],[3,3],[11.5,3],[13,7]],b:[6,8.5],lob:0,es:'Remate liftado contra el cristal lateral.',en:'Topspin smash into the side glass.'},
+  {p:[[1,9.6],[3,3],[11.5,3],[13,7]],b:[1,10.6],lob:0,es:'La bola sale de la pista: punto para los ámbar.',en:'The ball leaves the court: point to amber.'}]}
+];
+let pzI=0,pzS=0,pzRaf=null,pzP=null,pzB=null,pzPen=false,pzInk=[],pzDrag=null,pzCur=null;
+function pzInit(){
+  const svg=$('#pz'); if(!svg) return;
+  const W=20*PZ.M,H=10*PZ.M;
+  svg.innerHTML='<rect width="1080" height="580" fill="#241E42"/>'+
+    '<rect x="'+PZ.OX+'" y="'+PZ.OY+'" width="'+W+'" height="'+H+'" fill="#5A31E8" stroke="#EFEBFF" stroke-width="4"/>'+
+    '<line x1="'+mx(3.05)+'" y1="'+my(0)+'" x2="'+mx(3.05)+'" y2="'+my(10)+'" stroke="#EFEBFF" stroke-width="3"/>'+
+    '<line x1="'+mx(16.95)+'" y1="'+my(0)+'" x2="'+mx(16.95)+'" y2="'+my(10)+'" stroke="#EFEBFF" stroke-width="3"/>'+
+    '<line x1="'+mx(3.05)+'" y1="'+my(5)+'" x2="'+mx(16.95)+'" y2="'+my(5)+'" stroke="#EFEBFF" stroke-width="3"/>'+
+    '<line x1="'+mx(10)+'" y1="'+my(0)+'" x2="'+mx(10)+'" y2="'+my(10)+'" stroke="#161327" stroke-width="8"/>'+
+    '<line x1="'+mx(10)+'" y1="'+my(0)+'" x2="'+mx(10)+'" y2="'+my(10)+'" stroke="#fff" stroke-width="3" stroke-dasharray="3 6"/>'+
+    '<text x="'+mx(0.4)+'" y="'+(my(10)+28)+'" fill="#A79FC6" font-family="JetBrains Mono" font-size="14">20 m</text>'+
+    '<text x="'+(mx(0)-24)+'" y="'+my(5)+'" fill="#A79FC6" font-family="JetBrains Mono" font-size="14" transform="rotate(-90 '+(mx(0)-24)+' '+my(5)+')">10 m</text>'+
+    '<g id="ink"></g><g id="toks"></g>';
+  svg.addEventListener('pointerdown',pzDown); svg.addEventListener('pointermove',pzMove);
+  svg.addEventListener('pointerup',pzUp); svg.addEventListener('pointerleave',pzUp);
+  drawPlays(); pzLoad(0);
+}
+function drawPlays(){
+  const box=$('#plays'); box.innerHTML='';
+  PLAYS.forEach((p,i)=>{
+    const b=el('button',{class:'chip'+(i===pzI?' on':''),'aria-pressed':String(i===pzI)},(i+1)+'. '+(LANG==='es'?p.n:p.ne));
+    b.addEventListener('click',()=>{pzI=i;pzLoad(0);drawPlays();});
+    box.appendChild(b);
+  });
+}
+function pzLoad(i){
+  cancelAnimationFrame(pzRaf); pzRaf=null;
+  $('#pzPlay').textContent=LANG==='es'?'▶ Reproducir':'▶ Play';
+  pzS=i; const st=PLAYS[pzI].s[i];
+  pzP=st.p.map(q=>q.slice()); pzB=st.b.slice(); pzPaint(); pzCaption();
+}
+function pzCaption(){
+  const st=PLAYS[pzI].s[pzS];
+  $('#pzStep').textContent=(pzS+1)+'/'+PLAYS[pzI].s.length+' · '+(LANG==='es'?st.es:st.en);
+}
+function pzPaint(){
+  const L=$('#toks'); if(!L) return;
+  const lab=['A1','A2','B1','B2'];
+  L.innerHTML=pzP.map((q,i)=>
+    '<g class="tok" data-i="'+i+'" tabindex="0" role="button" aria-label="'+lab[i]+'">'+
+    '<circle cx="'+mx(q[0])+'" cy="'+my(q[1])+'" r="18" fill="'+(i<2?'#EFEBFF':'#FFB020')+'" stroke="#161327" stroke-width="3"/>'+
+    '<text x="'+mx(q[0])+'" y="'+(my(q[1])+5)+'" text-anchor="middle" font-family="Bricolage Grotesque" font-weight="800" font-size="15" fill="#161327">'+lab[i]+'</text></g>').join('')+
+    '<g class="tok" data-i="ball" tabindex="0" role="button" aria-label="Bola">'+
+    '<circle cx="'+mx(pzB[0])+'" cy="'+my(pzB[1])+'" r="11" fill="#FFB020" stroke="#161327" stroke-width="2"/></g>';
+}
+function pzGo(dir){
+  const steps=PLAYS[pzI].s, to=pzS+dir;
+  if(to<0||to>=steps.length) return false;
+  const from={p:pzP.map(q=>q.slice()),b:pzB.slice()}, nx=steps[to];
+  const t0=performance.now(), dur=1050;
+  cancelAnimationFrame(pzRaf);
+  (function anim(now){
+    const k=clamp((now-t0)/dur,0,1), e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;
+    pzP=from.p.map((q,i)=>[q[0]+(nx.p[i][0]-q[0])*e,q[1]+(nx.p[i][1]-q[1])*e]);
+    const arc=nx.lob?Math.sin(e*Math.PI)*1.1:0;
+    pzB=[from.b[0]+(nx.b[0]-from.b[0])*e, from.b[1]+(nx.b[1]-from.b[1])*e-arc];
+    pzPaint();
+    if(k<1) pzRaf=requestAnimationFrame(anim);
+    else{pzS=to;pzP=nx.p.map(q=>q.slice());pzB=nx.b.slice();pzPaint();pzCaption();pzRaf=null;}
+  })(t0);
+  return true;
+}
+function pzSvgPt(e){
+  const svg=$('#pz'), pt=svg.createSVGPoint(); pt.x=e.clientX; pt.y=e.clientY;
+  const p=pt.matrixTransform(svg.getScreenCTM().inverse());
+  return [(p.x-PZ.OX)/PZ.M,(p.y-PZ.OY)/PZ.M];
+}
+function pzDown(e){
+  const t=e.target.closest('.tok');
+  if(t&&!pzPen){pzDrag=t.dataset.i;$('#pz').setPointerCapture(e.pointerId);return;}
+  if(pzPen){pzCur={pts:[pzSvgPt(e)]};$('#pz').setPointerCapture(e.pointerId);}
+}
+function pzMove(e){
+  if(pzDrag!==null){
+    const m=pzSvgPt(e), q=[clamp(m[0],-.6,20.6),clamp(m[1],-.6,10.6)];
+    if(pzDrag==='ball') pzB=q; else pzP[+pzDrag]=q;
+    pzPaint(); return;
+  }
+  if(pzCur){
+    pzCur.pts.push(pzSvgPt(e));
+    $('#ink').innerHTML=pzInk.concat([pzCur]).map(l=>'<polyline points="'+
+      l.pts.map(q=>mx(q[0])+','+my(q[1])).join(' ')+
+      '" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity=".9"/>').join('');
+  }
+}
+function pzUp(){ pzDrag=null; if(pzCur){ if(pzCur.pts.length>2) pzInk.push(pzCur); pzCur=null; } }
+$('#pzNext').addEventListener('click',()=>pzGo(1));
+$('#pzPrev').addEventListener('click',()=>pzGo(-1));
+$('#pzReset').addEventListener('click',()=>pzLoad(0));
+$('#pzClear').addEventListener('click',()=>{pzInk=[];$('#ink').innerHTML='';});
+$('#pzPen').addEventListener('click',function(){pzPen=!pzPen;this.setAttribute('aria-pressed',String(pzPen));this.classList.toggle('on',pzPen);});
+$('#pzPlay').addEventListener('click',function(){
+  if(pzRaf){cancelAnimationFrame(pzRaf);pzRaf=null;this.textContent=LANG==='es'?'▶ Reproducir':'▶ Play';return;}
+  this.textContent=LANG==='es'?'⏸ Pausa':'⏸ Pause';
+  if(pzS>=PLAYS[pzI].s.length-1) pzLoad(0);
+  const chain=()=>{
+    if(!pzGo(1)){$('#pzPlay').textContent=LANG==='es'?'▶ Reproducir':'▶ Play';return;}
+    setTimeout(()=>{
+      if(pzS<PLAYS[pzI].s.length-1&&$('#pzPlay').textContent.indexOf('Paus')>-1) chain();
+      else $('#pzPlay').textContent=LANG==='es'?'▶ Reproducir':'▶ Play';
+    },1350);
+  };
+  chain();
+});
+
+/* pestañas de herramientas */
+$$('[data-tab]').forEach(b=>b.addEventListener('click',()=>{
+  $$('[data-tab]').forEach(x=>{x.classList.toggle('on',x===b);x.setAttribute('aria-selected',String(x===b));});
+  $$('.tp').forEach(p=>p.classList.toggle('on',p.id==='tab-'+b.dataset.tab));
+  watch();
+}));
+
+/* ── 14. Ranking ───────────────────────────────────────────────────────── */
+let sort={k:'pts',d:'desc'};
+function drawRanking(){
+  const q=$('#rkQ').value.trim().toLowerCase(), cat=$('#rkC').value;
+  let rows=RANKING.map(r=>({...r,ratio:Math.round(r.pg/r.pj*100)}));
+  rows.sort((a,b)=>{const A=a[sort.k],B=b[sort.k];
+    const v=typeof A==='string'?A.localeCompare(B,'es'):A-B; return sort.d==='asc'?v:-v;});
+  rows=rows.map((r,i)=>({...r,pos:i+1})).filter(r=>(cat==='all'||r.cat===cat)&&r.name.toLowerCase().includes(q));
+  const B=$('#rkB'); B.innerHTML='';
+  if(!rows.length){B.innerHTML='<tr><td colspan="8" style="text-align:center;color:var(--txt-soft);padding:1.3rem">'+
+    (LANG==='es'?'Sin resultados':'No results')+'</td></tr>';return;}
+  rows.forEach(r=>{
+    const form=r.form.split('').map(c=>'<span style="color:'+(c==='V'?'var(--ok)':'var(--bad)')+';font-weight:700">'+
+      (LANG==='es'?c:(c==='V'?'W':'L'))+'</span>').join('');
+    B.insertAdjacentHTML('beforeend','<tr><td><span class="rk'+(r.pos===1?' p1':'')+'">'+r.pos+'</span></td>'+
+      '<td><b>'+r.name+'</b></td><td>'+r.cat+'</td><td class="num">'+r.pj+'</td><td class="num">'+r.pg+'</td>'+
+      '<td class="num">'+r.ratio+' %</td><td class="num"><b>'+r.pts.toLocaleString('es-ES')+'</b></td><td class="num">'+form+'</td></tr>');
+  });
+  $$('#rkT th').forEach(th=>{th.dataset.k===sort.k?th.dataset.d=sort.d:th.removeAttribute('data-d');});
+}
+$$('#rkT th').forEach(th=>th.addEventListener('click',()=>{
+  const k=th.dataset.k; if(k==='pos')return;
+  sort=sort.k===k?{k,d:sort.d==='asc'?'desc':'asc'}:{k,d:th.dataset.s?'asc':'desc'};
+  drawRanking();
+}));
+$('#rkQ').addEventListener('input',drawRanking); $('#rkC').addEventListener('change',drawRanking);
+
+/* ── 15. Busco pareja ──────────────────────────────────────────────────── */
+const ADS=[
+  {name:'Sergio',level:'Intermedio',when:'Tardes',msg:'Busco pareja estable para la liga de 2ª. Suelo entrenar antes en el gimnasio.',ts:Date.now()-3.6e6},
+  {name:'Clara',level:'Avanzado',when:'Noches',msg:'Nivel 4, juego revés. Busco compañera para el torneo del viernes.',ts:Date.now()-7.2e6},
+  {name:'Nacho',level:'Iniciación',when:'Mañanas',msg:'Empecé hace dos meses. Partidos tranquilos entre semana.',ts:Date.now()-1.1e7},
+  {name:'Ainhoa',level:'Competición',when:'Fin de semana',msg:'Federada, busco pareja para torneos de la zona.',ts:Date.now()-1.8e7}
+];
+let mmF='all';
+const allAds=()=>store.get('ads',[]).concat(ADS).sort((a,b)=>b.ts-a.ts);
+function ago(ts){
+  const m=Math.round((Date.now()-ts)/6e4);
+  if(m<60) return (LANG==='es'?'hace ':'')+m+' min'+(LANG==='es'?'':' ago');
+  const h=Math.round(m/60);
+  if(h<24) return (LANG==='es'?'hace ':'')+h+' h'+(LANG==='es'?'':' ago');
+  return (LANG==='es'?'hace ':'')+Math.round(h/24)+(LANG==='es'?' días':' d ago');
+}
+function drawMM(){
+  const box=$('#mmL2'); box.innerHTML='';
+  const list=allAds().filter(a=>mmF==='all'||a.level===mmF);
+  if(!list.length){box.appendChild(el('div',{class:'void'},LANG==='es'?'No hay anuncios de este nivel.':'No ads at this level.'));return;}
+  list.forEach(a=>{
+    box.insertAdjacentHTML('beforeend','<div class="item">'+
+      '<span class="tg">'+a.level+' · '+a.when+' · '+ago(a.ts)+'</span>'+
+      '<h3 style="margin:.3rem 0 .4rem;font-size:1.15rem">'+a.name+'</h3>'+
+      '<p style="font-size:.88rem;margin:0 0 .8rem">'+(a.msg||'').replace(/</g,'&lt;')+'</p>'+
+      '<a class="btn btn--o btn--sm" style="width:100%" target="_blank" rel="noopener" href="'+WA+'?text='+
+        encodeURIComponent((LANG==='es'?'Hola, respondo al anuncio de ':'Hi, replying to ')+a.name)+'">'+
+        (LANG==='es'?'Contactar':'Get in touch')+'</a></div>');
+  });
+}
+$$('[data-mm]').forEach(b=>b.addEventListener('click',()=>{
+  mmF=b.dataset.mm;
+  $$('[data-mm]').forEach(x=>{x.classList.toggle('on',x===b);x.setAttribute('aria-pressed',String(x===b));});
+  drawMM();
+}));
+$('#mmF').addEventListener('submit',e=>{
+  e.preventDefault();
+  const n=$('#mmN').value.trim();
+  if(n.length<2){toast(LANG==='es'?'Escribe tu nombre.':'Enter your name.',true);$('#mmN').focus();return;}
+  const ads=store.get('ads',[]);
+  ads.unshift({name:n,level:$('#mmL').value,when:$('#mmW').selectedOptions[0].textContent,msg:$('#mmM').value.trim(),ts:Date.now()});
+  store.set('ads',ads.slice(0,20)); e.target.reset(); drawMM();
+  toast(LANG==='es'?'Anuncio publicado.':'Ad published.');
+});
+
+/* ── 16. Cafetería ─────────────────────────────────────────────────────── */
+let cfCat='all', order={};
+function drawMenu(){
+  const box=$('#menuGrid'); box.innerHTML='';
+  MENU.filter(m=>cfCat==='all'||m.c===cfCat).forEach(m=>{
+    const qty=order[m.n]||0;
+    const d=el('div',{class:'dish'},
+      '<div><b>'+(LANG==='es'?m.n:m.ne)+'</b><small>'+(LANG==='es'?m.d:m.de)+'</small>'+
+      '<div style="display:flex;gap:.4rem;align-items:center;margin-top:.5rem">'+
+        '<button class="chip" data-op="-" aria-label="Quitar">−</button>'+
+        '<span class="num" style="min-width:1.5rem;text-align:center;font-weight:700">'+qty+'</span>'+
+        '<button class="chip" data-op="+" aria-label="Añadir">+</button></div></div>'+
+      '<span class="e">'+eur(m.p)+'</span>');
+    $$('[data-op]',d).forEach(b=>b.addEventListener('click',()=>{
+      order[m.n]=clamp((order[m.n]||0)+(b.dataset.op==='+'?1:-1),0,20); drawMenu();
+    }));
+    box.appendChild(d);
+  });
+  cfTotal();
+}
+function cfTotal(){
+  let t=0; for(const k in order){const m=MENU.find(x=>x.n===k); if(m) t+=m.p*order[k];}
+  $('#cfT').textContent=eur(t); return t;
+}
+$$('[data-cat]').forEach(b=>b.addEventListener('click',()=>{
+  cfCat=b.dataset.cat;
+  $$('[data-cat]').forEach(x=>{x.classList.toggle('on',x===b);x.setAttribute('aria-pressed',String(x===b));});
+  drawMenu();
+}));
+$('#cfSend').addEventListener('click',async()=>{
+  const lines=Object.keys(order).filter(k=>order[k]).map(k=>{
+    const m=MENU.find(x=>x.n===k); return order[k]+' × '+(LANG==='es'?m.n:m.ne)+' — '+eur(m.p*order[k]);});
+  if(!lines.length){toast(LANG==='es'?'Marca algo de la carta primero.':'Pick something from the menu first.',true);return;}
+  const txt='☕ PADELBOX\n'+lines.join('\n')+'\nTOTAL: '+eur(cfTotal());
+  window.open(WA+'?text='+encodeURIComponent(txt),'_blank','noopener');
+});
+
+/* ── 17. FAQ ───────────────────────────────────────────────────────────── */
+function drawFaq(){
+  const box=$('#faqL'); box.innerHTML='';
+  (LANG==='es'?FAQ_ES:FAQ_EN).forEach((f,i)=>{
+    const q=el('div',{class:'q'},'<button aria-expanded="false" aria-controls="a'+i+'"><span>'+f.q+
+      '</span><span class="pm">+</span></button><div class="a" id="a'+i+'"><p style="margin:0">'+f.a+'</p></div>');
+    const btn=$('button',q), a=$('.a',q);
+    btn.addEventListener('click',()=>{
+      const open=q.classList.contains('on');
+      $$('#faqL .q').forEach(o=>{o.classList.remove('on');$('.a',o).style.maxHeight=null;$('button',o).setAttribute('aria-expanded','false');});
+      if(!open){q.classList.add('on');a.style.maxHeight=a.scrollHeight+30+'px';btn.setAttribute('aria-expanded','true');}
+    });
+    box.appendChild(q);
+  });
+}
+
+/* ── 18. Formularios, modales, cookies y estado en vivo ────────────────── */
+const MAIL=/^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i;
+function setErr(n,m){const f=n.closest('.field'); if(!f)return; f.classList.toggle('bad',!!m); const e=$('.err',f); if(e)e.textContent=m||'';}
+$('#cF').addEventListener('submit',e=>{
+  e.preventDefault(); let ok=true;
+  const need=(id,m)=>{const n=$(id); if(!n.value.trim()){setErr(n,m);ok=false;}else setErr(n,'');};
+  need('#cN',LANG==='es'?'Dinos cómo te llamas.':'Tell us your name.');
+  const mail=$('#cM');
+  if(!MAIL.test(mail.value.trim())){setErr(mail,LANG==='es'?'Revisa el correo.':'Check your email.');ok=false;}else setErr(mail,'');
+  const ph=$('#cP');
+  if(ph.value.trim()&&!/^[+\d\s().-]{9,}$/.test(ph.value.trim())){setErr(ph,LANG==='es'?'Teléfono no válido.':'Invalid phone.');ok=false;}else setErr(ph,'');
+  need('#cX',LANG==='es'?'Cuéntanos qué necesitas.':'Tell us what you need.');
+  if(!$('#cG').checked){ok=false;toast(LANG==='es'?'Acepta la política de privacidad.':'Accept the privacy policy.',true);}
+  if(!ok)return;
+  const msg='📩 '+$('#cT').value+'\n'+$('#cN').value+' · '+$('#cM').value+' · '+$('#cP').value+'\n\n'+$('#cX').value;
+  openModal('<h3>'+(LANG==='es'?'Mensaje listo':'Message ready')+'</h3><p style="color:var(--txt-soft);font-size:.92rem">'+
+    (LANG==='es'?'Esta web es una demo estática y no tiene servidor de correo. Mándanoslo por WhatsApp o por email y te contestamos.'
+                :'This site is a static demo with no mail server. Send it over WhatsApp or email and we will reply.')+'</p>'+
+    '<div style="display:flex;gap:.5rem;flex-wrap:wrap"><a class="btn btn--a cut" target="_blank" rel="noopener" href="'+WA+'?text='+
+    encodeURIComponent(msg)+'">WhatsApp</a><a class="btn btn--o" href="mailto:hola@padelbox.club?subject='+
+    encodeURIComponent($('#cT').value)+'&body='+encodeURIComponent(msg)+'">Email</a></div>');
+});
+['#cN','#cM','#cX','#cP'].forEach(id=>$(id).addEventListener('input',()=>setErr($(id),'')));
+$('#nF').addEventListener('submit',e=>{
+  e.preventDefault(); const v=$('#nM').value.trim(), m=$('#nMsg');
+  if(!MAIL.test(v)){m.style.color='#FF8095';m.textContent=LANG==='es'?'Correo no válido':'Invalid email';return;}
+  m.style.color='var(--amber)'; m.textContent=LANG==='es'?'¡Apuntado! Nos vemos en la pista.':'You are in. See you on court.';
+  $('#nM').value='';
+});
+
+let lastFocus=null;
+function openModal(html){
+  lastFocus=document.activeElement; $('#mbody').innerHTML=html;
+  $('#modal').classList.add('on'); document.body.classList.add('lock'); $('#mx').focus();
+}
+function closeModal(){$('#modal').classList.remove('on');document.body.classList.remove('lock');if(lastFocus)lastFocus.focus();}
+$('#mx').addEventListener('click',closeModal);
+$('#modal').addEventListener('click',e=>{if(e.target.id==='modal')closeModal();});
+addEventListener('keydown',e=>{if(e.key==='Escape'){if($('#modal').classList.contains('on'))closeModal();
+  if(drawer.classList.contains('open'))burger.click();}});
+const LEGAL={
+ legal:{es:['Aviso legal','<p>Padelbox Club · Polígono industrial, nave 14. Este sitio es una demostración: las tarifas, horarios, aforos y disponibilidad son datos de ejemplo y deben confirmarse con el club.</p>'],
+        en:['Legal notice','<p>Padelbox Club · Industrial estate, unit 14. This site is a demo: rates, timetables, occupancy and availability are sample data and must be confirmed with the club.</p>']},
+ privacy:{es:['Privacidad','<p>No enviamos tus datos a ningún servidor. Los formularios generan un mensaje que decides tú si envías por WhatsApp o correo. Tus reservas, anuncios y preferencias viven solo en el almacenamiento local de tu navegador.</p>'],
+          en:['Privacy','<p>We send your data to no server. The forms build a message you choose whether to send over WhatsApp or email. Your bookings, ads and preferences live only in your browser local storage.</p>']},
+ cookies:{es:['Cookies','<p>Sin cookies de terceros y sin analítica. Solo <code>localStorage</code> propio para el idioma, el tema, el carrito y tus anuncios.</p>'],
+          en:['Cookies','<p>No third-party cookies and no analytics. Only first-party <code>localStorage</code> for language, theme, cart and your ads.</p>']}
+};
+$$('[data-modal]').forEach(a=>a.addEventListener('click',e=>{
+  e.preventDefault(); const d=LEGAL[a.dataset.modal][LANG==='es'?'es':'en'];
+  openModal('<h3>'+d[0]+'</h3>'+d[1]);
+}));
+if(!store.get('ck',false)) setTimeout(()=>$('#ck').classList.add('on'),1500);
+$('#ckOk').addEventListener('click',()=>{store.set('ck',true);$('#ck').classList.remove('on');});
+
+function liveNow(){
+  const d=new Date(), h=d.getHours()+d.getMinutes()/60;
+  $('#clockNow').textContent=pad(d.getHours())+':'+pad(d.getMinutes());
+  const free=COURTS.filter(c=>!courtBusy(c.id)).length;
+  $('#vCourts').textContent=free+' / '+COURTS.length;
+  $('#gCourts').style.width=Math.round(free/COURTS.length*100)+'%';
+  $('#gCourts').style.background=free?'var(--ok)':'var(--bad)';
+  const occ=occAt(d.getDay(),clamp(d.getHours(),7,22));
+  $('#vGym').textContent=occ+' %';
+  $('#gGym').style.width=occ+'%'; $('#gGym').style.background=occTone(occ);
+  const today=gymOfDay(d).filter(g=>g.h>h)[0];
+  $('#vNext').textContent=today?pad(Math.floor(today.h))+':'+pad(Math.round(today.h%1*60))+' '+(LANG==='es'?today.n:today.ne)
+    :(LANG==='es'?'Mañana':'Tomorrow');
+  const open=h>=CLUB.open&&h<CLUB.close;
+  $('#vOpen').innerHTML='<span class="'+(open?'st-ok':'st-no')+'"><i class="dot"></i>'+
+    (open?(LANG==='es'?'Abierto':'Open'):(LANG==='es'?'Cerrado':'Closed'))+'</span>';
+  const on=$('#openNow');
+  if(on){on.textContent=open?(LANG==='es'?'● Abierto ahora':'● Open now'):(LANG==='es'?'● Cerrado':'● Closed');
+    on.style.color=open?'var(--ok)':'var(--bad)';}
+}
+
+/* ── Arranque ──────────────────────────────────────────────────────────── */
+captureES();
+buildCourts(); drawPlan(); pickZone('c1',false);
+buildDays(); setMode('padel'); drawCart();
+calcQuota(); drawGymDays(); drawOcc(); drawGymCards();
+drawClasses(); drawRanking(); drawMM(); drawMenu(); drawFaq();
+paint(); genTournament(); drawWeek(); pzInit();
+buildMarquee(); liveNow(); watch(); onScroll();
+setInterval(liveNow,30000);
+setInterval(()=>{drawPlan();pickZone(activeZone,false);},120000);
+if(LANG!=='es') applyLang(LANG);
+$$('.lang button').forEach(b=>b.addEventListener('click',()=>applyLang(b.dataset.lang)));
+})();
+</script>
+</body>
+</html>
