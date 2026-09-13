@@ -19,18 +19,36 @@ eyebrows, el panel del hero y las líneas del canvas— y también da el favicon
 
 | Rol | Valor |
 |---|---|
-| Marca | violeta eléctrico `#5A31E8` |
-| Acento | ámbar `#FFB020` |
-| Fondo oscuro | berenjena `#161327` |
-| Neutro claro | `#F5F4FA` (frío, con sesgo violeta) |
-| Estado | verde `#17A673` · ámbar `#E8940B` · rojo `#E23D53` |
+| Marca | azul profundo `#16305C` |
+| Acento | ámbar `#D98A2B` |
+| Fondo oscuro | tinta `#0C1526` |
+| Neutro claro | hueso `#F6F4EF` |
+| Estado | verde `#1B7A55` · ámbar `#B3730F` · rojo `#B93A32` |
 
 Los colores de estado son independientes de los de marca, así que «pista libre»
 y «acento» nunca se confunden. Tema claro y oscuro completos, con los tres
 estados (`prefers-color-scheme`, `data-theme="light"` y `data-theme="dark"`).
 
-Tipografía en tres papeles: **Bricolage Grotesque** (display), **DM Sans**
-(texto) y **JetBrains Mono** (datos, horas y precios, con `tabular-nums`).
+Tipografía en tres papeles: **Archivo** (display), **Public Sans** (texto) y
+**IBM Plex Mono** (datos, horas y precios, con `tabular-nums`).
+
+## Estructura
+
+Seis bloques, no doce. Lo que el visitante busca a la vez va junto, y dentro se
+resuelve con pestañas en lugar de con otra sección más:
+
+| Bloque | Contiene |
+|---|---|
+| **Inicio** | hero y el panel de estado en vivo |
+| **Reservar** | el plano de la nave y el motor de reservas, juntos |
+| **Cuotas** | la calculadora de abonos |
+| **Entrena** | pestañas: gimnasio · escuela de pádel |
+| **Herramientas** | pestañas: marcador · torneos · plan semanal · pizarra |
+| **Club** | pestañas: ranking · busco pareja · cafetería |
+| **Info** | preguntas frecuentes y contacto, a dos columnas |
+
+La barra de navegación es transparente sobre el hero y se vuelve sólida al hacer
+scroll.
 
 ## La nave
 

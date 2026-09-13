@@ -5,376 +5,424 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Padelbox Club</title>
 <meta name="description" content="Padelbox — club de pádel y fitness: 4 pistas indoor, gimnasio, vestuarios y cafetería en la misma nave. Reserva pista y clase desde la misma pantalla.">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23161327'/%3E%3Cpath d='M12 12 H66 L88 34 V88 H12 Z' fill='none' stroke='%235A31E8' stroke-width='11'/%3E%3Ccircle cx='56' cy='46' r='11' fill='%23FFB020'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='18' fill='%230C1526'/%3E%3Cpath d='M12 12 H66 L88 34 V88 H12 Z' fill='none' stroke='%23F6F4EF' stroke-width='11'/%3E%3Ccircle cx='56' cy='46' r='11' fill='%23D98A2B'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 /* ==========================================================================
    PADELBOX — club de pádel & fitness
-   La pista es una caja de cristal; el box es donde se entrena. Las dos mitades
-   del club en una palabra.
-   Identidad: violeta eléctrico + ámbar sobre berenjena.
+   La pista es una caja de cristal; el box es donde se entrena.
+   Identidad: azul profundo sobre hueso, con un solo acento ámbar.
    Motivo: la esquina cortada = la esquina de la caja.
+   Estructura: seis bloques, no doce. Lo que se agrupa por intención del
+   visitante va junto, con pestañas dentro en vez de una sección más.
    ========================================================================== */
 :root{
-  --brand:#5A31E8;  --brand-2:#7C5CFF;  --brand-deep:#3A1BAE;
-  --amber:#FFB020;  --amber-deep:#E08A00;
-  --ink:#161327;    --ink-2:#221C3D;
-  --paper:#F5F4FA;  --surface:#FFFFFF;  --surface-2:#EDEBF6;
-  --txt:#161327;    --txt-soft:#5B5477;
-  --line:#DDD9EC;
-  --ok:#17A673;     --warn:#E8940B;     --bad:#E23D53;
-  --cut:14px;
-  --r:16px;
-  --nav-h:74px;
-  --shadow:0 22px 45px -32px rgba(22,19,39,.65);
-  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
-  --disp:"Bricolage Grotesque","DM Sans",system-ui,sans-serif;
+  --navy:#16305C; --navy-2:#2A5490; --navy-deep:#0E2145;
+  --amber:#D98A2B; --amber-deep:#B36F16;
+  --ink:#0C1526;
+  --paper:#F6F4EF; --surface:#FFFFFF; --sunk:#EDEAE1;
+  --txt:#16223A; --soft:#5A6580; --faint:#8A93A8;
+  --line:#DFDACE; --rule:#CDC6B6;
+  --ok:#1B7A55; --warn:#B3730F; --bad:#B93A32;
+  --cut:14px; --r:4px; --nav-h:74px;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,monospace;
+  --disp:Archivo,"Public Sans",system-ui,sans-serif;
+  --shadow:0 18px 40px -32px rgba(12,21,38,.55);
 }
-:root:not([data-theme="light"]){}
 @media (prefers-color-scheme:dark){
   :root:not([data-theme="light"]){
-    --paper:#100D1C; --surface:#1A1630; --surface-2:#241E42;
-    --txt:#F0EEFA;  --txt-soft:#A79FC6; --line:#332B57;
-    --brand:#8267FF; --brand-2:#A491FF;
-    --shadow:0 24px 50px -30px #000;
+    --paper:#0C1526; --surface:#132038; --sunk:#1A2A47;
+    --txt:#E8EBF2; --soft:#98A5BE; --faint:#78849E;
+    --line:#25344F; --rule:#33445F;
+    --navy:#4E86D6; --navy-2:#6FA2E8; --amber:#E8A44E; --amber-deep:#D08C2E;
+    --ok:#3FC28C; --warn:#E0A245; --bad:#EC6A62;
+    --shadow:0 20px 44px -30px #000;
   }
 }
 :root[data-theme="dark"]{
-  --paper:#100D1C; --surface:#1A1630; --surface-2:#241E42;
-  --txt:#F0EEFA;  --txt-soft:#A79FC6; --line:#332B57;
-  --brand:#8267FF; --brand-2:#A491FF;
-  --shadow:0 24px 50px -30px #000;
+  --paper:#0C1526; --surface:#132038; --sunk:#1A2A47;
+  --txt:#E8EBF2; --soft:#98A5BE; --faint:#78849E;
+  --line:#25344F; --rule:#33445F;
+  --navy:#4E86D6; --navy-2:#6FA2E8; --amber:#E8A44E; --amber-deep:#D08C2E;
+  --ok:#3FC28C; --warn:#E0A245; --bad:#EC6A62;
+  --shadow:0 20px 44px -30px #000;
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{
-  margin:0; background:var(--paper); color:var(--txt);
-  font-family:"DM Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
-  font-size:16px; line-height:1.6; -webkit-font-smoothing:antialiased; overflow-x:hidden;
-}
+body{margin:0;background:var(--paper);color:var(--txt);
+  font-family:"Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  font-size:16.5px;line-height:1.62;-webkit-font-smoothing:antialiased;overflow-x:hidden}
 body.lock{overflow:hidden}
-h1,h2,h3,h4{font-family:var(--disp);font-weight:800;line-height:1.03;margin:0;text-wrap:balance;letter-spacing:-.02em}
-h1{font-size:clamp(2.1rem,8.4vw,5.4rem);overflow-wrap:break-word}
-h2{font-size:clamp(2rem,4.2vw,3.2rem)}
-h3{font-size:clamp(1.2rem,2vw,1.55rem)}
+h1,h2,h3,h4{font-family:var(--disp);font-weight:800;line-height:1.06;margin:0;
+  letter-spacing:-.022em;text-wrap:balance;color:var(--ink)}
+:root[data-theme="dark"] h1,:root[data-theme="dark"] h2,:root[data-theme="dark"] h3,:root[data-theme="dark"] h4{color:var(--txt)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) h1,:root:not([data-theme="light"]) h2,
+  :root:not([data-theme="light"]) h3,:root:not([data-theme="light"]) h4{color:var(--txt)}}
+h1{font-size:clamp(2.4rem,6.4vw,4.6rem)}
+h2{font-size:clamp(1.75rem,3.6vw,2.7rem)}
+h3{font-size:clamp(1.1rem,1.8vw,1.35rem);font-weight:700}
 p{margin:0 0 1rem}
 a{color:inherit;text-decoration:none}
 button,input,select,textarea{font:inherit;color:inherit}
 :focus-visible{outline:3px solid var(--amber);outline-offset:3px}
 .num{font-family:var(--mono);font-variant-numeric:tabular-nums}
-.wrap{width:min(1240px,92vw);margin-inline:auto}
+.wrap{width:min(1200px,92vw);margin-inline:auto}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
-.skip{position:absolute;left:-999px;z-index:300;background:var(--amber);color:#161327;padding:.7rem 1.1rem;font-weight:700}
+.skip{position:absolute;left:-999px;z-index:300;background:var(--amber);color:var(--ink);padding:.7rem 1.1rem;font-weight:700}
 .skip:focus{left:1rem;top:1rem}
-
-/* la esquina cortada, el gesto de la marca */
 .cut{clip-path:polygon(var(--cut) 0,100% 0,100% calc(100% - var(--cut)),calc(100% - var(--cut)) 100%,0 100%,0 var(--cut))}
 
-.eyebrow{display:inline-block;font-family:var(--mono);font-size:.72rem;font-weight:700;letter-spacing:.18em;
-  text-transform:uppercase;color:var(--brand);border:1px solid var(--line);padding:.35rem .7rem;--cut:8px}
-.lead{color:var(--txt-soft);max-width:64ch}
-.section{padding:clamp(3.4rem,7vw,6rem) 0;position:relative}
-.section--tint{background:var(--surface-2)}
-.sec-head{display:flex;flex-wrap:wrap;gap:1.2rem;align-items:end;justify-content:space-between;margin-bottom:2.2rem}
-.sec-head p{margin:.7rem 0 0}
-.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r)}
-.pad{padding:clamp(1rem,2.2vw,1.5rem)}
-.grid{display:grid;gap:1rem}
+/* --- ritmo: seis bloques grandes, separados por una regla, no por cajas --- */
+.block{padding:clamp(3.2rem,6.5vw,5.5rem) 0;border-top:1px solid var(--rule)}
+.block:first-of-type{border-top:0}
+.block--sunk{background:var(--sunk);border-top:0}
+.head{max-width:60ch;margin-bottom:clamp(1.8rem,3.5vw,2.8rem)}
+.head p{margin:.85rem 0 0;color:var(--soft);font-size:1.04rem}
+.eyebrow{display:inline-block;font-family:var(--mono);font-size:.68rem;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--navy);margin-bottom:.85rem}
+:root[data-theme="dark"] .eyebrow{color:var(--amber)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .eyebrow{color:var(--amber)}}
+.eyebrow::before{content:"";display:inline-block;width:22px;height:2px;background:currentColor;
+  vertical-align:.28em;margin-right:.6rem}
+.lead{color:var(--soft);max-width:62ch}
 
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;border:0;cursor:pointer;
-  font-family:var(--disp);font-weight:800;font-size:1rem;letter-spacing:-.01em;white-space:nowrap;
-  padding:.85rem 1.5rem;transition:transform .16s,filter .16s,background .16s;--cut:12px}
+  font-family:var(--disp);font-weight:700;font-size:.98rem;letter-spacing:-.01em;white-space:nowrap;
+  padding:.82rem 1.5rem;transition:transform .15s,filter .15s,box-shadow .15s;--cut:12px}
 .btn:hover{transform:translateY(-2px)}
-.btn:active{transform:none}
-.btn--p{background:var(--brand);color:#fff}
-.btn--p:hover{filter:brightness(1.12)}
-.btn--a{background:var(--amber);color:#161327}
-.btn--a:hover{filter:brightness(1.06)}
-.btn--o{background:transparent;color:var(--txt);box-shadow:inset 0 0 0 2px var(--line);clip-path:none;border-radius:10px}
-.btn--o:hover{box-shadow:inset 0 0 0 2px var(--brand)}
-/* el hero siempre es oscuro, así que ahí el outline va en blanco */
-.hero .btn--o{color:#F0EEFA;box-shadow:inset 0 0 0 2px rgba(255,255,255,.28)}
-.hero .btn--o:hover{box-shadow:inset 0 0 0 2px var(--amber);color:var(--amber)}
-.btn--sm{padding:.55rem 1rem;font-size:.9rem;--cut:9px}
+.btn--p{background:var(--navy);color:#F6F4EF}
+.btn--a{background:var(--amber);color:var(--ink)}
+.btn--p:hover,.btn--a:hover{filter:brightness(1.08)}
+.btn--o{background:transparent;color:var(--txt);box-shadow:inset 0 0 0 1.5px var(--rule);clip-path:none;border-radius:2px}
+.btn--o:hover{box-shadow:inset 0 0 0 1.5px var(--navy)}
+.btn--sm{padding:.52rem 1rem;font-size:.88rem;--cut:9px}
 .btn[disabled]{opacity:.4;cursor:not-allowed;transform:none}
 
-.chip{border:1px solid var(--line);background:var(--surface);padding:.45rem .9rem;border-radius:999px;
-  cursor:pointer;font-size:.88rem;font-weight:500;transition:.16s;color:var(--txt)}
-.chip:hover{border-color:var(--brand)}
-.chip[aria-pressed="true"],.chip.on{background:var(--brand);border-color:var(--brand);color:#fff}
+.chip{border:1px solid var(--line);background:var(--surface);padding:.44rem .9rem;border-radius:2px;
+  cursor:pointer;font-size:.87rem;font-weight:500;color:var(--txt);transition:.15s}
+.chip:hover{border-color:var(--navy)}
+.chip[aria-pressed="true"],.chip.on{background:var(--navy);border-color:var(--navy);color:#F6F4EF}
 
 .field{display:flex;flex-direction:column;gap:.3rem;margin-bottom:.85rem}
-.field label{font-family:var(--mono);font-size:.68rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--txt-soft)}
-.field input,.field select,.field textarea{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:.7rem .85rem}
-.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3px color-mix(in srgb,var(--brand) 22%,transparent)}
+.field label{font-family:var(--mono);font-size:.66rem;font-weight:600;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--faint)}
+.field input,.field select,.field textarea{background:var(--surface);border:1px solid var(--line);
+  border-radius:2px;padding:.68rem .8rem}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--navy);
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--navy) 18%,transparent)}
 .field .err{color:var(--bad);font-size:.78rem;min-height:1em}
 .field.bad input,.field.bad textarea{border-color:var(--bad)}
 
-/* estado semántico, separado de los colores de marca */
 .dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:.4rem}
 .st-ok{color:var(--ok)}   .st-ok .dot{background:var(--ok)}
 .st-mid{color:var(--warn)}.st-mid .dot{background:var(--warn)}
 .st-no{color:var(--bad)}  .st-no .dot{background:var(--bad)}
 
-/* ---------- nav ---------- */
-#bar{position:fixed;top:0;left:0;height:3px;width:0;background:var(--amber);z-index:120}
+/* --- nav: seis destinos --- */
+#bar{position:fixed;top:0;left:0;height:2px;width:0;background:var(--amber);z-index:120}
+/* sobre el hero la barra es transparente y va en claro; al hacer scroll se
+   vuelve sólida y cambia a la tinta del documento */
 header.nav{position:fixed;inset:0 0 auto;height:var(--nav-h);z-index:110;display:flex;align-items:center;
-  background:color-mix(in srgb,var(--paper) 82%,transparent);backdrop-filter:blur(16px);border-bottom:1px solid transparent;transition:.25s}
-header.nav.stuck{border-bottom-color:var(--line)}
-.nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:1rem;width:min(1400px,95vw)}
+  background:transparent;border-bottom:1px solid transparent;color:#EDEFF5;
+  transition:background .25s,border-color .25s,color .25s}
+header.nav .wd b,header.nav .wd>span{color:inherit;transition:color .25s}
+header.nav .ico,header.nav .lang{border-color:rgba(246,244,239,.28)}
+header.nav.stuck{background:color-mix(in srgb,var(--paper) 92%,transparent);backdrop-filter:blur(14px);
+  border-bottom-color:var(--rule);color:var(--txt)}
+header.nav.stuck .wd b{color:var(--ink)}
+:root[data-theme="dark"] header.nav.stuck .wd b{color:var(--txt)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) header.nav.stuck .wd b{color:var(--txt)}}
+header.nav.stuck .wd>span{color:var(--faint)}
+header.nav.stuck .ico,header.nav.stuck .lang{border-color:var(--line)}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:1rem;width:min(1320px,94vw)}
 .brand{display:flex;align-items:center;gap:.6rem;flex:0 0 auto}
-.brand .mk{width:42px;height:42px;background:var(--ink);display:grid;place-items:center;--cut:11px;flex:0 0 auto}
-.brand .mk svg{width:26px;height:26px}
-.brand .wd{line-height:1;display:flex;flex-direction:column;gap:.2rem}
-.brand .wd b{font-family:var(--disp);font-weight:800;font-size:1.16rem;letter-spacing:-.03em;text-transform:uppercase}
+.brand .mk{width:40px;height:40px;background:var(--ink);display:grid;place-items:center;--cut:10px;flex:0 0 auto}
+.brand .mk svg{width:25px;height:25px}
+.brand .wd{line-height:1;display:flex;flex-direction:column;gap:.22rem}
+.brand .wd b{font-family:var(--disp);font-weight:800;font-size:1.1rem;letter-spacing:-.035em;text-transform:uppercase}
 .brand .wd b i{font-style:normal;color:var(--amber)}
-.brand .wd>span{font-family:var(--mono);font-size:.56rem;letter-spacing:.28em;color:var(--txt-soft);text-transform:uppercase}
-.menu{display:flex;gap:.1rem;min-width:0;overflow:hidden}
-.menu a{padding:.5rem .62rem;font-size:.92rem;font-weight:500;white-space:nowrap;position:relative;border-radius:8px}
-.menu a::after{content:"";position:absolute;left:.62rem;right:.62rem;bottom:.3rem;height:2px;background:var(--amber);transform:scaleX(0);transform-origin:left;transition:transform .22s}
+.brand .wd>span{font-family:var(--mono);font-size:.55rem;letter-spacing:.26em;text-transform:uppercase;opacity:.72}
+.menu{display:flex;gap:.15rem;min-width:0}
+.menu a{padding:.5rem .7rem;font-size:.93rem;font-weight:500;white-space:nowrap;position:relative}
+.menu a::after{content:"";position:absolute;left:.7rem;right:.7rem;bottom:.32rem;height:2px;background:var(--amber);
+  transform:scaleX(0);transform-origin:left;transition:transform .22s}
 .menu a:hover::after,.menu a.act::after{transform:scaleX(1)}
 .acts{display:flex;align-items:center;gap:.45rem;flex:0 0 auto}
-.ico{width:38px;height:38px;border-radius:10px;border:1px solid var(--line);background:transparent;display:grid;place-items:center;cursor:pointer;transition:.16s}
-.ico:hover{border-color:var(--brand)}
-.lang{display:flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}
-.lang button{border:0;background:transparent;padding:.42rem .55rem;font-family:var(--mono);font-size:.72rem;font-weight:700;cursor:pointer}
-.lang button[aria-pressed="true"]{background:var(--brand);color:#fff}
+.ico{width:37px;height:37px;border-radius:2px;border:1px solid var(--line);background:transparent;
+  display:grid;place-items:center;cursor:pointer;transition:.15s}
+.ico:hover{border-color:var(--navy)}
+.lang{display:flex;border:1px solid var(--line);border-radius:2px;overflow:hidden}
+.lang button{border:0;background:transparent;padding:.4rem .55rem;font-family:var(--mono);font-size:.7rem;font-weight:600;cursor:pointer}
+.lang button[aria-pressed="true"]{background:var(--navy);color:#F6F4EF}
 #burger{display:none}
 .drawer{position:fixed;inset:var(--nav-h) 0 0;background:var(--paper);z-index:105;transform:translateX(100%);
-  transition:transform .32s cubic-bezier(.4,0,.2,1);padding:1.4rem 6vw;overflow:auto}
+  transition:transform .3s cubic-bezier(.4,0,.2,1);padding:1.4rem 6vw;overflow:auto}
 .drawer.open{transform:none}
-.drawer a{display:block;padding:.85rem 0;border-bottom:1px solid var(--line);font-family:var(--disp);font-weight:800;font-size:1.5rem}
-.drawer a.cta{background:var(--amber);color:#161327;border:0;text-align:center;padding:.9rem;margin-bottom:.7rem;--cut:12px}
-@media(max-width:1150px){ .menu{display:none} #burger{display:grid} }
+.drawer a{display:block;padding:.85rem 0;border-bottom:1px solid var(--line);font-family:var(--disp);
+  font-weight:800;font-size:1.45rem;color:var(--ink)}
+:root[data-theme="dark"] .drawer a{color:var(--txt)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .drawer a{color:var(--txt)}}
+.drawer a.cta{background:var(--amber);border:0;text-align:center;padding:.85rem;margin-bottom:.7rem;--cut:12px}
+@media(max-width:1050px){ .menu{display:none} #burger{display:grid} }
 @media(max-width:600px){
   .acts .btn{display:none}
-  .brand .mk{width:36px;height:36px} .brand .mk svg{width:22px;height:22px}
-  .brand .wd b{font-size:1rem} .lang button{padding:.38rem .42rem;font-size:.66rem} .ico{width:34px;height:34px}
+  .nav .wrap{gap:.5rem} .acts{gap:.35rem}
+  .brand .mk{width:35px;height:35px} .brand .mk svg{width:22px;height:22px}
+  .brand .wd b{font-size:.95rem} .lang button{padding:.36rem .42rem;font-size:.64rem} .ico{width:34px;height:34px}
 }
 
-/* ---------- hero ---------- */
-.hero{position:relative;padding:calc(var(--nav-h) + clamp(2.5rem,6vw,4.5rem)) 0 clamp(2.5rem,5vw,4rem);
-  background:var(--ink);color:#F0EEFA;overflow:hidden}
-.hero canvas{position:absolute;inset:0;width:100%;height:100%;opacity:.9}
+/* --- hero --- */
+.hero{position:relative;padding:calc(var(--nav-h) + clamp(2.6rem,6vw,4.5rem)) 0 clamp(2.4rem,5vw,3.6rem);
+  background:var(--ink);color:#EDEFF5;overflow:hidden}
+.hero canvas{position:absolute;inset:0;width:100%;height:100%;opacity:.85}
 .hero .wrap{position:relative;z-index:2}
-.hero-split{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:clamp(1.5rem,4vw,3rem);align-items:center}
-@media(max-width:940px){.hero-split{grid-template-columns:1fr}}
+.hero h1{color:#FFFFFF}
 .hero h1 em{font-style:normal;color:var(--amber)}
-.hero .lead{color:#B9B0DE}
-.hero .kicker{font-family:var(--mono);font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:var(--amber);
-  border:1px solid rgba(255,176,32,.4);padding:.35rem .7rem;display:inline-block;--cut:8px}
-.hero-cta{display:flex;flex-wrap:wrap;gap:.7rem;margin-top:1.6rem}
-/* panel "el club ahora": la página abre mostrando estado real */
-.live{background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.14);border-radius:var(--r);padding:1.1rem}
-.live h4{font-size:.95rem;display:flex;justify-content:space-between;align-items:center;margin-bottom:.9rem;color:#fff}
-.live h4 time{font-family:var(--mono);font-size:.72rem;color:#A79FC6;font-weight:500}
-.live-row{display:flex;align-items:center;justify-content:space-between;gap:.8rem;padding:.62rem 0;border-top:1px solid rgba(255,255,255,.09)}
+.hero .lead{color:#A9B4C9}
+.hero .kicker{font-family:var(--mono);font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--amber);display:inline-block;border-bottom:1px solid rgba(217,138,43,.5);padding-bottom:.3rem}
+.hero-split{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr);gap:clamp(1.6rem,4vw,3.4rem);align-items:end}
+@media(max-width:960px){.hero-split{grid-template-columns:1fr}}
+.hero-cta{display:flex;flex-wrap:wrap;gap:.7rem;margin-top:1.7rem}
+.hero .btn--o{color:#EDEFF5;box-shadow:inset 0 0 0 1.5px rgba(246,244,239,.3)}
+.hero .btn--o:hover{box-shadow:inset 0 0 0 1.5px var(--amber);color:var(--amber)}
+.live{border:1px solid rgba(246,244,239,.16);padding:1.15rem 1.25rem;background:rgba(246,244,239,.04)}
+.live h4{font-size:.92rem;color:#fff;display:flex;justify-content:space-between;align-items:center;margin-bottom:.8rem}
+.live h4 time{font-family:var(--mono);font-size:.72rem;color:#95A2BA;font-weight:400}
+.live-row{display:flex;align-items:center;justify-content:space-between;gap:.8rem;padding:.6rem 0;
+  border-top:1px solid rgba(246,244,239,.1)}
 .live-row:first-of-type{border-top:0}
-.live-row .k{font-size:.86rem;color:#B9B0DE}
-.live-row .v{font-family:var(--mono);font-weight:700;font-size:1.02rem;color:#fff}
-.gauge{height:6px;border-radius:99px;background:rgba(255,255,255,.14);overflow:hidden;flex:1;max-width:120px}
+.live-row .k{font-size:.85rem;color:#A9B4C9}
+.live-row .v{font-family:var(--mono);font-weight:600;font-size:1rem;color:#fff}
+.gauge{height:5px;background:rgba(246,244,239,.16);overflow:hidden;flex:1;max-width:110px}
 .gauge i{display:block;height:100%;width:0;transition:width .9s cubic-bezier(.2,.8,.2,1)}
 .live .btn{width:100%;margin-top:.9rem}
-.marquee{margin-top:clamp(2rem,4vw,3rem);border-top:1px solid rgba(255,255,255,.14);border-bottom:1px solid rgba(255,255,255,.14);
-  overflow:hidden;white-space:nowrap;padding:.6rem 0}
-.marquee div{display:inline-block;animation:mq 28s linear infinite}
-.marquee span{padding:0 1.4rem;font-family:var(--mono);font-size:.76rem;letter-spacing:.16em;text-transform:uppercase;color:#A79FC6}
-.marquee b{color:var(--amber)}
+.marquee{margin-top:clamp(2.2rem,4vw,3.2rem);border-top:1px solid rgba(246,244,239,.16);
+  border-bottom:1px solid rgba(246,244,239,.16);overflow:hidden;white-space:nowrap;padding:.55rem 0}
+.marquee div{display:inline-block;animation:mq 30s linear infinite}
+.marquee span{padding:0 1.4rem;font-family:var(--mono);font-size:.73rem;letter-spacing:.16em;
+  text-transform:uppercase;color:#95A2BA}
+.marquee b{color:var(--amber);font-weight:500}
 @keyframes mq{to{transform:translateX(-50%)}}
 
-/* ---------- plano de la nave ---------- */
-.plan{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:clamp(.8rem,2vw,1.3rem)}
+/* --- pestañas: lo que antes eran secciones sueltas --- */
+.tabs{display:flex;gap:.35rem;flex-wrap:wrap;margin-bottom:1.6rem;border-bottom:1px solid var(--rule);padding-bottom:0}
+.tabs.plain{border-bottom:0;padding-bottom:0}
+.tabs [role="tab"]{background:transparent;border:0;border-bottom:2px solid transparent;padding:.6rem .9rem;
+  cursor:pointer;font-family:var(--disp);font-weight:700;font-size:1rem;color:var(--soft);
+  border-radius:0;margin-bottom:-1px;transition:.15s}
+.tabs [role="tab"]:hover{color:var(--txt)}
+.tabs [role="tab"][aria-selected="true"]{color:var(--ink);border-bottom-color:var(--amber)}
+:root[data-theme="dark"] .tabs [role="tab"][aria-selected="true"]{color:var(--txt)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .tabs [role="tab"][aria-selected="true"]{color:var(--txt)}}
+.tp{display:none}
+.tp.on{display:block;animation:fade .28s}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.filters{display:flex;gap:.35rem;flex-wrap:wrap;margin-bottom:1.2rem}
+
+/* --- plano --- */
 .plan svg{width:100%;height:auto;display:block}
 .zone{cursor:pointer}
 .zone rect.bg{transition:fill .2s,opacity .2s}
 .zone:hover rect.bg,.zone.sel rect.bg{opacity:1}
 .zone text{pointer-events:none;font-family:var(--disp);font-weight:800}
-.legend{display:flex;flex-wrap:wrap;gap:1.1rem;margin-top:.9rem;font-size:.83rem;color:var(--txt-soft)}
-.legend i{width:11px;height:11px;display:inline-block;margin-right:.35rem;border-radius:3px}
-.plan-info{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1rem;margin-top:1.2rem}
+.legend{display:flex;flex-wrap:wrap;gap:1rem;margin-top:.8rem;font-size:.82rem;color:var(--soft)}
+.legend i{width:10px;height:10px;display:inline-block;margin-right:.35rem}
 
-/* ---------- reservas ---------- */
-.res{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:1.2rem;align-items:start}
+/* --- reservas --- */
+.res{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:1.6rem;align-items:start}
 .res>*{min-width:0}
 @media(max-width:980px){.res{grid-template-columns:minmax(0,1fr)}}
-.seg{display:inline-flex;border:1px solid var(--line);border-radius:12px;padding:3px;background:var(--surface);margin-bottom:1rem}
-.seg button{border:0;background:transparent;padding:.5rem 1rem;border-radius:9px;cursor:pointer;font-weight:700;font-size:.9rem}
-.seg button[aria-pressed="true"]{background:var(--brand);color:#fff}
-.days{display:flex;gap:.45rem;overflow-x:auto;padding-bottom:.5rem}
-.day{flex:0 0 auto;min-width:70px;text-align:center;border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:.55rem .35rem;cursor:pointer;transition:.16s}
-.day small{display:block;font-family:var(--mono);font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--txt-soft)}
-.day b{display:block;font-family:var(--disp);font-size:1.4rem;line-height:1.1}
-.day[aria-pressed="true"]{background:var(--brand);color:#fff;border-color:var(--brand)}
-.day[aria-pressed="true"] small{color:#D6CCFF}
-.slots{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:.5rem;margin-top:1rem}
-.slot{position:relative;border:1px solid var(--line);background:var(--surface);border-radius:11px;padding:.55rem .35rem;
-  text-align:center;cursor:pointer;font-weight:700;font-size:.95rem;transition:.15s}
-.slot small{display:block;font-family:var(--mono);font-size:.68rem;font-weight:500;color:var(--txt-soft)}
-.slot:hover:not(.no){border-color:var(--brand);transform:translateY(-2px)}
-.slot.pick{background:var(--brand);border-color:var(--brand);color:#fff}
-.slot.pick small{color:#D6CCFF}
-.slot.no{opacity:.38;cursor:not-allowed;text-decoration:line-through}
-.slot .tag{position:absolute;top:-8px;right:-4px;background:var(--amber);color:#161327;font-family:var(--mono);
-  font-size:.55rem;font-weight:700;padding:.1rem .35rem;border-radius:4px}
-.cart{position:sticky;top:calc(var(--nav-h) + 14px)}
-.cart ul{list-style:none;margin:.7rem 0 0;padding:0;display:grid;gap:.45rem}
-.cart li{display:flex;justify-content:space-between;gap:.5rem;align-items:center;background:var(--paper);border-radius:10px;padding:.5rem .65rem;font-size:.86rem}
-.cart li button{border:0;background:none;color:var(--bad);cursor:pointer;font-size:1.1rem;line-height:1}
-.tot{display:flex;justify-content:space-between;align-items:baseline;border-top:1px dashed var(--line);margin-top:.85rem;padding-top:.85rem}
-.tot b{font-family:var(--disp);font-size:1.8rem}
-.void{border:1px dashed var(--line);border-radius:11px;padding:1.2rem .6rem;text-align:center;color:var(--txt-soft);font-size:.88rem}
+.seg{display:inline-flex;border:1px solid var(--rule);padding:2px;background:var(--surface);margin-bottom:1.1rem}
+.seg button{border:0;background:transparent;padding:.5rem 1rem;cursor:pointer;font-weight:600;font-size:.9rem;color:var(--soft)}
+.seg button[aria-pressed="true"]{background:var(--navy);color:#F6F4EF}
+.days{display:flex;gap:.4rem;overflow-x:auto;padding-bottom:.5rem}
+.day{flex:0 0 auto;min-width:66px;text-align:center;border:1px solid var(--line);background:var(--surface);
+  padding:.5rem .3rem;cursor:pointer;transition:.15s}
+.day small{display:block;font-family:var(--mono);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
+.day b{display:block;font-family:var(--disp);font-size:1.3rem;line-height:1.15}
+.day[aria-pressed="true"]{background:var(--navy);color:#F6F4EF;border-color:var(--navy)}
+.day[aria-pressed="true"] small{color:#B9CBE8}
+.slots{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:.45rem;margin-top:1rem}
+.slot{position:relative;border:1px solid var(--line);background:var(--surface);padding:.5rem .35rem;
+  text-align:center;cursor:pointer;font-weight:600;font-size:.94rem;transition:.15s}
+.slot small{display:block;font-family:var(--mono);font-size:.66rem;font-weight:400;color:var(--soft)}
+.slot:hover:not(.no){border-color:var(--navy)}
+.slot.pick{background:var(--navy);border-color:var(--navy);color:#F6F4EF}
+.slot.pick small{color:#B9CBE8}
+.slot.no{opacity:.36;cursor:not-allowed;text-decoration:line-through}
+.slot .tag{position:absolute;top:-7px;right:-3px;background:var(--amber);color:var(--ink);
+  font-family:var(--mono);font-size:.54rem;font-weight:600;padding:.08rem .3rem}
+.cart{position:sticky;top:calc(var(--nav-h) + 14px);border:1px solid var(--rule);background:var(--surface);padding:1.15rem}
+.cart ul{list-style:none;margin:.7rem 0 0;padding:0;display:grid;gap:.4rem}
+.cart li{display:flex;justify-content:space-between;gap:.5rem;align-items:center;background:var(--sunk);
+  padding:.48rem .6rem;font-size:.85rem}
+.cart li button{border:0;background:none;color:var(--bad);cursor:pointer;font-size:1.05rem;line-height:1}
+.tot{display:flex;justify-content:space-between;align-items:baseline;border-top:1px solid var(--rule);
+  margin-top:.85rem;padding-top:.85rem}
+.tot b{font-family:var(--disp);font-size:1.7rem}
+.void{border:1px dashed var(--line);padding:1.1rem .6rem;text-align:center;color:var(--faint);font-size:.86rem}
 
-/* ---------- calculadora de cuota ---------- */
-/* rejilla de dos columnas usada en torneos y en "busco pareja" */
-.tr-grid{display:grid}
-.tr-grid>*{min-width:0}
-@media(max-width:820px){.tr-grid{grid-template-columns:minmax(0,1fr)!important}}
-.quota{display:grid;grid-template-columns:minmax(0,340px) minmax(0,1fr);gap:1.4rem;align-items:start}
-@media(max-width:860px){.quota{grid-template-columns:1fr}}
-.range{width:100%;accent-color:var(--brand)}
-.plans{display:grid;gap:.6rem}
-.plan-row{display:grid;grid-template-columns:1fr auto;gap:.6rem 1rem;align-items:center;border:1px solid var(--line);
-  background:var(--surface);border-radius:12px;padding:.75rem .9rem;transition:.2s}
-.plan-row.best{border-color:var(--brand);box-shadow:0 0 0 3px color-mix(in srgb,var(--brand) 16%,transparent)}
-.plan-row .nm{font-family:var(--disp);font-weight:800;font-size:1.05rem}
-.plan-row .de{font-size:.8rem;color:var(--txt-soft)}
-.plan-row .pr{font-family:var(--mono);font-weight:700;font-size:1.2rem;text-align:right;white-space:nowrap}
-.plan-row .track{grid-column:1/-1;height:8px;border-radius:99px;background:var(--surface-2);overflow:hidden}
-.plan-row .track i{display:block;height:100%;background:var(--txt-soft);width:0;transition:width .5s}
-.plan-row.best .track i{background:var(--brand)}
-.badge{font-family:var(--mono);font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
-  background:var(--amber);color:#161327;padding:.18rem .45rem;border-radius:4px}
+/* --- cuotas --- */
+.quota{display:grid;grid-template-columns:minmax(0,320px) minmax(0,1fr);gap:1.6rem;align-items:start}
+@media(max-width:880px){.quota{grid-template-columns:1fr}}
+.range{width:100%;accent-color:var(--navy)}
+.plans{display:grid;gap:1px;background:var(--rule);border:1px solid var(--rule)}
+.plan-row{display:grid;grid-template-columns:1fr auto;gap:.5rem 1rem;align-items:center;
+  background:var(--surface);padding:.85rem 1rem;transition:.2s}
+.plan-row.best{background:color-mix(in srgb,var(--amber) 12%,var(--surface))}
+.plan-row .nm{font-family:var(--disp);font-weight:700;font-size:1.02rem}
+.plan-row .de{font-size:.8rem;color:var(--soft)}
+.plan-row .pr{font-family:var(--mono);font-weight:600;font-size:1.15rem;text-align:right;white-space:nowrap}
+.plan-row .track{grid-column:1/-1;height:6px;background:var(--sunk);overflow:hidden}
+.plan-row .track i{display:block;height:100%;background:var(--faint);width:0;transition:width .5s}
+.plan-row.best .track i{background:var(--amber)}
+.badge{font-family:var(--mono);font-size:.6rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+  background:var(--amber);color:var(--ink);padding:.16rem .42rem}
 
-/* ---------- aforo del gimnasio ---------- */
-.occ{display:grid;grid-template-columns:repeat(16,1fr);gap:4px;align-items:end;height:150px;margin:1rem 0 .4rem}
-.occ .h{position:relative;background:var(--surface-2);border-radius:4px 4px 2px 2px;transition:.25s;cursor:default}
-.occ .h i{position:absolute;inset:auto 0 0 0;border-radius:4px 4px 2px 2px;transition:height .7s cubic-bezier(.2,.8,.2,1)}
+/* --- aforo --- */
+.occ{display:grid;grid-template-columns:repeat(16,1fr);gap:3px;align-items:end;height:140px;margin:1rem 0 .4rem}
+.occ .h{position:relative;background:var(--sunk)}
+.occ .h i{position:absolute;inset:auto 0 0 0;transition:height .7s cubic-bezier(.2,.8,.2,1)}
 .occ .h.now{outline:2px solid var(--txt);outline-offset:2px}
-.occ-x{display:grid;grid-template-columns:repeat(16,1fr);gap:4px;font-family:var(--mono);font-size:.6rem;color:var(--txt-soft);text-align:center}
+.occ-x{display:grid;grid-template-columns:repeat(16,1fr);gap:3px;font-family:var(--mono);font-size:.6rem;
+  color:var(--faint);text-align:center}
 .occ-x span:nth-child(even){visibility:hidden}
 @media(max-width:640px){.occ-x span:nth-child(4n+2),.occ-x span:nth-child(4n+3),.occ-x span:nth-child(4n+4){visibility:hidden}}
 
-/* ---------- pestañas de herramientas ---------- */
-.tabs{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:1.3rem}
-.tp{display:none}
-.tp.on{display:block;animation:fade .3s}
-@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-
-/* marcador */
-.board{display:grid;grid-template-columns:1fr auto 1fr;gap:1rem;align-items:center;background:var(--ink);color:#fff;border-radius:var(--r);padding:clamp(1rem,3vw,1.9rem)}
+/* --- marcador --- */
+.board{display:grid;grid-template-columns:1fr auto 1fr;gap:1rem;align-items:center;background:var(--ink);
+  color:#fff;padding:clamp(1rem,3vw,1.9rem)}
 .side{text-align:center}
-.side .nm{font-family:var(--mono);font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:#B9B0DE}
-.side .pt{font-family:var(--disp);font-weight:800;font-size:clamp(3.2rem,11vw,5.6rem);line-height:1;color:var(--amber);font-variant-numeric:tabular-nums}
+.side .nm{font-family:var(--mono);font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;color:#A9B4C9}
+.side .pt{font-family:var(--disp);font-weight:800;font-size:clamp(3rem,10vw,5.2rem);line-height:1;
+  color:var(--amber);font-variant-numeric:tabular-nums}
 .side.srv .nm::after{content:" ●";color:var(--amber)}
-.sets{display:flex;gap:.3rem;justify-content:center;margin-top:.3rem}
-.sets i{width:28px;height:32px;display:grid;place-items:center;background:rgba(255,255,255,.1);border-radius:6px;font-style:normal;font-family:var(--mono);font-weight:700}
-.sets i.w{background:var(--amber);color:#161327}
-.board .vs{font-family:var(--mono);color:#6E639B;font-size:.9rem}
-.clock{text-align:center;font-family:var(--mono);font-size:1.6rem;font-weight:700;margin-top:.6rem;color:#fff}
-.note{text-align:center;font-family:var(--mono);font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--amber);min-height:1.2em;margin-top:.5rem}
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:.5rem;margin-top:1rem}
-.stats div{border:1px solid var(--line);border-radius:11px;padding:.55rem .7rem;background:var(--surface)}
-.stats small{display:block;font-family:var(--mono);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:var(--txt-soft)}
-.stats b{font-family:var(--mono);font-size:1.15rem}
-#log{max-height:140px;overflow:auto;font-size:.84rem;color:var(--txt-soft);margin-top:.9rem;border-top:1px dashed var(--line);padding-top:.7rem}
-#log div{padding:.14rem 0;border-bottom:1px dotted var(--line)}
+.sets{display:flex;gap:.28rem;justify-content:center;margin-top:.3rem}
+.sets i{width:27px;height:30px;display:grid;place-items:center;background:rgba(246,244,239,.1);
+  font-style:normal;font-family:var(--mono);font-weight:600}
+.sets i.w{background:var(--amber);color:var(--ink)}
+.board .vs{font-family:var(--mono);color:#6B7891;font-size:.85rem}
+.clock{text-align:center;font-family:var(--mono);font-size:1.5rem;font-weight:600;margin-top:.6rem;color:#fff}
+.note{text-align:center;font-family:var(--mono);font-size:.76rem;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--amber-deep);min-height:1.2em;margin-top:.5rem}
+:root[data-theme="dark"] .note{color:var(--amber)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .note{color:var(--amber)}}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(115px,1fr));gap:1px;background:var(--rule);
+  border:1px solid var(--rule);margin-top:1rem}
+.stats div{background:var(--surface);padding:.55rem .7rem}
+.stats small{display:block;font-family:var(--mono);font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
+.stats b{font-family:var(--mono);font-size:1.1rem}
+#log{max-height:130px;overflow:auto;font-size:.83rem;color:var(--soft);margin-top:.9rem;
+  border-top:1px solid var(--line);padding-top:.7rem}
+#log div{padding:.13rem 0;border-bottom:1px dotted var(--line)}
 
-/* cuadro eliminatorio */
-.bracket{display:flex;gap:1.4rem;overflow-x:auto;padding:.4rem 0 1rem}
-.rnd{flex:0 0 210px;display:flex;flex-direction:column;justify-content:space-around;gap:.8rem}
-.rnd h5{font-family:var(--mono);font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--txt-soft);margin:0 0 .2rem}
-.tie{border:1px solid var(--line);border-radius:11px;overflow:hidden;background:var(--surface)}
-.tie button{display:flex;justify-content:space-between;width:100%;border:0;background:transparent;padding:.5rem .7rem;
-  cursor:pointer;font-size:.86rem;text-align:left;border-bottom:1px solid var(--line)}
+/* --- cuadro de torneo --- */
+.bracket{display:flex;gap:1.3rem;overflow-x:auto;padding:.4rem 0 1rem}
+.rnd{flex:0 0 200px;display:flex;flex-direction:column;justify-content:space-around;gap:.7rem}
+.rnd h5{font-family:var(--mono);font-size:.64rem;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin:0 0 .2rem}
+.tie{border:1px solid var(--line);background:var(--surface)}
+.tie button{display:flex;justify-content:space-between;width:100%;border:0;background:transparent;
+  padding:.48rem .65rem;cursor:pointer;font-size:.85rem;text-align:left;border-bottom:1px solid var(--line)}
 .tie button:last-child{border-bottom:0}
-.tie button:hover:not(:disabled){background:color-mix(in srgb,var(--brand) 12%,transparent)}
-.tie button.win{background:color-mix(in srgb,var(--ok) 16%,transparent);font-weight:700}
-.tie button:disabled{color:var(--txt-soft);cursor:default}
-.tie .s{font-family:var(--mono);font-size:.78rem;color:var(--txt-soft)}
+.tie button:hover:not(:disabled){background:var(--sunk)}
+.tie button.win{background:color-mix(in srgb,var(--ok) 15%,transparent);font-weight:700}
+.tie button:disabled{color:var(--faint);cursor:default}
+.tie .s{font-family:var(--mono);font-size:.76rem;color:var(--soft)}
 
-/* planificador semanal */
-.week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:.5rem;margin-top:1rem}
+/* --- plan semanal --- */
+.week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:1px;background:var(--rule);
+  border:1px solid var(--rule);margin-top:1rem}
 @media(max-width:760px){.week{grid-template-columns:repeat(2,minmax(0,1fr))}}
-.dayc{border:1px solid var(--line);border-radius:12px;padding:.65rem;background:var(--surface);min-height:118px;display:flex;flex-direction:column;gap:.3rem}
-.dayc h6{margin:0;font-family:var(--mono);font-size:.64rem;letter-spacing:.12em;text-transform:uppercase;color:var(--txt-soft)}
-.dayc .act{border-radius:8px;padding:.4rem .5rem;font-size:.78rem;font-weight:700;line-height:1.25}
-.act--p{background:color-mix(in srgb,var(--brand) 18%,transparent);color:var(--brand)}
-.act--g{background:color-mix(in srgb,var(--amber) 26%,transparent);color:var(--amber-deep)}
-.act--r{background:var(--surface-2);color:var(--txt-soft)}
+.dayc{background:var(--surface);padding:.6rem;min-height:110px;display:flex;flex-direction:column;gap:.3rem}
+.dayc h6{margin:0;font-family:var(--mono);font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--faint)}
+.dayc .act{padding:.38rem .45rem;font-size:.76rem;font-weight:600;line-height:1.25}
+.act--p{background:color-mix(in srgb,var(--navy) 15%,transparent);color:var(--navy)}
+.act--g{background:color-mix(in srgb,var(--amber) 24%,transparent);color:var(--amber-deep)}
+.act--r{background:var(--sunk);color:var(--faint)}
 :root[data-theme="dark"] .act--g{color:var(--amber)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .act--g{color:var(--amber)}}
 
-/* pizarra */
-.court-wrap{border-radius:var(--r);overflow:hidden;border:1px solid var(--line);margin-top:1rem;background:#241E42}
+/* --- pizarra --- */
+.court-wrap{overflow:hidden;border:1px solid var(--rule);margin-top:1rem;background:var(--ink)}
 .court-wrap svg{width:100%;height:auto;display:block;touch-action:none}
 .tok{cursor:grab}
-.step-txt{text-align:center;font-family:var(--disp);font-weight:800;font-size:1.1rem;margin:.9rem 0 .3rem}
+.step-txt{text-align:center;font-family:var(--disp);font-weight:700;font-size:1.05rem;margin:.9rem 0 .5rem}
 
-/* tablas, tarjetas y pie */
-.tblbox{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r);background:var(--surface)}
-table.t{width:100%;border-collapse:collapse;font-size:.89rem}
-table.t th,table.t td{padding:.6rem .7rem;border-bottom:1px solid var(--line);text-align:left}
-table.t th{font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;user-select:none;white-space:nowrap;color:var(--txt-soft)}
-table.t th[data-d="asc"]::after{content:" ▲";color:var(--brand)}
-table.t th[data-d="desc"]::after{content:" ▼";color:var(--brand)}
-table.t tbody tr:hover{background:color-mix(in srgb,var(--brand) 8%,transparent)}
-.rk{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:7px;background:var(--surface-2);font-family:var(--mono);font-weight:700;font-size:.76rem}
-.rk.p1{background:var(--amber);color:#161327}
+/* --- tablas, listas y tarjetas --- */
+.tblbox{overflow-x:auto;border:1px solid var(--rule);background:var(--surface)}
+table.t{width:100%;border-collapse:collapse;font-size:.88rem}
+table.t th,table.t td{padding:.55rem .7rem;border-bottom:1px solid var(--line);text-align:left}
+table.t th{font-family:var(--mono);font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;
+  user-select:none;white-space:nowrap;color:var(--faint);font-weight:500}
+table.t th[data-d="asc"]::after{content:" ▲";color:var(--amber-deep)}
+table.t th[data-d="desc"]::after{content:" ▼";color:var(--amber-deep)}
+table.t tbody tr:hover{background:var(--sunk)}
+.rk{display:inline-grid;place-items:center;width:23px;height:23px;background:var(--sunk);
+  font-family:var(--mono);font-weight:600;font-size:.74rem}
+.rk.p1{background:var(--amber);color:var(--ink)}
 
-.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(252px,1fr));gap:1rem}
-.item{border:1px solid var(--line);border-radius:var(--r);background:var(--surface);padding:1.1rem;transition:.2s}
-.item:hover{transform:translateY(-4px);box-shadow:var(--shadow);border-color:var(--brand)}
-.item .tg{font-family:var(--mono);font-size:.64rem;letter-spacing:.12em;text-transform:uppercase;color:var(--brand)}
-.item .pr{font-family:var(--disp);font-weight:800;font-size:1.6rem}
-.item .pr span{font-family:"DM Sans";font-size:.8rem;font-weight:400;color:var(--txt-soft)}
-.bar{height:6px;border-radius:99px;background:var(--surface-2);overflow:hidden;margin:.55rem 0}
-.bar i{display:block;height:100%;width:0;background:var(--brand);transition:width 1s cubic-bezier(.2,.8,.2,1)}
+/* la rejilla común: una sola para clases, gimnasio, anuncios y carta */
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(248px,1fr));gap:1px;
+  background:var(--rule);border:1px solid var(--rule)}
+.item{background:var(--surface);padding:1.05rem 1.1rem;transition:background .18s}
+.item:hover{background:var(--sunk)}
+.item .tg{font-family:var(--mono);font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--navy)}
+:root[data-theme="dark"] .item .tg{color:var(--amber)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .item .tg{color:var(--amber)}}
+.item .pr{font-family:var(--disp);font-weight:800;font-size:1.5rem}
+.item .pr span{font-family:"Public Sans";font-size:.78rem;font-weight:400;color:var(--soft)}
+.bar{height:5px;background:var(--sunk);overflow:hidden;margin:.5rem 0}
+.bar i{display:block;height:100%;width:0;background:var(--navy);transition:width 1s cubic-bezier(.2,.8,.2,1)}
+.dish{background:var(--surface);padding:.85rem 1rem;display:flex;justify-content:space-between;gap:1rem}
+.dish b{font-family:var(--disp);font-weight:700;font-size:1rem;display:block}
+.dish small{color:var(--soft);font-size:.81rem}
+.dish .e{font-family:var(--mono);font-weight:600;white-space:nowrap}
 
-.dish{display:flex;justify-content:space-between;gap:1rem;border:1px solid var(--line);border-radius:12px;padding:.8rem .95rem;background:var(--surface)}
-.dish b{font-family:var(--disp);font-weight:800;font-size:1.02rem;display:block}
-.dish small{color:var(--txt-soft);font-size:.82rem}
-.dish .e{font-family:var(--mono);font-weight:700;white-space:nowrap}
-
-.faq{display:grid;gap:.55rem;max-width:880px}
-.q{border:1px solid var(--line);border-radius:12px;background:var(--surface);overflow:hidden}
-.q>button{width:100%;display:flex;justify-content:space-between;gap:1rem;align-items:center;padding:.95rem 1.1rem;background:none;border:0;cursor:pointer;text-align:left;font-weight:700}
-.q .pm{width:24px;height:24px;border-radius:7px;background:var(--surface-2);display:grid;place-items:center;transition:.22s;flex:0 0 auto}
-.q.on .pm{background:var(--brand);color:#fff;transform:rotate(45deg)}
-.q .a{max-height:0;overflow:hidden;transition:max-height .35s;padding:0 1.1rem;color:var(--txt-soft)}
+/* --- faq y contacto --- */
+.split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(1.6rem,4vw,3rem);align-items:start}
+@media(max-width:900px){.split{grid-template-columns:1fr}}
+.faq{display:grid;gap:0;border-top:1px solid var(--line)}
+.q{border-bottom:1px solid var(--line)}
+.q>button{width:100%;display:flex;justify-content:space-between;gap:1rem;align-items:center;padding:.95rem 0;
+  background:none;border:0;cursor:pointer;text-align:left;font-weight:600;font-size:1rem}
+.q .pm{width:22px;height:22px;display:grid;place-items:center;transition:.22s;flex:0 0 auto;color:var(--soft)}
+.q.on .pm{transform:rotate(45deg);color:var(--amber-deep)}
+.q .a{max-height:0;overflow:hidden;transition:max-height .35s;color:var(--soft);font-size:.94rem}
 .q.on .a{padding-bottom:1rem}
+.row{display:flex;gap:.8rem;padding:.75rem 0;border-bottom:1px solid var(--line)}
 
-.contact{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:1.4rem}
-@media(max-width:860px){.contact{grid-template-columns:1fr}}
-.row{display:flex;gap:.85rem;padding:.8rem 0;border-bottom:1px solid var(--line)}
-
-footer{background:var(--ink);color:#B9B0DE;padding:3.2rem 0 1.4rem}
-footer h4{color:#fff;margin-bottom:.7rem;font-size:1.05rem}
-footer ul{list-style:none;margin:0;padding:0;display:grid;gap:.4rem;font-size:.9rem}
+footer{background:var(--ink);color:#A9B4C9;padding:3rem 0 1.3rem;margin-top:0}
+footer h4{color:#fff;margin-bottom:.7rem;font-size:1rem}
+footer ul{list-style:none;margin:0;padding:0;display:grid;gap:.38rem;font-size:.88rem}
 footer a:hover{color:var(--amber)}
-.fgrid{display:grid;grid-template-columns:1.5fr 1fr 1fr 1.3fr;gap:2rem}
+.fgrid{display:grid;grid-template-columns:1.6fr 1fr 1fr 1.3fr;gap:2rem}
 @media(max-width:860px){.fgrid{grid-template-columns:1fr 1fr}}
 @media(max-width:540px){.fgrid{grid-template-columns:1fr}}
-.copy{border-top:1px solid rgba(255,255,255,.12);margin-top:2.2rem;padding-top:1.1rem;font-size:.8rem;display:flex;flex-wrap:wrap;gap:.7rem;justify-content:space-between}
+.copy{border-top:1px solid rgba(246,244,239,.14);margin-top:2rem;padding-top:1rem;font-size:.78rem;
+  display:flex;flex-wrap:wrap;gap:.7rem;justify-content:space-between}
 
-.fab{position:fixed;right:16px;z-index:90;width:50px;height:50px;border-radius:50%;display:grid;place-items:center;border:0;cursor:pointer;box-shadow:var(--shadow);transition:.22s}
-#top{bottom:84px;background:var(--surface);border:1px solid var(--line);color:var(--txt);opacity:0;pointer-events:none}
+.fab{position:fixed;right:16px;z-index:90;width:48px;height:48px;display:grid;place-items:center;border:0;
+  cursor:pointer;box-shadow:var(--shadow);transition:.2s;--cut:11px}
+#top{bottom:80px;background:var(--surface);border:1px solid var(--rule);color:var(--txt);opacity:0;pointer-events:none}
 #top.on{opacity:1;pointer-events:auto}
-#wa{bottom:22px;background:#25D366;color:#fff}
+#wa{bottom:20px;background:#25D366;color:#fff}
 .fab:hover{transform:translateY(-3px)}
 
-.modal{position:fixed;inset:0;z-index:150;display:none;place-items:center;padding:1rem;background:rgba(16,13,28,.72);backdrop-filter:blur(4px)}
+.modal{position:fixed;inset:0;z-index:150;display:none;place-items:center;padding:1rem;background:rgba(12,21,38,.75);backdrop-filter:blur(4px)}
 .modal.on{display:grid}
-.mbox{background:var(--surface);border:1px solid var(--line);border-radius:18px;width:min(560px,96vw);max-height:88vh;overflow:auto;padding:1.5rem}
-.mbox .x{float:right;border:0;background:none;font-size:1.5rem;cursor:pointer;color:var(--txt-soft);line-height:1}
+.mbox{background:var(--surface);border:1px solid var(--rule);width:min(560px,96vw);max-height:88vh;overflow:auto;padding:1.5rem}
+.mbox .x{float:right;border:0;background:none;font-size:1.5rem;cursor:pointer;color:var(--soft);line-height:1}
 #toasts{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);z-index:200;display:grid;gap:.5rem;width:min(420px,92vw)}
-.toast{background:var(--ink);color:#fff;border-left:4px solid var(--amber);border-radius:11px;padding:.75rem 1rem;font-size:.88rem}
+.toast{background:var(--ink);color:#fff;border-left:3px solid var(--amber);padding:.72rem 1rem;font-size:.87rem}
 .toast.bad{border-left-color:var(--bad)}
-#ck{position:fixed;left:1rem;right:1rem;bottom:1rem;z-index:160;background:var(--surface);border:1px solid var(--line);
-  border-radius:14px;padding:.9rem 1.1rem;display:none;gap:.9rem;align-items:center;flex-wrap:wrap;max-width:700px;margin-inline:auto;box-shadow:var(--shadow)}
+#ck{position:fixed;left:1rem;right:1rem;bottom:1rem;z-index:160;background:var(--surface);border:1px solid var(--rule);
+  padding:.9rem 1.1rem;display:none;gap:.9rem;align-items:center;flex-wrap:wrap;max-width:680px;margin-inline:auto;box-shadow:var(--shadow)}
 #ck.on{display:flex}
 
-.rv{opacity:0;transform:translateY(20px);transition:opacity .6s,transform .6s}
+.rv{opacity:0;transform:translateY(16px);transition:opacity .55s,transform .55s}
 .rv.in{opacity:1;transform:none}
 @media(prefers-reduced-motion:reduce){
   .rv{opacity:1;transform:none;transition:none}
@@ -388,18 +436,18 @@ footer a:hover{color:var(--amber)}
 <!-- Marca PADELBOX: la caja con la esquina cortada y la bola saliendo de ella -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <symbol id="mark" viewBox="0 0 100 100">
-    <path d="M9 9 H67 L91 33 V91 H9 Z" fill="none" stroke="#5A31E8" stroke-width="12" stroke-linejoin="miter"/>
-    <path d="M24 78 L44 58" fill="none" stroke="#FFB020" stroke-width="9" stroke-linecap="round"/>
-    <circle cx="57" cy="45" r="12" fill="#FFB020"/>
+    <path d="M9 9 H67 L91 33 V91 H9 Z" fill="none" stroke="#F6F4EF" stroke-width="12" stroke-linejoin="miter"/>
+    <path d="M24 78 L44 58" fill="none" stroke="#D98A2B" stroke-width="9" stroke-linecap="round"/>
+    <circle cx="57" cy="45" r="12" fill="#D98A2B"/>
   </symbol>
   <symbol id="lockup" viewBox="0 0 280 280">
-    <rect width="280" height="280" rx="0" fill="#161327"/>
-    <path d="M280 0 L280 34 L246 0 Z" fill="#5A31E8"/>
-    <path d="M0 280 L34 280 L0 246 Z" fill="#FFB020"/>
+    <rect width="280" height="280" fill="#0C1526"/>
+    <path d="M280 0 L280 32 L248 0 Z" fill="#16305C"/>
+    <path d="M0 280 L32 280 L0 248 Z" fill="#D98A2B"/>
     <use href="#mark" x="84" y="38" width="112" height="112"/>
-    <text x="140" y="212" text-anchor="middle" font-family="Bricolage Grotesque,sans-serif" font-weight="800" font-size="46" letter-spacing="-1">
-      <tspan fill="#FFFFFF">PADEL</tspan><tspan fill="#FFB020">BOX</tspan></text>
-    <text x="140" y="242" text-anchor="middle" font-family="JetBrains Mono,monospace" font-weight="700" font-size="12" letter-spacing="7" fill="#8267FF">PADEL · FITNESS</text>
+    <text x="140" y="212" text-anchor="middle" font-family="Archivo,sans-serif" font-weight="800" font-size="44" letter-spacing="-1">
+      <tspan fill="#F6F4EF">PADEL</tspan><tspan fill="#D98A2B">BOX</tspan></text>
+    <text x="140" y="242" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-weight="600" font-size="12" letter-spacing="7" fill="#6E86AE">PADEL · FITNESS</text>
   </symbol>
 </svg>
 
@@ -412,14 +460,12 @@ footer a:hover{color:var(--amber)}
       <span class="wd"><b>Padel<i>box</i></b><span>Padel · Fitness</span></span>
     </a>
     <nav class="menu" id="menu" aria-label="Principal">
-      <a href="#nave" data-i18n="n.club">La nave</a>
-      <a href="#reservas" data-i18n="n.book">Reservas</a>
+      <a href="#reservar" data-i18n="n.book">Reservar</a>
       <a href="#cuotas" data-i18n="n.plans">Cuotas</a>
-      <a href="#gimnasio" data-i18n="n.gym">Gimnasio</a>
-      <a href="#escuela" data-i18n="n.school">Escuela</a>
-      <a href="#tools" data-i18n="n.tools">Herramientas</a>
-      <a href="#ranking" data-i18n="n.rank">Ranking</a>
-      <a href="#contacto" data-i18n="n.contact">Contacto</a>
+      <a href="#entrena" data-i18n="n.train">Entrena</a>
+      <a href="#herramientas" data-i18n="n.tools">Herramientas</a>
+      <a href="#club" data-i18n="n.club">Club</a>
+      <a href="#info" data-i18n="n.contact">Contacto</a>
     </nav>
     <div class="acts">
       <div class="lang" role="group" aria-label="Idioma">
@@ -427,7 +473,7 @@ footer a:hover{color:var(--amber)}
         <button type="button" data-lang="en" aria-pressed="false">EN</button>
       </div>
       <button class="ico" id="theme" type="button" aria-label="Cambiar tema">◐</button>
-      <a class="btn btn--a btn--sm cut" href="#reservas" data-i18n="n.cta">Reservar</a>
+      <a class="btn btn--a btn--sm cut" href="#reservar" data-i18n="n.cta">Reservar</a>
       <button class="ico" id="burger" type="button" aria-label="Menú" aria-expanded="false">
         <svg width="19" height="13" viewBox="0 0 19 13" fill="none" stroke="currentColor" stroke-width="2"><path d="M0 1h19M0 6.5h19M0 12h19"/></svg>
       </button>
@@ -436,37 +482,30 @@ footer a:hover{color:var(--amber)}
 </header>
 
 <nav class="drawer" id="drawer" aria-label="Menú móvil">
-  <a href="#reservas" class="cta cut" data-i18n="n.cta">Reservar</a>
-  <a href="#nave" data-i18n="n.club">La nave</a>
-  <a href="#reservas" data-i18n="n.book">Reservas</a>
+  <a href="#reservar" class="cta cut" data-i18n="n.cta">Reservar</a>
+  <a href="#reservar" data-i18n="n.book">Reservar pista o clase</a>
   <a href="#cuotas" data-i18n="n.plans">Cuotas</a>
-  <a href="#gimnasio" data-i18n="n.gym">Gimnasio</a>
-  <a href="#escuela" data-i18n="n.school">Escuela</a>
-  <a href="#tools" data-i18n="n.tools">Herramientas</a>
-  <a href="#ranking" data-i18n="n.rank">Ranking</a>
-  <a href="#pareja" data-i18n="n.partner">Busco pareja</a>
-  <a href="#cafeteria" data-i18n="n.cafe">Cafetería</a>
-  <a href="#faq">FAQ</a>
-  <a href="#contacto" data-i18n="n.contact">Contacto</a>
+  <a href="#entrena" data-i18n="n.train">Entrena</a>
+  <a href="#herramientas" data-i18n="n.tools">Herramientas</a>
+  <a href="#club" data-i18n="n.club">Club</a>
+  <a href="#info" data-i18n="n.contact">Contacto</a>
 </nav>
 
 <main id="main">
-<!-- ══════════ HERO ══════════ -->
+<!-- 1 ─ INICIO -->
 <section class="hero" id="inicio">
   <canvas id="hc" aria-hidden="true"></canvas>
   <div class="wrap">
     <div class="hero-split">
       <div>
-        <span class="kicker cut" data-i18n="h.kick">Pádel + gimnasio · Todo bajo el mismo techo</span>
-        <h1 style="margin:1rem 0"><span data-i18n="h.t1">Del calentamiento</span><br><em data-i18n="h.t2">al último punto</em></h1>
+        <span class="kicker" data-i18n="h.kick">Pádel + gimnasio · Todo bajo el mismo techo</span>
+        <h1 style="margin:1.1rem 0"><span data-i18n="h.t1">Del calentamiento</span><br><em data-i18n="h.t2">al último punto</em></h1>
         <p class="lead" data-i18n="h.lead">Cuatro pistas indoor, un gimnasio de 560 m², vestuarios y cafetería en la misma nave. Entrenas, juegas, te duchas y te quedas a comer sin mover el coche.</p>
         <div class="hero-cta">
-          <a class="btn btn--a cut" href="#reservas" data-i18n="h.cta1">Reservar pista o clase</a>
+          <a class="btn btn--a cut" href="#reservar" data-i18n="h.cta1">Reservar pista o clase</a>
           <a class="btn btn--o" href="#cuotas" data-i18n="h.cta2">Calcular mi cuota</a>
         </div>
       </div>
-
-      <!-- El club ahora: la página abre mostrando estado, no un formulario vacío -->
       <aside class="live" aria-live="polite">
         <h4><span data-i18n="h.now">El club ahora</span> <time id="clockNow">--:--</time></h4>
         <div class="live-row"><span class="k" data-i18n="h.courts">Pistas libres</span>
@@ -475,118 +514,92 @@ footer a:hover{color:var(--amber)}
           <span style="display:flex;align-items:center;gap:.6rem"><span class="gauge"><i id="gGym"></i></span><b class="v" id="vGym">–</b></span></div>
         <div class="live-row"><span class="k" data-i18n="h.next">Próxima clase dirigida</span><b class="v" id="vNext">–</b></div>
         <div class="live-row"><span class="k" data-i18n="h.open">Estado</span><b class="v" id="vOpen">–</b></div>
-        <a class="btn btn--p cut" href="#reservas" data-i18n="h.cta3">Ver huecos de hoy</a>
       </aside>
     </div>
-
     <div class="marquee" aria-hidden="true"><div id="mq"></div></div>
   </div>
 </section>
 
-<!-- ══════════ LA NAVE ══════════ -->
-<section class="section" id="nave">
+<!-- 2 ─ RESERVAR: el plano y el motor, juntos -->
+<section class="block" id="reservar">
   <div class="wrap">
-    <div class="sec-head rv">
-      <div>
-        <span class="eyebrow cut" data-i18n="nv.eye">La nave</span>
-        <h2 style="margin-top:.8rem" data-i18n="nv.t">Cuatro pistas, un gimnasio y una barra</h2>
-        <p class="lead" data-i18n="nv.lead">Todo en planta baja y sin escaleras: las cuatro pistas en línea, los vestuarios pegados a ellas, el gimnasio al fondo y la cafetería con vistas a la pista 4. Toca una zona del plano para ir a su sección.</p>
-      </div>
+    <div class="head rv">
+      <span class="eyebrow" data-i18n="r.eye">Reservas</span>
+      <h2 data-i18n="r.t">Elige la zona y la hora</h2>
+      <p data-i18n="r.lead">Cuatro pistas en línea, vestuarios pegados a ellas, el gimnasio al fondo y la cafetería con vistas a la pista 4. Toca una pista en el plano y cambia entre pádel y gimnasio: las dos cosas caen en el mismo carrito.</p>
     </div>
 
-    <div class="plan rv">
+    <div class="plan rv" style="margin-bottom:1.6rem">
       <svg viewBox="0 0 1000 700" role="img" aria-label="Plano de la nave: 4 pistas de pádel, vestuarios, gimnasio y cafetería">
         <g id="zones"></g>
-        <text x="0" y="688" font-family="JetBrains Mono" font-size="14" fill="var(--txt-soft)" id="planFoot">1 840 m² · 4 pistas indoor · gimnasio 560 m² · acceso y aseos adaptados</text>
+        <text x="0" y="688" font-family="IBM Plex Mono" font-size="14" fill="var(--faint)" id="planFoot">1 840 m² · 4 pistas indoor · gimnasio 560 m² · acceso y aseos adaptados</text>
       </svg>
       <div class="legend">
         <span class="st-ok"><i style="background:var(--ok)"></i><span data-i18n="nv.free">Pista libre</span></span>
         <span class="st-no"><i style="background:var(--bad)"></i><span data-i18n="nv.busy">Pista ocupada</span></span>
-        <span><i style="background:var(--brand)"></i><span data-i18n="nv.sel">Seleccionada</span></span>
+        <span><i style="background:var(--navy)"></i><span data-i18n="nv.sel">Seleccionada</span></span>
         <span><i style="background:var(--amber)"></i><span data-i18n="nv.serv">Zonas de servicio</span></span>
       </div>
-      <div class="plan-info">
-        <div class="panel pad" id="zoneCard">
-          <span class="eyebrow cut" data-i18n="nv.detail">Detalle</span>
-          <h3 id="zName" style="margin:.6rem 0 .3rem">—</h3>
-          <p id="zDesc" style="font-size:.92rem;color:var(--txt-soft);margin:0 0 .8rem">—</p>
-          <div id="zMeta" style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.9rem"></div>
-          <button class="btn btn--p btn--sm cut" id="zGo" data-i18n="nv.go">Ir a esta zona</button>
-        </div>
-        <div class="panel pad"><b class="num" style="font-size:2rem">4</b><br><span data-i18n="nv.f1">pistas panorámicas indoor, todas con cristal al fondo y LED antirreflejo.</span></div>
-        <div class="panel pad"><b class="num" style="font-size:2rem">560 m²</b><br><span data-i18n="nv.f2">de gimnasio: fuerza, cardio, zona funcional y sala de dirigidas.</span></div>
-        <div class="panel pad"><b class="num" style="font-size:2rem">07–24</b><br><span data-i18n="nv.f3">todos los días. Acceso con QR fuera del horario de recepción.</span></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ══════════ RESERVAS (pista + gimnasio en el mismo motor) ══════════ -->
-<section class="section section--tint" id="reservas">
-  <div class="wrap">
-    <div class="sec-head rv">
-      <div>
-        <span class="eyebrow cut" data-i18n="r.eye">Reservas</span>
-        <h2 style="margin-top:.8rem" data-i18n="r.t">Pista y clase, en la misma pantalla</h2>
-        <p class="lead" data-i18n="r.lead">Cambia entre pádel y gimnasio sin salir de aquí. Puedes mezclar las dos cosas en la misma reserva: pista a las 19:00 y funcional a las 20:30 salen en el mismo carrito y en el mismo total.</p>
-      </div>
-    </div>
-
-    <div class="seg rv" role="group" aria-label="Tipo de reserva">
-      <button type="button" data-mode="padel" aria-pressed="true" data-i18n="r.mPadel">🎾 Pista de pádel</button>
-      <button type="button" data-mode="gym" aria-pressed="false" data-i18n="r.mGym">🏋️ Clase dirigida</button>
     </div>
 
     <div class="res">
-      <div class="panel pad rv">
-        <div style="display:flex;gap:.8rem;flex-wrap:wrap;align-items:end;margin-bottom:1rem" id="padelCtl">
-          <div class="field" style="margin:0;min-width:170px"><label for="court" data-i18n="r.court">Pista</label><select id="court"></select></div>
-          <div class="field" style="margin:0;min-width:130px"><label for="dur" data-i18n="r.dur">Duración</label>
-            <select id="dur"><option value="60">60 min</option><option value="90" selected>90 min</option><option value="120">120 min</option></select></div>
+      <div class="rv">
+        <div id="zoneCard" style="border-left:2px solid var(--amber);padding:.2rem 0 .2rem 1rem;margin-bottom:1.4rem">
+          <h3 id="zName" style="margin:0 0 .3rem">—</h3>
+          <p id="zDesc" style="font-size:.92rem;color:var(--soft);margin:0 0 .7rem;max-width:58ch">—</p>
+          <div id="zMeta" style="display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:.8rem"></div>
+          <button class="btn btn--o btn--sm" id="zGo" data-i18n="nv.go">Ir a esta zona</button>
         </div>
-        <div class="field" style="max-width:260px" id="rateCtl"><label for="rate" data-i18n="r.rate">Tarifa</label>
-          <select id="rate">
-            <option value="1" data-i18n="r.r1">Sin abono</option>
-            <option value="0.75" data-i18n="r.r2">Abono Pádel (−25 %)</option>
-            <option value="0.6" data-i18n="r.r3">Abono Total (−40 %)</option>
-          </select></div>
 
+        <div class="seg" role="group" aria-label="Tipo de reserva">
+          <button type="button" data-mode="padel" aria-pressed="true" data-i18n="r.mPadel">Pista de pádel</button>
+          <button type="button" data-mode="gym" aria-pressed="false" data-i18n="r.mGym">Clase dirigida</button>
+        </div>
+        <div style="display:flex;gap:.8rem;flex-wrap:wrap;align-items:end;margin-bottom:1rem">
+          <div id="padelCtl" style="display:flex;gap:.8rem;flex-wrap:wrap;align-items:end">
+            <div class="field" style="margin:0;min-width:150px"><label for="court" data-i18n="r.court">Pista</label><select id="court"></select></div>
+            <div class="field" style="margin:0;min-width:120px"><label for="dur" data-i18n="r.dur">Duración</label>
+              <select id="dur"><option value="60">60 min</option><option value="90" selected>90 min</option><option value="120">120 min</option></select></div>
+          </div>
+          <div class="field" style="margin:0;min-width:170px"><label for="rate" data-i18n="r.rate">Tarifa</label>
+            <select id="rate">
+              <option value="1" data-i18n="r.r1">Sin abono</option>
+              <option value="0.75" data-i18n="r.r2">Abono Pádel (−25 %)</option>
+              <option value="0.6" data-i18n="r.r3">Abono Total (−40 %)</option>
+            </select></div>
+        </div>
         <div class="days" id="days" role="group" aria-label="Día"></div>
         <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:1.1rem">
-          <h3 id="slotT" style="font-size:1.1rem">—</h3>
-          <small class="num" id="slotC" style="color:var(--txt-soft)"></small>
+          <h3 id="slotT" style="font-size:1.05rem">—</h3>
+          <small class="num" id="slotC" style="color:var(--faint)"></small>
         </div>
         <div class="slots" id="slots"></div>
       </div>
 
       <aside class="cart rv">
-        <div class="panel pad">
-          <h3 data-i18n="c.t">Tu reserva</h3>
-          <ul id="cartL"></ul>
-          <div class="void" id="cartE" data-i18n="c.empty">Aún no has elegido nada.</div>
-          <div class="tot"><span data-i18n="c.total">Total</span><b class="num" id="cartT">0,00 €</b></div>
-          <small id="cartS" style="color:var(--txt-soft);display:block;margin-top:.3rem"></small>
-          <button class="btn btn--a cut" style="width:100%;margin-top:.9rem" id="checkout" disabled data-i18n="c.go">Confirmar</button>
-          <button class="btn btn--o btn--sm" style="width:100%;margin-top:.5rem" id="clear" data-i18n="c.clear">Vaciar</button>
-          <p style="font-size:.76rem;color:var(--txt-soft);margin:.8rem 0 0" data-i18n="c.note">Se guarda en este navegador. La confirmación final es en recepción o por WhatsApp.</p>
-        </div>
+        <h3 data-i18n="c.t">Tu reserva</h3>
+        <ul id="cartL"></ul>
+        <div class="void" id="cartE" data-i18n="c.empty">Aún no has elegido nada.</div>
+        <div class="tot"><span data-i18n="c.total">Total</span><b class="num" id="cartT">0,00 €</b></div>
+        <small id="cartS" style="color:var(--faint);display:block;margin-top:.3rem"></small>
+        <button class="btn btn--a cut" style="width:100%;margin-top:.9rem" id="checkout" disabled data-i18n="c.go">Confirmar</button>
+        <button class="btn btn--o btn--sm" style="width:100%;margin-top:.5rem" id="clear" data-i18n="c.clear">Vaciar</button>
+        <p style="font-size:.75rem;color:var(--faint);margin:.8rem 0 0" data-i18n="c.note">Se guarda en este navegador. La confirmación final es en recepción o por WhatsApp.</p>
       </aside>
     </div>
   </div>
 </section>
 
-<!-- ══════════ CUOTAS: calculadora con punto de cruce ══════════ -->
-<section class="section" id="cuotas">
+<!-- 3 ─ CUOTAS -->
+<section class="block block--sunk" id="cuotas">
   <div class="wrap">
-    <div class="sec-head rv">
-      <div>
-        <span class="eyebrow cut" data-i18n="q.eye">Cuotas</span>
-        <h2 style="margin-top:.8rem" data-i18n="q.t">¿Te sale a cuenta el abono?</h2>
-        <p class="lead" data-i18n="q.lead">Mueve los deslizadores con lo que juegas y entrenas al mes. Calculamos lo que pagarías con cada opción y te marcamos la más barata. Sin letra pequeña: el cálculo está a la vista.</p>
-      </div>
+    <div class="head rv">
+      <span class="eyebrow" data-i18n="q.eye">Cuotas</span>
+      <h2 data-i18n="q.t">¿Te sale a cuenta el abono?</h2>
+      <p data-i18n="q.lead">Mueve los deslizadores con lo que juegas y entrenas al mes. Calculamos lo que pagarías con cada opción y te marcamos la más barata. Sin letra pequeña: el cálculo está a la vista.</p>
     </div>
     <div class="quota">
-      <div class="panel pad rv">
+      <div class="rv">
         <div class="field">
           <label for="qPadel"><span data-i18n="q.s1">Partidos de pádel al mes</span> — <b class="num" id="qPadelV">6</b></label>
           <input class="range" type="range" id="qPadel" min="0" max="24" value="6">
@@ -607,13 +620,13 @@ footer a:hover{color:var(--amber)}
             <option value="1" data-i18n="q.sh1">Pago yo la pista entera</option>
           </select>
         </div>
-        <p style="font-size:.8rem;color:var(--txt-soft);margin:0" data-i18n="q.note">Se calcula con tarifa media de pista (valle y punta mezclados) y 90 minutos por partido.</p>
+        <p style="font-size:.79rem;color:var(--faint);margin:0" data-i18n="q.note">Se calcula con tarifa media de pista (valle y punta mezclados) y 90 minutos por partido.</p>
       </div>
       <div class="rv">
         <div class="plans" id="plans"></div>
-        <div class="panel pad" style="margin-top:1rem">
-          <h3 style="font-size:1.1rem" id="qVerdict">—</h3>
-          <p id="qWhy" style="font-size:.9rem;color:var(--txt-soft);margin:.4rem 0 0"></p>
+        <div style="margin-top:1.2rem;border-left:2px solid var(--amber);padding-left:1rem">
+          <h3 id="qVerdict" style="font-size:1.08rem">—</h3>
+          <p id="qWhy" style="font-size:.9rem;color:var(--soft);margin:.4rem 0 0"></p>
           <p id="qCross" style="font-size:.9rem;margin:.6rem 0 0"></p>
         </div>
       </div>
@@ -621,76 +634,74 @@ footer a:hover{color:var(--amber)}
   </div>
 </section>
 
-<!-- ══════════ GIMNASIO ══════════ -->
-<section class="section section--tint" id="gimnasio">
+<!-- 4 ─ ENTRENA: gimnasio y escuela, antes dos secciones -->
+<section class="block" id="entrena">
   <div class="wrap">
-    <div class="sec-head rv">
-      <div>
-        <span class="eyebrow cut" data-i18n="g.eye">Gimnasio</span>
-        <h2 style="margin-top:.8rem" data-i18n="g.t">Entrena cuando esté vacío</h2>
-        <p class="lead" data-i18n="g.lead">Estos son los datos de aforo de la última semana, hora a hora. Pincha en un día para ver su curva y te decimos la franja más despejada.</p>
-      </div>
-      <div style="text-align:right">
-        <small style="color:var(--txt-soft);display:block" data-i18n="g.best">Mejor franja del día</small>
-        <b class="num" id="gBest" style="font-size:1.7rem">—</b>
-      </div>
+    <div class="head rv">
+      <span class="eyebrow" data-i18n="e2.eye">Entrena</span>
+      <h2 data-i18n="e2.t">Gimnasio y escuela</h2>
+      <p data-i18n="e2.lead">Las dos formas de venir aquí que no son jugar un partido suelto: entrenar por tu cuenta con las dirigidas, o meterte en un grupo de la escuela de pádel.</p>
     </div>
-    <div class="panel pad rv">
-      <div class="tabs" id="gDays" role="group" aria-label="Día de la semana"></div>
-      <div class="occ" id="occ" role="img" aria-label="Aforo del gimnasio por horas"></div>
-      <div class="occ-x" id="occX"></div>
-      <div style="display:flex;flex-wrap:wrap;gap:1.2rem;margin-top:1rem;font-size:.83rem;color:var(--txt-soft)">
-        <span class="st-ok"><i class="dot"></i><span data-i18n="g.l1">Tranquilo (menos del 40 %)</span></span>
-        <span class="st-mid"><i class="dot"></i><span data-i18n="g.l2">Movido (40–75 %)</span></span>
-        <span class="st-no"><i class="dot"></i><span data-i18n="g.l3">Lleno (más del 75 %)</span></span>
-      </div>
+    <div class="tabs rv" role="tablist" data-group="entrena">
+      <button role="tab" aria-selected="true" data-tab="gym" data-group="entrena" data-i18n="tb.gym">Gimnasio</button>
+      <button role="tab" aria-selected="false" data-tab="school" data-group="entrena" data-i18n="tb.school">Escuela de pádel</button>
     </div>
-    <h3 style="margin:2rem 0 1rem" data-i18n="g.classes">Clases dirigidas de esta semana</h3>
-    <div class="cards" id="gymCards"></div>
-  </div>
-</section>
 
-<!-- ══════════ ESCUELA ══════════ -->
-<section class="section" id="escuela">
-  <div class="wrap">
-    <div class="sec-head rv">
-      <div>
-        <span class="eyebrow cut" data-i18n="e.eye">Escuela de pádel</span>
-        <h2 style="margin-top:.8rem" data-i18n="e.t">Grupos de cuatro, nunca de seis</h2>
+    <div class="tp on" id="tab-gym" data-panel-group="entrena" role="tabpanel">
+      <div class="rv">
+        <div style="display:flex;flex-wrap:wrap;gap:1rem;justify-content:space-between;align-items:end;margin-bottom:.4rem">
+          <p class="lead" style="margin:0" data-i18n="g.lead">Estos son los datos de aforo de la última semana, hora a hora. Pincha en un día para ver su curva y te decimos la franja más despejada.</p>
+          <div style="text-align:right">
+            <small style="color:var(--faint);display:block" data-i18n="g.best">Mejor franja del día</small>
+            <b class="num" id="gBest" style="font-size:1.6rem">—</b>
+          </div>
+        </div>
+        <div class="filters" id="gDays" role="group" aria-label="Día de la semana"></div>
+        <div class="occ" id="occ" role="img" aria-label="Aforo del gimnasio por horas"></div>
+        <div class="occ-x" id="occX"></div>
+        <div style="display:flex;flex-wrap:wrap;gap:1.2rem;margin-top:.9rem;font-size:.82rem;color:var(--soft)">
+          <span class="st-ok"><i class="dot"></i><span data-i18n="g.l1">Tranquilo (menos del 40 %)</span></span>
+          <span class="st-mid"><i class="dot"></i><span data-i18n="g.l2">Movido (40–75 %)</span></span>
+          <span class="st-no"><i class="dot"></i><span data-i18n="g.l3">Lleno (más del 75 %)</span></span>
+        </div>
+        <h3 style="margin:2rem 0 1rem" data-i18n="g.classes">Clases dirigidas de esta semana</h3>
+        <div class="cards" id="gymCards"></div>
+      </div>
+    </div>
+
+    <div class="tp" id="tab-school" data-panel-group="entrena" role="tabpanel">
+      <div class="rv">
         <p class="lead" data-i18n="e.lead">Cuatro alumnos por pista y entrenador titulado. Filtra por nivel para ver los grupos con plaza.</p>
+        <div class="filters" role="group" aria-label="Nivel">
+          <button class="chip on" data-lvl="all" aria-pressed="true" data-i18n="e.all">Todos</button>
+          <button class="chip" data-lvl="iniciacion" aria-pressed="false" data-i18n="e.l1">Iniciación</button>
+          <button class="chip" data-lvl="intermedio" aria-pressed="false" data-i18n="e.l2">Intermedio</button>
+          <button class="chip" data-lvl="avanzado" aria-pressed="false" data-i18n="e.l3">Avanzado</button>
+          <button class="chip" data-lvl="infantil" aria-pressed="false" data-i18n="e.l4">Infantil</button>
+        </div>
+        <div class="cards" id="classes"></div>
       </div>
     </div>
-    <div class="tabs rv" role="group" aria-label="Nivel">
-      <button class="chip on" data-lvl="all" aria-pressed="true" data-i18n="e.all">Todos</button>
-      <button class="chip" data-lvl="iniciacion" aria-pressed="false" data-i18n="e.l1">Iniciación</button>
-      <button class="chip" data-lvl="intermedio" aria-pressed="false" data-i18n="e.l2">Intermedio</button>
-      <button class="chip" data-lvl="avanzado" aria-pressed="false" data-i18n="e.l3">Avanzado</button>
-      <button class="chip" data-lvl="infantil" aria-pressed="false" data-i18n="e.l4">Infantil</button>
-    </div>
-    <div class="cards" id="classes"></div>
   </div>
 </section>
 
-<!-- ══════════ HERRAMIENTAS ══════════ -->
-<section class="section section--tint" id="tools">
+<!-- 5 ─ HERRAMIENTAS -->
+<section class="block block--sunk" id="herramientas">
   <div class="wrap">
-    <div class="sec-head rv">
-      <div>
-        <span class="eyebrow cut" data-i18n="t.eye">Herramientas del club</span>
-        <h2 style="margin-top:.8rem" data-i18n="t.t">Cuatro cosas que sí vas a usar</h2>
-        <p class="lead" data-i18n="t.lead">Marcador con cronómetro y estadísticas, generador de torneos con cuadro clicable, planificador semanal que mezcla pista y gimnasio, y pizarra táctica. Nada de esto pide registro.</p>
-      </div>
+    <div class="head rv">
+      <span class="eyebrow" data-i18n="t.eye">Herramientas del club</span>
+      <h2 data-i18n="t.t">Cuatro cosas que sí vas a usar</h2>
+      <p data-i18n="t.lead">Marcador con cronómetro y estadísticas, generador de torneos con cuadro clicable, planificador semanal que mezcla pista y gimnasio, y pizarra táctica. Nada de esto pide registro.</p>
     </div>
-    <div class="tabs rv" role="tablist">
-      <button class="chip on" role="tab" aria-selected="true" data-tab="marcador" data-i18n="t.1">🎾 Marcador</button>
-      <button class="chip" role="tab" aria-selected="false" data-tab="torneo" data-i18n="t.2">🏆 Torneos</button>
-      <button class="chip" role="tab" aria-selected="false" data-tab="plan" data-i18n="t.3">📅 Plan semanal</button>
-      <button class="chip" role="tab" aria-selected="false" data-tab="pizarra" data-i18n="t.4">📐 Pizarra táctica</button>
+    <div class="tabs rv" role="tablist" data-group="tools">
+      <button role="tab" aria-selected="true" data-tab="marcador" data-group="tools" data-i18n="t.1">Marcador</button>
+      <button role="tab" aria-selected="false" data-tab="torneo" data-group="tools" data-i18n="t.2">Torneos</button>
+      <button role="tab" aria-selected="false" data-tab="plan" data-group="tools" data-i18n="t.3">Plan semanal</button>
+      <button role="tab" aria-selected="false" data-tab="pizarra" data-group="tools" data-i18n="t.4">Pizarra táctica</button>
     </div>
 
-    <!-- MARCADOR -->
-    <div class="tp on" id="tab-marcador" role="tabpanel">
-      <div class="panel pad rv">
+    <div class="tp on" id="tab-marcador" data-panel-group="tools" role="tabpanel">
+      <div class="rv">
         <div style="display:flex;flex-wrap:wrap;gap:.7rem;align-items:end;margin-bottom:1rem">
           <div class="field" style="margin:0"><label for="tA" data-i18n="m.a">Pareja A</label><input id="tA" value="Nosotros" maxlength="16"></div>
           <div class="field" style="margin:0"><label for="tB" data-i18n="m.b">Pareja B</label><input id="tB" value="Ellos" maxlength="16"></div>
@@ -714,20 +725,19 @@ footer a:hover{color:var(--amber)}
           <button class="btn btn--o btn--sm" id="share" data-i18n="m.share">Copiar acta</button>
         </div>
         <div class="stats" id="stats"></div>
-        <p style="text-align:center;font-size:.78rem;color:var(--txt-soft);margin-top:.7rem" data-i18n="m.keys">Teclas: <kbd>A</kbd> y <kbd>L</kbd> suman punto, <kbd>Z</kbd> deshace.</p>
+        <p style="text-align:center;font-size:.78rem;color:var(--faint);margin-top:.7rem" data-i18n="m.keys">Teclas: <kbd>A</kbd> y <kbd>L</kbd> suman punto, <kbd>Z</kbd> deshace.</p>
         <div id="log" aria-live="polite"></div>
       </div>
     </div>
 
-    <!-- TORNEOS -->
-    <div class="tp" id="tab-torneo" role="tabpanel">
-      <div class="panel pad rv">
+    <div class="tp" id="tab-torneo" data-panel-group="tools" role="tabpanel">
+      <div class="rv">
         <p class="lead" data-i18n="tr.lead">Dos formatos. La <b>liguilla rotatoria</b> cambia parejas y rivales cada ronda; el <b>cuadro eliminatorio</b> se juega a una vida y avanzas ganadores pinchando en ellos.</p>
         <div class="seg" role="group" aria-label="Formato">
           <button type="button" data-fmt="liga" aria-pressed="true" data-i18n="tr.f1">Liguilla rotatoria</button>
           <button type="button" data-fmt="cuadro" aria-pressed="false" data-i18n="tr.f2">Cuadro eliminatorio</button>
         </div>
-        <div style="display:grid;grid-template-columns:minmax(0,1fr) 240px;gap:1.2rem" class="tr-grid">
+        <div style="display:grid;grid-template-columns:minmax(0,1fr) 230px;gap:1.2rem" class="tr-grid">
           <div class="field">
             <label for="players" id="plLabel" data-i18n="tr.players">Jugadores, uno por línea o separados por comas</label>
             <textarea id="players" rows="7">Ana, Bea, Carlos, David, Elena, Fran, Gemma, Hugo</textarea>
@@ -749,35 +759,33 @@ footer a:hover{color:var(--amber)}
       </div>
     </div>
 
-    <!-- PLAN SEMANAL -->
-    <div class="tp" id="tab-plan" role="tabpanel">
-      <div class="panel pad rv">
+    <div class="tp" id="tab-plan" data-panel-group="tools" role="tabpanel">
+      <div class="rv">
         <p class="lead" data-i18n="pl.lead">Dinos cuántos días tienes y qué buscas, y repartimos la semana entre pista, gimnasio y descanso, respetando 48 horas entre sesiones de fuerza del mismo grupo.</p>
         <div style="display:flex;flex-wrap:wrap;gap:.8rem;align-items:end">
-          <div class="field" style="margin:0;min-width:140px"><label for="plDays" data-i18n="pl.days">Días libres</label>
+          <div class="field" style="margin:0;min-width:130px"><label for="plDays" data-i18n="pl.days">Días libres</label>
             <select id="plDays"><option>2</option><option>3</option><option selected>4</option><option>5</option><option>6</option></select></div>
-          <div class="field" style="margin:0;min-width:190px"><label for="plGoal" data-i18n="pl.goal">Objetivo</label>
+          <div class="field" style="margin:0;min-width:180px"><label for="plGoal" data-i18n="pl.goal">Objetivo</label>
             <select id="plGoal">
               <option value="juego" data-i18n="pl.g1">Mejorar mi pádel</option>
               <option value="fuerza" data-i18n="pl.g2">Ganar fuerza</option>
               <option value="peso" data-i18n="pl.g3">Perder grasa</option>
               <option value="lesion" data-i18n="pl.g4">Volver de una lesión</option>
             </select></div>
-          <div class="field" style="margin:0;min-width:150px"><label for="plLvl" data-i18n="pl.lvl">Nivel de pádel</label>
+          <div class="field" style="margin:0;min-width:145px"><label for="plLvl" data-i18n="pl.lvl">Nivel de pádel</label>
             <select id="plLvl"><option data-i18n="e.l1">Iniciación</option><option selected data-i18n="e.l2">Intermedio</option><option data-i18n="e.l3">Avanzado</option></select></div>
           <button class="btn btn--p btn--sm cut" id="plGen" data-i18n="pl.gen">Generar semana</button>
           <button class="btn btn--o btn--sm" id="plCopy" data-i18n="pl.copy">Copiar plan</button>
         </div>
         <div class="week" id="week"></div>
-        <p id="plNote" style="font-size:.86rem;color:var(--txt-soft);margin-top:1rem"></p>
+        <p id="plNote" style="font-size:.86rem;color:var(--soft);margin-top:1rem;max-width:70ch"></p>
       </div>
     </div>
 
-    <!-- PIZARRA -->
-    <div class="tp" id="tab-pizarra" role="tabpanel">
-      <div class="panel pad rv">
+    <div class="tp" id="tab-pizarra" data-panel-group="tools" role="tabpanel">
+      <div class="rv">
         <p class="lead" data-i18n="pz.lead">Pista a escala real (20 × 10 m). Elige una jugada y avánzala paso a paso, o arrastra jugadores y bola para plantear la tuya. El lápiz dibuja trayectorias encima.</p>
-        <div class="tabs" id="plays" role="group" aria-label="Jugadas"></div>
+        <div class="filters" id="plays" role="group" aria-label="Jugadas"></div>
         <div class="court-wrap"><svg id="pz" viewBox="0 0 1080 580" role="img" aria-label="Pizarra táctica"></svg></div>
         <p class="step-txt" id="pzStep" aria-live="polite">—</p>
         <div style="display:flex;flex-wrap:wrap;gap:.55rem;justify-content:center">
@@ -793,140 +801,126 @@ footer a:hover{color:var(--amber)}
   </div>
 </section>
 
-<!-- ══════════ RANKING ══════════ -->
-<section class="section" id="ranking">
+<!-- 6 ─ CLUB: ranking, pareja y cafetería, antes tres secciones -->
+<section class="block" id="club">
   <div class="wrap">
-    <div class="sec-head rv">
-      <div>
-        <span class="eyebrow cut" data-i18n="rk.eye">Liga interna</span>
-        <h2 style="margin-top:.8rem" data-i18n="rk.t">Ranking del club</h2>
-        <p class="lead" data-i18n="rk.lead">Ordena por cualquier columna y busca a tu pareja. Se actualiza los lunes con los resultados de la semana.</p>
-      </div>
-      <div style="display:flex;gap:.5rem;flex-wrap:wrap">
-        <input id="rkQ" placeholder="Buscar…" style="border:1px solid var(--line);border-radius:10px;padding:.55rem .85rem;background:var(--surface)">
-        <select id="rkC" style="border:1px solid var(--line);border-radius:10px;padding:.55rem .85rem;background:var(--surface)">
-          <option value="all" data-i18n="rk.all">Todas</option><option>1ª</option><option>2ª</option><option>3ª</option><option>Fem</option>
-        </select>
-      </div>
+    <div class="head rv">
+      <span class="eyebrow" data-i18n="c2.eye">Vida del club</span>
+      <h2 data-i18n="c2.t">Lo que pasa cuando no estás jugando</h2>
+      <p data-i18n="c2.lead">La liga interna, el tablón para encontrar con quién jugar y la carta de la cafetería, que es donde acaba cada partido.</p>
     </div>
-    <div class="tblbox rv">
-      <table class="t" id="rkT">
-        <thead><tr>
-          <th data-k="pos">#</th><th data-k="name" data-s="1" data-i18n="rk.p">Jugador/a</th>
-          <th data-k="cat" data-s="1" data-i18n="rk.c">Cat.</th><th data-k="pj">PJ</th><th data-k="pg">PG</th>
-          <th data-k="ratio">%</th><th data-k="pts" data-i18n="rk.pts">Puntos</th><th data-k="form" data-s="1" data-i18n="rk.f">Forma</th>
-        </tr></thead><tbody id="rkB"></tbody>
-      </table>
+    <div class="tabs rv" role="tablist" data-group="club">
+      <button role="tab" aria-selected="true" data-tab="rank" data-group="club" data-i18n="tb.rank">Ranking</button>
+      <button role="tab" aria-selected="false" data-tab="partner" data-group="club" data-i18n="tb.partner">Busco pareja</button>
+      <button role="tab" aria-selected="false" data-tab="cafe" data-group="club" data-i18n="tb.cafe">Cafetería</button>
     </div>
-  </div>
-</section>
 
-<!-- ══════════ BUSCO PAREJA ══════════ -->
-<section class="section section--tint" id="pareja">
-  <div class="wrap">
-    <div class="sec-head rv">
-      <div>
-        <span class="eyebrow cut" data-i18n="p.eye">Comunidad</span>
-        <h2 style="margin-top:.8rem" data-i18n="p.t">Busco pareja</h2>
+    <div class="tp on" id="tab-rank" data-panel-group="club" role="tabpanel">
+      <div class="rv">
+        <div style="display:flex;flex-wrap:wrap;gap:1rem;justify-content:space-between;align-items:end;margin-bottom:1rem">
+          <p class="lead" style="margin:0" data-i18n="rk.lead">Ordena por cualquier columna y busca a tu pareja. Se actualiza los lunes con los resultados de la semana.</p>
+          <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+            <input id="rkQ" placeholder="Buscar…" style="border:1px solid var(--line);border-radius:2px;padding:.52rem .8rem;background:var(--surface)">
+            <select id="rkC" style="border:1px solid var(--line);border-radius:2px;padding:.52rem .8rem;background:var(--surface)">
+              <option value="all" data-i18n="rk.all">Todas</option><option>1ª</option><option>2ª</option><option>3ª</option><option>Fem</option>
+            </select>
+          </div>
+        </div>
+        <div class="tblbox">
+          <table class="t" id="rkT">
+            <thead><tr>
+              <th data-k="pos">#</th><th data-k="name" data-s="1" data-i18n="rk.p">Jugador/a</th>
+              <th data-k="cat" data-s="1" data-i18n="rk.c">Cat.</th><th data-k="pj">PJ</th><th data-k="pg">PG</th>
+              <th data-k="ratio">%</th><th data-k="pts" data-i18n="rk.pts">Puntos</th><th data-k="form" data-s="1" data-i18n="rk.f">Forma</th>
+            </tr></thead><tbody id="rkB"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="tp" id="tab-partner" data-panel-group="club" role="tabpanel">
+      <div class="rv">
         <p class="lead" data-i18n="p.lead">Publica cuándo puedes jugar y con qué nivel. Filtra los anuncios y contacta por WhatsApp.</p>
+        <div style="display:grid;grid-template-columns:minmax(0,300px) minmax(0,1fr);gap:1.4rem" class="tr-grid">
+          <form id="mmF" novalidate style="border:1px solid var(--rule);background:var(--surface);padding:1.1rem">
+            <h3 style="font-size:1.02rem;margin-bottom:.8rem" data-i18n="p.pub">Publicar anuncio</h3>
+            <div class="field"><label for="mmN" data-i18n="p.name">Nombre</label><input id="mmN" required><span class="err"></span></div>
+            <div class="field"><label for="mmL" data-i18n="p.level">Nivel</label>
+              <select id="mmL"><option>Iniciación</option><option selected>Intermedio</option><option>Avanzado</option><option>Competición</option></select></div>
+            <div class="field"><label for="mmW" data-i18n="p.when">Franja</label>
+              <select id="mmW"><option data-i18n="p.w1">Mañanas</option><option data-i18n="p.w2">Mediodía</option><option selected data-i18n="p.w3">Tardes</option><option data-i18n="p.w4">Noches</option><option data-i18n="p.w5">Fin de semana</option></select></div>
+            <div class="field"><label for="mmM" data-i18n="p.msg">Mensaje</label><textarea id="mmM" rows="3" maxlength="140"></textarea></div>
+            <button class="btn btn--p cut" style="width:100%" data-i18n="p.send">Publicar</button>
+          </form>
+          <div>
+            <div class="filters" role="group" aria-label="Filtrar">
+              <button class="chip on" data-mm="all" aria-pressed="true" data-i18n="e.all">Todos</button>
+              <button class="chip" data-mm="Iniciación" aria-pressed="false">Iniciación</button>
+              <button class="chip" data-mm="Intermedio" aria-pressed="false">Intermedio</button>
+              <button class="chip" data-mm="Avanzado" aria-pressed="false">Avanzado</button>
+              <button class="chip" data-mm="Competición" aria-pressed="false">Competición</button>
+            </div>
+            <div class="cards" id="mmL2"></div>
+          </div>
+        </div>
       </div>
     </div>
-    <div style="display:grid;grid-template-columns:minmax(0,320px) minmax(0,1fr);gap:1.3rem" class="tr-grid">
-      <form class="panel pad rv" id="mmF" novalidate>
-        <h3 style="font-size:1.1rem" data-i18n="p.pub">Publicar anuncio</h3>
-        <div class="field"><label for="mmN" data-i18n="p.name">Nombre</label><input id="mmN" required><span class="err"></span></div>
-        <div class="field"><label for="mmL" data-i18n="p.level">Nivel</label>
-          <select id="mmL"><option>Iniciación</option><option selected>Intermedio</option><option>Avanzado</option><option>Competición</option></select></div>
-        <div class="field"><label for="mmW" data-i18n="p.when">Franja</label>
-          <select id="mmW"><option data-i18n="p.w1">Mañanas</option><option data-i18n="p.w2">Mediodía</option><option selected data-i18n="p.w3">Tardes</option><option data-i18n="p.w4">Noches</option><option data-i18n="p.w5">Fin de semana</option></select></div>
-        <div class="field"><label for="mmM" data-i18n="p.msg">Mensaje</label><textarea id="mmM" rows="3" maxlength="140"></textarea></div>
-        <button class="btn btn--p cut" style="width:100%" data-i18n="p.send">Publicar</button>
-      </form>
+
+    <div class="tp" id="tab-cafe" data-panel-group="club" role="tabpanel">
       <div class="rv">
-        <div class="tabs" role="group" aria-label="Filtrar">
-          <button class="chip on" data-mm="all" aria-pressed="true" data-i18n="e.all">Todos</button>
-          <button class="chip" data-mm="Iniciación" aria-pressed="false">Iniciación</button>
-          <button class="chip" data-mm="Intermedio" aria-pressed="false">Intermedio</button>
-          <button class="chip" data-mm="Avanzado" aria-pressed="false">Avanzado</button>
-          <button class="chip" data-mm="Competición" aria-pressed="false">Competición</button>
+        <div style="display:flex;flex-wrap:wrap;gap:1rem;justify-content:space-between;align-items:end;margin-bottom:1rem">
+          <p class="lead" style="margin:0" data-i18n="cf.lead">Cocina de verdad, opciones altas en proteína y batidos de después de entrenar. Marca lo que quieras y llévate el pedido escrito.</p>
+          <div style="text-align:right">
+            <small style="color:var(--faint);display:block" data-i18n="cf.sel">Tu pedido</small>
+            <b class="num" id="cfT" style="font-size:1.8rem">0,00 €</b>
+            <div><button class="btn btn--o btn--sm" id="cfSend" style="margin-top:.4rem" data-i18n="cf.order">Enviar a la barra</button></div>
+          </div>
         </div>
-        <div class="cards" id="mmL2"></div>
+        <div class="filters" role="group" aria-label="Filtrar carta">
+          <button class="chip on" data-cat="all" aria-pressed="true" data-i18n="e.all">Todo</button>
+          <button class="chip" data-cat="menu" aria-pressed="false" data-i18n="cf.c1">Menú</button>
+          <button class="chip" data-cat="prote" aria-pressed="false" data-i18n="cf.c2">Alto en proteína</button>
+          <button class="chip" data-cat="picar" aria-pressed="false" data-i18n="cf.c3">Para picar</button>
+          <button class="chip" data-cat="bebida" aria-pressed="false" data-i18n="cf.c4">Bebidas</button>
+        </div>
+        <div class="cards" id="menuGrid"></div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ══════════ CAFETERÍA ══════════ -->
-<section class="section" id="cafeteria">
+<!-- 7 ─ INFO: preguntas y contacto en la misma pantalla -->
+<section class="block block--sunk" id="info">
   <div class="wrap">
-    <div class="sec-head rv">
-      <div>
-        <span class="eyebrow cut" data-i18n="cf.eye">Cafetería</span>
-        <h2 style="margin-top:.8rem" data-i18n="cf.t">Se pide desde la pista</h2>
-        <p class="lead" data-i18n="cf.lead">Cocina de verdad, opciones altas en proteína y batidos de después de entrenar. Marca lo que quieras y llévate el pedido escrito.</p>
-      </div>
-      <div style="text-align:right">
-        <small style="color:var(--txt-soft);display:block" data-i18n="cf.sel">Tu pedido</small>
-        <b class="num" id="cfT" style="font-size:1.9rem">0,00 €</b>
-        <div><button class="btn btn--o btn--sm" id="cfSend" style="margin-top:.4rem" data-i18n="cf.order">Enviar a la barra</button></div>
-      </div>
+    <div class="head rv">
+      <span class="eyebrow" data-i18n="i.eye">Antes de venir</span>
+      <h2 data-i18n="i.t">Dudas y cómo llegar</h2>
     </div>
-    <div class="tabs rv" role="group" aria-label="Filtrar carta">
-      <button class="chip on" data-cat="all" aria-pressed="true" data-i18n="e.all">Todo</button>
-      <button class="chip" data-cat="menu" aria-pressed="false" data-i18n="cf.c1">Menú</button>
-      <button class="chip" data-cat="prote" aria-pressed="false" data-i18n="cf.c2">Alto en proteína</button>
-      <button class="chip" data-cat="picar" aria-pressed="false" data-i18n="cf.c3">Para picar</button>
-      <button class="chip" data-cat="bebida" aria-pressed="false" data-i18n="cf.c4">Bebidas</button>
-    </div>
-    <div class="cards" id="menuGrid"></div>
-  </div>
-</section>
-
-<!-- ══════════ FAQ ══════════ -->
-<section class="section section--tint" id="faq">
-  <div class="wrap">
-    <div class="sec-head rv"><div><span class="eyebrow cut">FAQ</span><h2 style="margin-top:.8rem" data-i18n="f.t">Preguntas frecuentes</h2></div></div>
-    <div class="faq rv" id="faqL"></div>
-  </div>
-</section>
-
-<!-- ══════════ CONTACTO ══════════ -->
-<section class="section" id="contacto">
-  <div class="wrap">
-    <div class="sec-head rv"><div><span class="eyebrow cut" data-i18n="ct.eye">Contacto</span><h2 style="margin-top:.8rem" data-i18n="ct.t">Pásate a verlo</h2></div></div>
-    <div class="contact">
-      <form class="panel pad rv" id="cF" novalidate>
-        <div class="field"><label for="cN" data-i18n="ct.n">Nombre</label><input id="cN" required autocomplete="name"><span class="err"></span></div>
-        <div class="field"><label for="cM" data-i18n="ct.m">Email</label><input id="cM" type="email" required autocomplete="email"><span class="err"></span></div>
-        <div class="field"><label for="cP" data-i18n="ct.p">Teléfono</label><input id="cP" type="tel" autocomplete="tel"><span class="err"></span></div>
-        <div class="field"><label for="cT" data-i18n="ct.s">Motivo</label>
-          <select id="cT"><option data-i18n="ct.o1">Alta de abono</option><option data-i18n="ct.o2">Prueba gratuita del gimnasio</option><option data-i18n="ct.o3">Escuela de pádel</option><option data-i18n="ct.o4">Empresas y eventos</option><option data-i18n="ct.o5">Otros</option></select></div>
-        <div class="field"><label for="cX" data-i18n="ct.msg">Mensaje</label><textarea id="cX" rows="4" required></textarea><span class="err"></span></div>
-        <label style="display:flex;gap:.55rem;align-items:flex-start;font-size:.82rem;color:var(--txt-soft)">
-          <input type="checkbox" id="cG" required style="margin-top:.25rem"><span data-i18n="ct.gdpr">Acepto la política de privacidad y el tratamiento de mis datos.</span></label>
-        <button class="btn btn--a cut" style="width:100%;margin-top:.9rem" data-i18n="ct.send">Enviar</button>
-      </form>
+    <div class="split">
       <div class="rv">
-        <div class="panel pad" style="margin-bottom:1rem">
-          <div class="row"><span>📍</span><div><b data-i18n="ct.addr">Dónde</b><br><span data-i18n="ct.addrV">Polígono industrial, nave 14 · a 12 min del centro</span></div></div>
-          <div class="row"><span>🕖</span><div><b data-i18n="ct.hours">Horario</b><br><span data-i18n="ct.hoursV">Todos los días de 07:00 a 24:00</span> — <span id="openNow" style="font-weight:700"></span></div></div>
-          <div class="row"><span>🅿️</span><div><b data-i18n="ct.park">Parking</b><br><span data-i18n="ct.parkV">80 plazas propias y dos puntos de carga eléctrica</span></div></div>
-          <div class="row" style="border:0"><span>💬</span><div><b>WhatsApp</b><br><a href="#" id="waLink" data-i18n="ct.wa">Escríbenos y te contestamos en minutos</a></div></div>
+        <h3 style="margin-bottom:.9rem" data-i18n="f.t">Preguntas frecuentes</h3>
+        <div class="faq" id="faqL"></div>
+      </div>
+      <div class="rv">
+        <div style="margin-bottom:1.4rem">
+          <div class="row"><span>📍</span><div><b data-i18n="ct.addr">Dónde</b><br><span style="color:var(--soft)" data-i18n="ct.addrV">Polígono industrial, nave 14 · a 12 min del centro</span></div></div>
+          <div class="row"><span>🕖</span><div><b data-i18n="ct.hours">Horario</b><br><span style="color:var(--soft)" data-i18n="ct.hoursV">Todos los días de 07:00 a 24:00</span> — <span id="openNow" style="font-weight:700"></span></div></div>
+          <div class="row"><span>🅿️</span><div><b data-i18n="ct.park">Parking</b><br><span style="color:var(--soft)" data-i18n="ct.parkV">80 plazas propias y dos puntos de carga eléctrica</span></div></div>
+          <div class="row" style="border:0"><span>💬</span><div><b>WhatsApp</b><br><a href="#" id="waLink" style="color:var(--navy);text-decoration:underline;text-underline-offset:3px" data-i18n="ct.wa">Escríbenos y te contestamos en minutos</a></div></div>
         </div>
-        <div class="panel" style="overflow:hidden;background:var(--ink)">
-          <svg viewBox="0 0 500 300" role="img" aria-label="Plano de situación">
-            <defs><pattern id="gp" width="42" height="42" patternUnits="userSpaceOnUse"><path d="M42 0H0v42" fill="none" stroke="rgba(255,255,255,.06)"/></pattern></defs>
-            <rect width="500" height="300" fill="#161327"/><rect width="500" height="300" fill="url(#gp)"/>
-            <path d="M-10 220 Q170 200 250 155 T520 80" stroke="#332B57" stroke-width="18" fill="none"/>
-            <path d="M110 -10 L145 310M375 -10 L345 310" stroke="#241E42" stroke-width="11" fill="none"/>
-            <g transform="translate(250,155)">
-              <circle r="44" fill="rgba(255,176,32,.13)"><animate attributeName="r" values="32;56;32" dur="3s" repeatCount="indefinite"/><animate attributeName="opacity" values=".5;0;.5" dur="3s" repeatCount="indefinite"/></circle>
-              <use href="#mark" x="-17" y="-17" width="34" height="34"/>
-              <text y="-30" text-anchor="middle" fill="#fff" font-family="Bricolage Grotesque" font-weight="800" font-size="17">PADELBOX</text>
-              <text y="36" text-anchor="middle" fill="#A79FC6" font-family="JetBrains Mono" font-size="10">NAVE 14 · POL. IND.</text>
-            </g>
-          </svg>
-        </div>
+        <form id="cF" novalidate>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 .8rem" class="tr-grid">
+            <div class="field"><label for="cN" data-i18n="ct.n">Nombre</label><input id="cN" required autocomplete="name"><span class="err"></span></div>
+            <div class="field"><label for="cM" data-i18n="ct.m">Email</label><input id="cM" type="email" required autocomplete="email"><span class="err"></span></div>
+            <div class="field"><label for="cP" data-i18n="ct.p">Teléfono</label><input id="cP" type="tel" autocomplete="tel"><span class="err"></span></div>
+            <div class="field"><label for="cT" data-i18n="ct.s">Motivo</label>
+              <select id="cT"><option data-i18n="ct.o1">Alta de abono</option><option data-i18n="ct.o2">Prueba gratuita del gimnasio</option><option data-i18n="ct.o3">Escuela de pádel</option><option data-i18n="ct.o4">Empresas y eventos</option><option data-i18n="ct.o5">Otros</option></select></div>
+          </div>
+          <div class="field"><label for="cX" data-i18n="ct.msg">Mensaje</label><textarea id="cX" rows="4" required></textarea><span class="err"></span></div>
+          <label style="display:flex;gap:.55rem;align-items:flex-start;font-size:.82rem;color:var(--soft)">
+            <input type="checkbox" id="cG" required style="margin-top:.25rem"><span data-i18n="ct.gdpr">Acepto la política de privacidad y el tratamiento de mis datos.</span></label>
+          <button class="btn btn--a cut" style="width:100%;margin-top:.9rem" data-i18n="ct.send">Enviar</button>
+        </form>
       </div>
     </div>
   </div>
@@ -937,20 +931,20 @@ footer a:hover{color:var(--amber)}
   <div class="wrap">
     <div class="fgrid">
       <div>
-        <a href="#inicio" style="display:inline-block;width:120px" aria-label="Padelbox Club">
+        <a href="#inicio" style="display:inline-block;width:112px" aria-label="Padelbox Club">
           <svg viewBox="0 0 280 280" style="width:100%;height:auto;display:block" role="img" aria-label="Padelbox Club"><use href="#lockup"/></svg></a>
-        <p style="margin-top:.9rem;font-size:.9rem" data-i18n="ft.about">Cuatro pistas, gimnasio, vestuarios y cafetería en la misma nave. Pádel y fitness sin cambiar de sitio.</p>
+        <p style="margin-top:.9rem;font-size:.88rem" data-i18n="ft.about">Cuatro pistas, gimnasio, vestuarios y cafetería en la misma nave. Pádel y fitness sin cambiar de sitio.</p>
       </div>
       <div><h4 data-i18n="ft.club">Club</h4><ul>
-        <li><a href="#nave" data-i18n="n.club">La nave</a></li><li><a href="#reservas" data-i18n="n.book">Reservas</a></li>
-        <li><a href="#gimnasio" data-i18n="n.gym">Gimnasio</a></li><li><a href="#cafeteria" data-i18n="n.cafe">Cafetería</a></li></ul></div>
+        <li><a href="#reservar" data-i18n="n.book">Reservar</a></li><li><a href="#cuotas" data-i18n="n.plans">Cuotas</a></li>
+        <li><a href="#entrena" data-i18n="n.train">Entrena</a></li><li><a href="#club" data-i18n="tb.cafe">Cafetería</a></li></ul></div>
       <div><h4 data-i18n="ft.play">Juega</h4><ul>
-        <li><a href="#escuela" data-i18n="n.school">Escuela</a></li><li><a href="#ranking" data-i18n="n.rank">Liga interna</a></li>
-        <li><a href="#pareja" data-i18n="n.partner">Busco pareja</a></li><li><a href="#tools" data-i18n="n.tools">Herramientas</a></li></ul></div>
+        <li><a href="#entrena" data-i18n="tb.school">Escuela</a></li><li><a href="#club" data-i18n="tb.rank">Ranking</a></li>
+        <li><a href="#club" data-i18n="tb.partner">Busco pareja</a></li><li><a href="#herramientas" data-i18n="n.tools">Herramientas</a></li></ul></div>
       <div><h4 data-i18n="ft.news">Novedades</h4>
-        <p style="font-size:.88rem" data-i18n="ft.newsD">Torneos, plazas sueltas y horarios nuevos del gimnasio.</p>
+        <p style="font-size:.86rem" data-i18n="ft.newsD">Torneos, plazas sueltas y horarios nuevos del gimnasio.</p>
         <form id="nF" style="display:flex;gap:.4rem" novalidate>
-          <input id="nM" type="email" placeholder="tu@email.com" required style="flex:1;min-width:0;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:10px;padding:.6rem .75rem;color:#fff">
+          <input id="nM" type="email" placeholder="tu@email.com" required style="flex:1;min-width:0;background:rgba(246,244,239,.08);border:1px solid rgba(246,244,239,.2);border-radius:2px;padding:.58rem .7rem;color:#fff">
           <button class="btn btn--a btn--sm cut" type="submit">OK</button></form>
         <small id="nMsg" style="display:block;margin-top:.4rem;min-height:1.2em"></small></div>
     </div>
@@ -961,17 +955,16 @@ footer a:hover{color:var(--amber)}
   </div>
 </footer>
 
-<button class="fab" id="top" aria-label="Arriba">↑</button>
-<a class="fab" id="wa" href="#" target="_blank" rel="noopener" aria-label="WhatsApp">
-  <svg width="25" height="25" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15l-1.3 4.8 4.9-1.3A10 10 0 1 0 12 2Zm5.8 14.2c-.2.7-1.4 1.3-2 1.4-.5.1-1.2.1-1.9-.1-.4-.1-1-.3-1.8-.6-3.1-1.3-5.1-4.5-5.3-4.7-.1-.2-1.2-1.6-1.2-3.1s.8-2.2 1-2.5c.3-.3.6-.4.8-.4h.6c.2 0 .4 0 .7.5l.9 2.2c.1.2.1.4 0 .6l-.4.6-.3.3c-.1.1-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.1 1 2.1 1.3 2.4 1.5.3.1.5.1.6-.1l.9-1c.2-.2.4-.2.6-.1l2.1 1c.3.1.5.2.5.4.1.1.1.7-.1 1.4Z"/></svg></a>
+<button class="fab cut" id="top" aria-label="Arriba">↑</button>
+<a class="fab cut" id="wa" href="#" target="_blank" rel="noopener" aria-label="WhatsApp">
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15l-1.3 4.8 4.9-1.3A10 10 0 1 0 12 2Zm5.8 14.2c-.2.7-1.4 1.3-2 1.4-.5.1-1.2.1-1.9-.1-.4-.1-1-.3-1.8-.6-3.1-1.3-5.1-4.5-5.3-4.7-.1-.2-1.2-1.6-1.2-3.1s.8-2.2 1-2.5c.3-.3.6-.4.8-.4h.6c.2 0 .4 0 .7.5l.9 2.2c.1.2.1.4 0 .6l-.4.6-.3.3c-.1.1-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.1 1 2.1 1.3 2.4 1.5.3.1.5.1.6-.1l.9-1c.2-.2.4-.2.6-.1l2.1 1c.3.1.5.2.5.4.1.1.1.7-.1 1.4Z"/></svg></a>
 
 <div class="modal" id="modal" role="dialog" aria-modal="true"><div class="mbox"><button class="x" id="mx" aria-label="Cerrar">×</button><div id="mbody"></div></div></div>
 <div id="toasts" aria-live="polite"></div>
 <div id="ck" role="region" aria-label="Cookies">
-  <span style="flex:1;min-width:210px;font-size:.88rem" data-i18n="ck.t">Solo usamos almacenamiento propio para recordar tu reserva, tu idioma y tu tema. Ni analítica ni terceros.</span>
+  <span style="flex:1;min-width:210px;font-size:.86rem" data-i18n="ck.t">Solo usamos almacenamiento propio para recordar tu reserva, tu idioma y tu tema. Ni analítica ni terceros.</span>
   <button class="btn btn--p btn--sm cut" id="ckOk" data-i18n="ck.ok">Vale</button>
 </div>
-
 <script>
 /* ==========================================================================
    PADELBOX — club de pádel & fitness · app.js
@@ -1014,16 +1007,16 @@ const COURTS=[
 const ZONES=[
   {id:'vm',x:782,y:10, w:208,h:168,ic:'🚿',es:'Vestuario mujeres',en:'Women changing room',
    d:'Doce duchas, taquillas con código y secadores. Acceso directo desde las pistas.',
-   de:'Twelve showers, keypad lockers and hairdryers. Direct access from the courts.',go:'#nave'},
+   de:'Twelve showers, keypad lockers and hairdryers. Direct access from the courts.',go:'#reservar'},
   {id:'vh',x:782,y:192,w:208,h:168,ic:'🚿',es:'Vestuario hombres',en:'Men changing room',
    d:'Doce duchas, taquillas con código y zona de secado de ropa deportiva.',
-   de:'Twelve showers, keypad lockers and a drying area for kit.',go:'#nave'},
+   de:'Twelve showers, keypad lockers and a drying area for kit.',go:'#reservar'},
   {id:'gym',x:10,y:420,w:560,h:200,ic:'🏋️',es:'Gimnasio · 560 m²',en:'Gym · 560 m²',
    d:'Peso libre, máquinas guiadas, cardio y una sala aparte para las clases dirigidas. Abierto de 07:00 a 24:00.',
-   de:'Free weights, machines, cardio and a separate studio for classes. Open 07:00 to 24:00.',go:'#gimnasio'},
+   de:'Free weights, machines, cardio and a separate studio for classes. Open 07:00 to 24:00.',go:'#entrena',tab:['entrena','gym']},
   {id:'caf',x:588,y:420,w:402,h:200,ic:'☕',es:'Cafetería y terraza',en:'Café and terrace',
    d:'Cocina propia, batidos de después de entrenar y una barra desde la que se ve la pista 4.',
-   de:'Own kitchen, post-workout shakes and a bar overlooking court 4.',go:'#cafeteria'}
+   de:'Own kitchen, post-workout shakes and a bar overlooking court 4.',go:'#club',tab:['club','cafe']}
 ];
 
 /* clases dirigidas: alimentan el motor de reservas y las tarjetas del gimnasio */
@@ -1114,7 +1107,16 @@ const FAQ_EN=[
 /* ── 2. Diccionario ES/EN ──────────────────────────────────────────────── */
 const EN={
  'skip':'Skip to content',
- 'n.club':'The unit','n.book':'Booking','n.plans':'Passes','n.gym':'Gym','n.school':'Academy','n.tools':'Tools',
+ 'n.club':'Club','n.book':'Book','n.plans':'Passes','n.train':'Train','n.gym':'Gym','n.school':'Academy','n.tools':'Tools',
+ 'e2.eye':'Train','e2.t':'Gym and academy',
+ 'e2.lead':'The two ways of coming here that are not a one-off match: training on your own with the classes, or joining a padel academy group.',
+ 'c2.eye':'Club life','c2.t':'What happens when you are not playing',
+ 'c2.lead':'The internal league, the board for finding someone to play with, and the café menu — where every match ends.',
+ 'i.eye':'Before you come','i.t':'Questions and how to get here',
+ 'tb.gym':'Gym','tb.school':'Padel academy','tb.rank':'Ranking','tb.partner':'Find a partner','tb.cafe':'Café',
+ 'r.t':'Pick the zone and the time',
+ 'r.lead':'Four courts in a row, changing rooms right beside them, the gym at the back and the café looking onto court 4. Tap a court on the plan and switch between padel and gym: both land in the same cart.',
+ 'r.mPadel':'Padel court','r.mGym':'Gym class',
  'n.rank':'Ranking','n.contact':'Contact','n.cta':'Book','n.partner':'Find a partner','n.cafe':'Café',
  'h.kick':'Padel + gym · all under one roof','h.t1':'From the warm-up','h.t2':'to the last point',
  'h.lead':'Four indoor courts, a 560 m² gym, changing rooms and a café in the same unit. Train, play, shower and stay for lunch without moving the car.',
@@ -1126,9 +1128,8 @@ const EN={
  'nv.f1':'panoramic indoor courts, all with glass at the back and anti-glare LED.',
  'nv.f2':'of gym: strength, cardio, functional area and a class studio.',
  'nv.f3':'every day. QR entry outside reception hours.',
- 'r.eye':'Booking','r.t':'Court and class on one screen',
- 'r.lead':'Switch between padel and gym without leaving this page. You can mix both in one booking: a court at 7 pm and a functional class at 8:30 land in the same cart and the same total.',
- 'r.mPadel':'🎾 Padel court','r.mGym':'🏋️ Gym class','r.court':'Court','r.dur':'Duration','r.rate':'Rate',
+ 'r.eye':'Booking',
+ 'r.court':'Court','r.dur':'Duration','r.rate':'Rate',
  'r.r1':'No pass','r.r2':'Padel pass (−25%)','r.r3':'Full pass (−40%)',
  'c.t':'Your booking','c.empty':'Nothing picked yet.','c.total':'Total','c.go':'Confirm','c.clear':'Clear',
  'c.note':'Saved in this browser. Final confirmation is at reception or on WhatsApp.',
@@ -1145,7 +1146,7 @@ const EN={
  'e.all':'All','e.l1':'Beginner','e.l2':'Intermediate','e.l3':'Advanced','e.l4':'Juniors',
  't.eye':'Club tools','t.t':'Four things you will actually use',
  't.lead':'Scoreboard with a clock and stats, tournament generator with a clickable draw, a weekly planner that mixes court and gym, and a tactics board. None of it asks you to sign up.',
- 't.1':'🎾 Scoreboard','t.2':'🏆 Tournaments','t.3':'📅 Weekly plan','t.4':'📐 Tactics board',
+ 't.1':'Scoreboard','t.2':'Tournaments','t.3':'Weekly plan','t.4':'Tactics board',
  'm.a':'Team A','m.b':'Team B','m.deuce':'Deuce','m.d1':'Golden point','m.d2':'Advantages','m.fmt':'Format',
  'm.f3':'Best of 3 sets','m.f1':'1 set','m.undo':'↶ Undo','m.reset':'Reset','m.share':'Copy match report',
  'm.keys':'Keys: <kbd>A</kbd> and <kbd>L</kbd> add a point, <kbd>Z</kbd> undoes.',
@@ -1260,8 +1261,8 @@ function buildMarquee(){
       b.tr.push([b.x,b.y]); if(b.tr.length>18) b.tr.shift();
       ctx.beginPath();
       b.tr.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));
-      ctx.strokeStyle='rgba(124,92,255,.30)'; ctx.lineWidth=2; ctx.stroke();
-      ctx.beginPath(); ctx.arc(b.x,b.y,b.r,0,7); ctx.fillStyle='rgba(255,176,32,.55)'; ctx.fill();
+      ctx.strokeStyle='rgba(78,134,214,.30)'; ctx.lineWidth=2; ctx.stroke();
+      ctx.beginPath(); ctx.arc(b.x,b.y,b.r,0,7); ctx.fillStyle='rgba(217,138,43,.6)'; ctx.fill();
     });
     raf=requestAnimationFrame(frame);
   }
@@ -1284,7 +1285,7 @@ function drawPlan(){
   const g=$('#zones'); g.innerHTML='';
   COURTS.forEach(c=>{
     const busy=courtBusy(c.id), sel=activeZone==='c'+c.id;
-    const fill=sel?'var(--brand)':(busy?'var(--bad)':'var(--ok)');
+    const fill=sel?'var(--navy)':(busy?'var(--bad)':'var(--ok)');
     const n=document.createElementNS('http://www.w3.org/2000/svg','g');
     n.setAttribute('class','zone'+(sel?' sel':'')); n.setAttribute('tabindex','0'); n.setAttribute('role','button');
     n.setAttribute('aria-label',c.name+' — '+(busy?(LANG==='es'?'ocupada':'busy'):(LANG==='es'?'libre':'free')));
@@ -1304,13 +1305,13 @@ function drawPlan(){
     n.setAttribute('aria-label',LANG==='es'?z.es:z.en); n.dataset.z=z.id;
     const cx=z.x+z.w/2, cy=z.y+z.h/2;
     n.innerHTML='<rect class="bg" x="'+z.x+'" y="'+z.y+'" width="'+z.w+'" height="'+z.h+'" rx="10" fill="'+
-        (sel?'var(--brand)':'var(--amber)')+'" opacity="'+(sel?1:.9)+'"/>'+
+        (sel?'var(--navy)':'var(--amber)')+'" opacity="'+(sel?1:.9)+'"/>'+
       '<text x="'+cx+'" y="'+(cy-16)+'" text-anchor="middle" font-size="30">'+z.ic+'</text>'+
       /* solo partimos la etiqueta en dos líneas si la caja es estrecha */
       (z.w>300?[(LANG==='es'?z.es:z.en).toUpperCase()]
               :(LANG==='es'?z.es:z.en).toUpperCase().split(/ (?=[^ ]*$)/)).map((w,i)=>
         '<text x="'+cx+'" y="'+(cy+16+i*24)+'" text-anchor="middle" font-size="'+(z.w>300?21:17)+'" fill="'+
-        (sel?'#fff':'#161327')+'">'+w+'</text>').join('');
+        (sel?'#F6F4EF':'#0C1526')+'">'+w+'</text>').join('');
     wireZone(n,z.id); g.appendChild(n);
   });
 }
@@ -1331,18 +1332,18 @@ function pickZone(id,go){
     $('#zDesc').textContent=court.desc;
     $('#zMeta').innerHTML='<span class="badge" style="background:'+(busy?'var(--bad)':'var(--ok)')+';color:#fff">'+
         (busy?(LANG==='es'?'Ocupada ahora':'Busy now'):(LANG==='es'?'Libre ahora':'Free now'))+'</span>'+
-      '<span class="badge" style="background:var(--surface-2);color:var(--txt)">'+eur(CLUB.padel[90])+' / 90 min</span>'+
-      '<span class="badge" style="background:var(--surface-2);color:var(--txt)">20 × 10 m</span>';
+      '<span class="badge" style="background:var(--sunk);color:var(--txt)">'+eur(CLUB.padel[90])+' / 90 min</span>'+
+      '<span class="badge" style="background:var(--sunk);color:var(--txt)">20 × 10 m</span>';
     $('#zGo').textContent=LANG==='es'?'Reservar esta pista':'Book this court';
-    $('#zGo').onclick=()=>{setMode('padel');$('#court').value=String(court.id);drawSlots();$('#reservas').scrollIntoView({behavior:'smooth'});};
+    $('#zGo').onclick=()=>{setMode('padel');$('#court').value=String(court.id);drawSlots();$('#reservar').scrollIntoView({behavior:'smooth'});};
   }else if(zone){
     $('#zName').textContent=LANG==='es'?zone.es:zone.en;
     $('#zDesc').textContent=LANG==='es'?zone.d:zone.de;
     $('#zMeta').innerHTML='<span class="badge">'+(LANG==='es'?'Zona de servicio':'Service area')+'</span>';
     $('#zGo').textContent=LANG==='es'?'Ir a esta zona':'Go to this zone';
-    $('#zGo').onclick=()=>$(zone.go).scrollIntoView({behavior:'smooth'});
+    $('#zGo').onclick=()=>{ if(zone.tab) showTab(zone.tab[0],zone.tab[1]); $(zone.go).scrollIntoView({behavior:'smooth'}); };
   }
-  if(go&&zone) $(zone.go).scrollIntoView({behavior:'smooth'});
+  if(go&&zone){ if(zone.tab) showTab(zone.tab[0],zone.tab[1]); $(zone.go).scrollIntoView({behavior:'smooth'}); }
 }
 
 /* ── 6. Reservas: pádel y gimnasio en el mismo carrito ─────────────────── */
@@ -1458,7 +1459,7 @@ function drawCart(){
     total+=it.price; it.t==='padel'?padelN++:gymN++;
     const d=new Date(it.date+'T00:00:00'), dn=(LANG==='es'?D_ES:D_EN)[d.getDay()];
     const nm=it.t==='padel'?it.name:(LANG==='es'?it.name:it.nameE);
-    const li=el('li',null,'<span><b>'+dn+' '+d.getDate()+'</b> · '+it.lb+'<br><small style="color:var(--txt-soft)">'+
+    const li=el('li',null,'<span><b>'+dn+' '+d.getDate()+'</b> · '+it.lb+'<br><small style="color:var(--soft)">'+
       (it.t==='padel'?'🎾 ':'🏋️ ')+nm+' · '+it.dur+' min'+(it.peak?' · PUNTA':'')+'</small></span>'+
       '<span style="display:flex;align-items:center;gap:.5rem"><b class="num">'+(it.price?eur(it.price):'—')+
       '</b><button aria-label="Quitar">×</button></span>');
@@ -1489,7 +1490,7 @@ $('#checkout').addEventListener('click',()=>{
     return (i.t==='padel'?'🎾 ':'🏋️ ')+pad(d.getDate())+'/'+pad(d.getMonth()+1)+' '+i.lb+' · '+nm+' ('+i.dur+' min) — '+(i.price?eur(i.price):(LANG==='es'?'incluida':'included'));}).join('\n');
   const msg='¡Hola Padelbox! Quiero confirmar:\n'+lines+'\nTOTAL: '+eur(total);
   openModal('<h3>'+(LANG==='es'?'Resumen de tu reserva':'Booking summary')+'</h3>'+
-    '<p style="color:var(--txt-soft);font-size:.92rem">'+(LANG==='es'
+    '<p style="color:var(--soft);font-size:.92rem">'+(LANG==='es'
       ?'Repasa las líneas y confirma por WhatsApp. Recepción te contesta en unos minutos.'
       :'Check the lines and confirm on WhatsApp. Reception replies within minutes.')+'</p>'+
     '<pre style="white-space:pre-wrap;background:var(--paper);padding:1rem;border-radius:11px;font-size:.85rem;font-family:var(--mono)">'+lines.replace(/</g,'&lt;')+'</pre>'+
@@ -1589,7 +1590,7 @@ function drawGymCards(){
     const c=el('div',{class:'item'},
       '<span class="tg">'+g.room+' · '+g.lvl+'</span>'+
       '<h3 style="margin:.25rem 0 .35rem">'+(LANG==='es'?g.n:g.ne)+'</h3>'+
-      '<div class="num" style="font-size:.84rem;color:var(--txt-soft)">'+days+' · '+pad(Math.floor(g.h))+':'+pad(Math.round(g.h%1*60))+' · '+g.dur+' min</div>'+
+      '<div class="num" style="font-size:.84rem;color:var(--soft)">'+days+' · '+pad(Math.floor(g.h))+':'+pad(Math.round(g.h%1*60))+' · '+g.dur+' min</div>'+
       '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:.7rem">'+
         '<span class="num" style="font-size:.86rem">👤 '+g.coach+'</span>'+
         '<span class="num" style="font-size:.86rem">🔥 '+g.kcal+' kcal</span></div>'+
@@ -1599,7 +1600,7 @@ function drawGymCards(){
       const today=new Date(); today.setHours(0,0,0,0);
       for(let i=0;i<14;i++){const d=new Date(today);d.setDate(today.getDate()+i);
         if(g.days.includes(d.getDay())){selDate=d;break;}}
-      buildDays(); drawSlots(); $('#reservas').scrollIntoView({behavior:'smooth'});
+      buildDays(); drawSlots(); $('#reservar').scrollIntoView({behavior:'smooth'});
     });
     box.appendChild(c);
   });
@@ -1615,13 +1616,13 @@ function drawClasses(){
     const full=c.spots===0;
     const n=el('div',{class:'item'},
       '<span class="tg">'+c.lvl+'</span><h3 style="margin:.25rem 0 .4rem">'+(LANG==='es'?c.n:c.ne)+'</h3>'+
-      '<p style="font-size:.88rem;color:var(--txt-soft);margin:0 0 .6rem">'+(LANG==='es'?c.d:c.de)+'</p>'+
+      '<p style="font-size:.88rem;color:var(--soft);margin:0 0 .6rem">'+(LANG==='es'?c.d:c.de)+'</p>'+
       '<div class="num" style="font-size:.82rem;display:grid;gap:.15rem;margin-bottom:.5rem">'+
         '<span>'+(LANG==='es'?c.days:c.daysE)+'</span><span>'+c.time+'</span><span>👤 '+c.coach+'</span></div>'+
       '<div class="bar"><i data-w="'+c.fill+'"></i></div>'+
       '<div style="display:flex;justify-content:space-between;align-items:center">'+
         '<span class="pr">'+c.price+' €<span> /'+(LANG==='es'?'mes':'mo')+'</span></span>'+
-        '<span class="badge" style="'+(full?'background:var(--surface-2);color:var(--txt-soft)':'')+'">'+
+        '<span class="badge" style="'+(full?'background:var(--sunk);color:var(--soft)':'')+'">'+
           (full?(LANG==='es'?'Lista de espera':'Waiting list'):c.spots+' '+(LANG==='es'?'plazas':'spots'))+'</span></div>'+
       '<button class="btn '+(full?'btn--o':'btn--p cut')+' btn--sm" style="width:100%;margin-top:.8rem">'+
         (full?(LANG==='es'?'Apuntarme a la lista':'Join the list'):(LANG==='es'?'Reservar plaza':'Book a spot'))+'</button>');
@@ -1646,7 +1647,7 @@ const M={a:0,b:0,ga:0,gb:0,sa:[],sb:[],srv:'A',tb:false,over:false,hist:[],
 const snap=()=>JSON.stringify({a:M.a,b:M.b,ga:M.ga,gb:M.gb,sa:M.sa,sb:M.sb,srv:M.srv,tb:M.tb,over:M.over,won:M.won,gp:M.gp,games:M.games});
 const names=()=>({A:$('#tA').value||'A',B:$('#tB').value||'B'});
 const toWin=()=>+$('#bo').value===1?1:2;
-function log(x){$('#log').prepend(el('div',null,'<span class="num" style="color:var(--txt-soft)">'+
+function log(x){$('#log').prepend(el('div',null,'<span class="num" style="color:var(--soft)">'+
   new Date().toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'})+'</span> · '+x));}
 function point(who){
   if(M.over) return;
@@ -1816,7 +1817,7 @@ function drawBracket(){
   box.insertAdjacentHTML('beforeend', champ
     ? '<div class="panel pad" style="margin-top:.6rem;border-color:var(--amber)"><b class="num">🏆 '+
       (LANG==='es'?'Campeón/a: ':'Champion: ')+champ+'</b></div>'
-    : '<p style="font-size:.86rem;color:var(--txt-soft)">'+(LANG==='es'
+    : '<p style="font-size:.86rem;color:var(--soft)">'+(LANG==='es'
         ?'Pincha en el ganador de cada cruce y avanzará solo a la siguiente ronda.'
         :'Click the winner of each tie and they move on automatically.')+'</p>');
   $$('#trOut .tie button').forEach(b=>b.addEventListener('click',()=>{
@@ -1840,8 +1841,8 @@ function genTournament(){
     box.innerHTML='<div class="cards">'+draw.map((ms,r)=>
       '<div class="panel pad"><span class="eyebrow cut">'+(LANG==='es'?'Ronda ':'Round ')+(r+1)+' · '+pts+' '+(LANG==='es'?'pts':'pts')+'</span>'+
       ms.map(m=>'<div style="display:flex;justify-content:space-between;gap:.6rem;padding:.5rem 0;border-bottom:1px dashed var(--line);font-size:.88rem">'+
-        '<span><b>'+m.t1.join(' + ')+'</b><br><small style="color:var(--txt-soft)">vs</small><br><b>'+m.t2.join(' + ')+'</b></span>'+
-        '<span class="badge" style="align-self:center;'+(m.court?'':'background:var(--surface-2);color:var(--txt-soft)')+'">'+
+        '<span><b>'+m.t1.join(' + ')+'</b><br><small style="color:var(--soft)">vs</small><br><b>'+m.t2.join(' + ')+'</b></span>'+
+        '<span class="badge" style="align-self:center;'+(m.court?'':'background:var(--sunk);color:var(--soft)')+'">'+
         (m.court?(LANG==='es'?'Pista ':'Court ')+m.court:(LANG==='es'?'Descansa':'Rest'))+'</span></div>').join('')+
       '</div>').join('')+'</div>';
     box.dataset.k=draw.map((ms,r)=>(LANG==='es'?'RONDA ':'ROUND ')+(r+1)+'\n'+ms.map(m=>
@@ -1898,7 +1899,7 @@ function drawWeek(){
     const txt=!s?(LANG==='es'?'Descanso':'Rest'):(LANG==='es'?s[1]:s[2]);
     const extra=!s?'':(s[0]==='p'?'🎾':'🏋️');
     return '<div class="dayc"><h6>'+n+'</h6><div class="act '+cls+'">'+extra+' '+txt+'</div>'+
-      (s?'<small class="num" style="color:var(--txt-soft);font-size:.68rem;margin-top:auto">'+
+      (s?'<small class="num" style="color:var(--soft);font-size:.68rem;margin-top:auto">'+
         (s[0]==='p'?'90 min · '+(LANG==='es'?'pista':'court'):'45–60 min · '+(LANG==='es'?'gimnasio':'gym'))+'</small>':'')+'</div>';
   }).join('');
   const notes={
@@ -1956,12 +1957,12 @@ let pzI=0,pzS=0,pzRaf=null,pzP=null,pzB=null,pzPen=false,pzInk=[],pzDrag=null,pz
 function pzInit(){
   const svg=$('#pz'); if(!svg) return;
   const W=20*PZ.M,H=10*PZ.M;
-  svg.innerHTML='<rect width="1080" height="580" fill="#241E42"/>'+
-    '<rect x="'+PZ.OX+'" y="'+PZ.OY+'" width="'+W+'" height="'+H+'" fill="#5A31E8" stroke="#EFEBFF" stroke-width="4"/>'+
-    '<line x1="'+mx(3.05)+'" y1="'+my(0)+'" x2="'+mx(3.05)+'" y2="'+my(10)+'" stroke="#EFEBFF" stroke-width="3"/>'+
-    '<line x1="'+mx(16.95)+'" y1="'+my(0)+'" x2="'+mx(16.95)+'" y2="'+my(10)+'" stroke="#EFEBFF" stroke-width="3"/>'+
-    '<line x1="'+mx(3.05)+'" y1="'+my(5)+'" x2="'+mx(16.95)+'" y2="'+my(5)+'" stroke="#EFEBFF" stroke-width="3"/>'+
-    '<line x1="'+mx(10)+'" y1="'+my(0)+'" x2="'+mx(10)+'" y2="'+my(10)+'" stroke="#161327" stroke-width="8"/>'+
+  svg.innerHTML='<rect width="1080" height="580" fill="#0C1526"/>'+
+    '<rect x="'+PZ.OX+'" y="'+PZ.OY+'" width="'+W+'" height="'+H+'" fill="#16305C" stroke="#F6F4EF" stroke-width="4"/>'+
+    '<line x1="'+mx(3.05)+'" y1="'+my(0)+'" x2="'+mx(3.05)+'" y2="'+my(10)+'" stroke="#F6F4EF" stroke-width="3"/>'+
+    '<line x1="'+mx(16.95)+'" y1="'+my(0)+'" x2="'+mx(16.95)+'" y2="'+my(10)+'" stroke="#F6F4EF" stroke-width="3"/>'+
+    '<line x1="'+mx(3.05)+'" y1="'+my(5)+'" x2="'+mx(16.95)+'" y2="'+my(5)+'" stroke="#F6F4EF" stroke-width="3"/>'+
+    '<line x1="'+mx(10)+'" y1="'+my(0)+'" x2="'+mx(10)+'" y2="'+my(10)+'" stroke="#0C1526" stroke-width="8"/>'+
     '<line x1="'+mx(10)+'" y1="'+my(0)+'" x2="'+mx(10)+'" y2="'+my(10)+'" stroke="#fff" stroke-width="3" stroke-dasharray="3 6"/>'+
     '<text x="'+mx(0.4)+'" y="'+(my(10)+28)+'" fill="#A79FC6" font-family="JetBrains Mono" font-size="14">20 m</text>'+
     '<text x="'+(mx(0)-24)+'" y="'+my(5)+'" fill="#A79FC6" font-family="JetBrains Mono" font-size="14" transform="rotate(-90 '+(mx(0)-24)+' '+my(5)+')">10 m</text>'+
@@ -1993,10 +1994,10 @@ function pzPaint(){
   const lab=['A1','A2','B1','B2'];
   L.innerHTML=pzP.map((q,i)=>
     '<g class="tok" data-i="'+i+'" tabindex="0" role="button" aria-label="'+lab[i]+'">'+
-    '<circle cx="'+mx(q[0])+'" cy="'+my(q[1])+'" r="18" fill="'+(i<2?'#EFEBFF':'#FFB020')+'" stroke="#161327" stroke-width="3"/>'+
-    '<text x="'+mx(q[0])+'" y="'+(my(q[1])+5)+'" text-anchor="middle" font-family="Bricolage Grotesque" font-weight="800" font-size="15" fill="#161327">'+lab[i]+'</text></g>').join('')+
+    '<circle cx="'+mx(q[0])+'" cy="'+my(q[1])+'" r="18" fill="'+(i<2?'#F6F4EF':'#D98A2B')+'" stroke="#0C1526" stroke-width="3"/>'+
+    '<text x="'+mx(q[0])+'" y="'+(my(q[1])+5)+'" text-anchor="middle" font-family="Bricolage Grotesque" font-weight="800" font-size="15" fill="#0C1526">'+lab[i]+'</text></g>').join('')+
     '<g class="tok" data-i="ball" tabindex="0" role="button" aria-label="Bola">'+
-    '<circle cx="'+mx(pzB[0])+'" cy="'+my(pzB[1])+'" r="11" fill="#FFB020" stroke="#161327" stroke-width="2"/></g>';
+    '<circle cx="'+mx(pzB[0])+'" cy="'+my(pzB[1])+'" r="11" fill="#D98A2B" stroke="#0C1526" stroke-width="2"/></g>';
 }
 function pzGo(dir){
   const steps=PLAYS[pzI].s, to=pzS+dir;
@@ -2058,12 +2059,16 @@ $('#pzPlay').addEventListener('click',function(){
   chain();
 });
 
-/* pestañas de herramientas */
-$$('[data-tab]').forEach(b=>b.addEventListener('click',()=>{
-  $$('[data-tab]').forEach(x=>{x.classList.toggle('on',x===b);x.setAttribute('aria-selected',String(x===b));});
-  $$('.tp').forEach(p=>p.classList.toggle('on',p.id==='tab-'+b.dataset.tab));
+/* pestañas: tres grupos independientes (entrena, herramientas y club) */
+function showTab(group,tab){
+  $$('[data-group="'+group+'"][data-tab]').forEach(x=>{
+    const on=x.dataset.tab===tab;
+    x.classList.toggle('on',on); x.setAttribute('aria-selected',String(on));
+  });
+  $$('[data-panel-group="'+group+'"]').forEach(p=>p.classList.toggle('on',p.id==='tab-'+tab));
   watch();
-}));
+}
+$$('[data-tab][data-group]').forEach(b=>b.addEventListener('click',()=>showTab(b.dataset.group,b.dataset.tab)));
 
 /* ── 14. Ranking ───────────────────────────────────────────────────────── */
 let sort={k:'pts',d:'desc'};
@@ -2074,7 +2079,7 @@ function drawRanking(){
     const v=typeof A==='string'?A.localeCompare(B,'es'):A-B; return sort.d==='asc'?v:-v;});
   rows=rows.map((r,i)=>({...r,pos:i+1})).filter(r=>(cat==='all'||r.cat===cat)&&r.name.toLowerCase().includes(q));
   const B=$('#rkB'); B.innerHTML='';
-  if(!rows.length){B.innerHTML='<tr><td colspan="8" style="text-align:center;color:var(--txt-soft);padding:1.3rem">'+
+  if(!rows.length){B.innerHTML='<tr><td colspan="8" style="text-align:center;color:var(--soft);padding:1.3rem">'+
     (LANG==='es'?'Sin resultados':'No results')+'</td></tr>';return;}
   rows.forEach(r=>{
     const form=r.form.split('').map(c=>'<span style="color:'+(c==='V'?'var(--ok)':'var(--bad)')+';font-weight:700">'+
@@ -2205,7 +2210,7 @@ $('#cF').addEventListener('submit',e=>{
   if(!$('#cG').checked){ok=false;toast(LANG==='es'?'Acepta la política de privacidad.':'Accept the privacy policy.',true);}
   if(!ok)return;
   const msg='📩 '+$('#cT').value+'\n'+$('#cN').value+' · '+$('#cM').value+' · '+$('#cP').value+'\n\n'+$('#cX').value;
-  openModal('<h3>'+(LANG==='es'?'Mensaje listo':'Message ready')+'</h3><p style="color:var(--txt-soft);font-size:.92rem">'+
+  openModal('<h3>'+(LANG==='es'?'Mensaje listo':'Message ready')+'</h3><p style="color:var(--soft);font-size:.92rem">'+
     (LANG==='es'?'Esta web es una demo estática y no tiene servidor de correo. Mándanoslo por WhatsApp o por email y te contestamos.'
                 :'This site is a static demo with no mail server. Send it over WhatsApp or email and we will reply.')+'</p>'+
     '<div style="display:flex;gap:.5rem;flex-wrap:wrap"><a class="btn btn--a cut" target="_blank" rel="noopener" href="'+WA+'?text='+
