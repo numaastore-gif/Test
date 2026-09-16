@@ -27,6 +27,8 @@ opcional), `prism`, `box`, `gear`, `torus` y `merge` para combinarlos.
 
 | Módulo | Detalle |
 |---|---|
+| **Hero** | Una pieza del catálogo se imprime capa a capa sobre la cama, con la capa activa en caliente y un panel de estado que cuenta capas, altura y material. Va encadenando piezas en bucle. El motor corta la malla por altura (`opt.clip`), no es un vídeo. |
+| **Escala** | En las fichas con foto, un esquema compara la altura de la pieza con una cabeza adulta (22 cm). Responde a la pregunta que de verdad frena la compra. |
 | **Catálogo** | 12 piezas con filtro por categoría, buscador y orden por ventas, precio o novedad. Cada tarjeta lleva su render 3D. |
 | **Ficha de producto** | Visor 3D que gira solo y se puede arrastrar. Color, material y tamaño cambian el render, el peso, el tiempo de impresión y el precio al momento. |
 | **Carrito** | Panel lateral, persistente en el navegador. El pedido se genera como texto listo para mandar por Instagram o WhatsApp. |

@@ -138,8 +138,8 @@ header.nav.stuck{border-bottom-color:var(--line)}
 @media(max-width:560px){ .acts .btn{display:none} }
 
 /* hero */
-.hero{padding:calc(var(--nav-h) + clamp(2rem,5vw,3.4rem)) 0 clamp(2rem,4vw,3rem)}
-.hero-grid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:clamp(1.6rem,4vw,3rem);align-items:center}
+.hero{padding:calc(var(--nav-h) + clamp(2.4rem,6vw,4.4rem)) 0 clamp(2.4rem,5vw,3.6rem)}
+.hero-grid{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:clamp(1.6rem,4vw,3rem);align-items:center}
 @media(max-width:900px){.hero-grid{grid-template-columns:1fr}}
 .hero h1 em{font-style:normal;color:var(--brand)}
 .hero-cta{display:flex;flex-wrap:wrap;gap:.7rem;margin-top:1.6rem}
@@ -150,6 +150,19 @@ header.nav.stuck{border-bottom-color:var(--line)}
 .stage canvas:active{cursor:grabbing}
 .stage .hint{position:absolute;left:12px;bottom:10px;font-family:var(--mono);font-size:.62rem;
   letter-spacing:.12em;text-transform:uppercase;color:var(--faint)}
+/* panel de estado, como el de una impresora */
+.slicer{position:absolute;left:0;right:0;bottom:0;padding:.75rem .9rem;
+  background:linear-gradient(transparent,var(--ink) 30%);color:#E9EDF2}
+.slicer-top{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;margin-bottom:.4rem}
+.slicer-top b{font-family:var(--disp);font-weight:600;font-size:.92rem}
+.slicer-top span{font-size:.8rem;color:var(--brand-2);font-weight:700}
+.slicer-bar{height:3px;background:rgba(255,255,255,.18);overflow:hidden}
+.slicer-bar i{display:block;height:100%;background:var(--brand-2);width:0}
+.slicer-grid{display:grid;grid-template-columns:repeat(4,auto);gap:.2rem 1rem;margin-top:.5rem;
+  font-size:.6rem;letter-spacing:.06em;color:#9BA6B4;justify-content:space-between}
+.slicer-grid b{color:#E9EDF2;font-weight:700}
+@media(max-width:520px){.slicer-grid{grid-template-columns:repeat(2,auto)}}
+.stage{cursor:default}
 .specs{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:1px;background:var(--line);
   border:1px solid var(--line);margin-top:1.4rem}
 .specs div{background:var(--surface);padding:.65rem .8rem}
@@ -187,6 +200,10 @@ header.nav.stuck{border-bottom-color:var(--line)}
 .empty{grid-column:1/-1;background:var(--surface);padding:2.4rem 1rem;text-align:center;color:var(--soft)}
 
 /* ficha */
+.scale{display:grid;grid-template-columns:96px 1fr;gap:.9rem;align-items:center;
+  border:1px solid var(--line);border-radius:var(--r);padding:.8rem .9rem;margin-top:1rem}
+.scale svg{width:96px;height:auto;display:block}
+.scale p{margin:0;font-size:.82rem;color:var(--soft)}
 .licence svg{flex:0 0 auto}
 .licence{display:flex;align-items:center;gap:.45rem;font-size:.78rem;color:var(--brand);line-height:1.35;
   background:color-mix(in srgb,var(--brand) 9%,transparent);border-radius:99px;
@@ -339,23 +356,25 @@ footer.site a:hover{color:var(--brand-2)}
   <div class="wrap">
     <div class="hero-grid">
       <div>
-        <div class="eyebrow"><span class="layers" aria-hidden="true"><i></i><i></i><i></i></span> Piezas impresas bajo pedido</div>
-        <h1>Lo diseñas o lo eliges.<br><em>Nosotros lo imprimimos.</em></h1>
-        <p class="lead" style="margin-top:1rem">Catálogo de piezas listas, con el acabado que tú elijas: desde raw para que la pintes tú hasta pintada a mano. Y si lo que buscas no está, mándanos el archivo o la idea y te damos precio al momento.</p>
+        <div class="eyebrow"><span class="layers" aria-hidden="true"><i></i><i></i><i></i></span> Impresión 3D bajo pedido</div>
+        <h1>Lo imprimimos<br><em>mientras lo miras.</em></h1>
         <div class="hero-cta">
           <a class="btn btn--p" href="#catalogo">Ver el catálogo</a>
           <a class="btn btn--o" href="#medida">Calcular mi pieza</a>
         </div>
-        <div class="specs">
-          <div><small>De una pieza</small><b class="mono">25×25×25 cm</b></div>
-          <div><small>Altura de capa</small><b class="mono">0,12–0,28 mm</b></div>
-          <div><small>Más grande</small><b class="mono">por partes</b></div>
-          <div><small>Materiales</small><b class="mono">PLA · PETG · TPU</b></div>
-        </div>
       </div>
       <div class="stage">
-        <canvas id="heroCv" aria-label="Pieza 3D girando"></canvas>
-        <span class="hint">Arrastra para girar</span>
+        <canvas id="heroCv" aria-label="Simulación de una pieza imprimiéndose capa a capa"></canvas>
+        <div class="slicer" aria-hidden="true">
+          <div class="slicer-top"><b id="slName">—</b><span id="slPct" class="mono">0 %</span></div>
+          <div class="slicer-bar"><i id="slBar"></i></div>
+          <div class="slicer-grid mono">
+            <span>Capa <b id="slLayer">0</b></span>
+            <span>Altura <b id="slZ">0,0</b> mm</span>
+            <span>Boquilla <b>205 °C</b></span>
+            <span>Material <b id="slMat">PLA</b></span>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -654,7 +673,8 @@ function hex2rgb(h){h=h.replace('#','');return [parseInt(h.slice(0,2),16),parseI
 function shade(rgb,k){return 'rgb('+rgb.map(c=>clamp(Math.round(c*k),0,255)).join(',')+')';}
 
 function render(cv,mesh,opt){
-  const o=Object.assign({rx:-.38,ry:.6,color:'#0E8C86',scale:1,layers:true,metal:0},opt||{});
+  const o=Object.assign({rx:-.38,ry:.6,color:'#0E8C86',scale:1,layers:true,metal:0,
+                         clip:null,bed:false,hot:'#E2543C',cy:0.5},opt||{});
   const ctx=cv.getContext('2d');
   const dpr=Math.min(devicePixelRatio||1,2);
   const W=cv.clientWidth||cv.width, H=cv.clientHeight||cv.height;
@@ -662,35 +682,56 @@ function render(cv,mesh,opt){
   cv.width=W*dpr; cv.height=H*dpr; ctx.setTransform(dpr,0,0,dpr,0,0);
   ctx.clearRect(0,0,W,H);
   const cx=Math.cos(o.rx),sx=Math.sin(o.rx),cy=Math.cos(o.ry),sy=Math.sin(o.ry);
-  const pts=mesh.v.map(p=>{
-    let x=p[0]*cy - p[2]*sy, z=p[0]*sy + p[2]*cy;      /* giro en Y */
-    let y=p[1]*cx - z*sx;    z=p[1]*sx + z*cx;          /* giro en X */
-    return [x,y,z];
-  });
   const dist=4.2, S=Math.min(W,H)*0.40*o.scale;
-  const proj=pts.map(p=>{const k=S*dist/(p[2]+dist);return [W/2+p[0]*k, H/2 - p[1]*k];});
-  const rgb=hex2rgb(o.color);
-  const polys=mesh.f.map(f=>{
+  const turn=p=>{
+    let x=p[0]*cy - p[2]*sy, z=p[0]*sy + p[2]*cy;
+    let y=p[1]*cx - z*sx;    z=p[1]*sx + z*cx;
+    return [x,y,z];
+  };
+  const flat=p=>{const k=S*dist/(p[2]+dist);return [W/2+p[0]*k, H*o.cy - p[1]*k];};
+  const pr=p=>flat(turn(p));
+
+  if(o.bed){
+    /* la cama de impresión, para que se vea que la pieza crece desde algo */
+    ctx.strokeStyle='rgba(14,140,134,.22)'; ctx.lineWidth=1;
+    const R=1.55, y=-1.02, N=8;
+    for(let i=0;i<=N;i++){
+      const t=-R+2*R*i/N;
+      let a=pr([t,y,-R]), b=pr([t,y,R]);
+      ctx.beginPath(); ctx.moveTo(a[0],a[1]); ctx.lineTo(b[0],b[1]); ctx.stroke();
+      a=pr([-R,y,t]); b=pr([R,y,t]);
+      ctx.beginPath(); ctx.moveTo(a[0],a[1]); ctx.lineTo(b[0],b[1]); ctx.stroke();
+    }
+  }
+
+  const pts=mesh.v.map(turn);
+  const proj=pts.map(flat);
+  const rgb=hex2rgb(o.color), hot=hex2rgb(o.hot);
+  const polys=[];
+  mesh.f.forEach(f=>{
+    let lo=Infinity, hi=-Infinity;
+    f.forEach(i=>{ const y=mesh.v[i][1]; if(y<lo)lo=y; if(y>hi)hi=y; });
+    if(o.clip!==null && lo>o.clip) return;             /* aún no se ha impreso */
     let z=0; f.forEach(i=>z+=pts[i][2]); z/=f.length;
     const a=pts[f[0]],b=pts[f[1]],c=pts[f[2]];
     const u=[b[0]-a[0],b[1]-a[1],b[2]-a[2]], w=[c[0]-a[0],c[1]-a[1],c[2]-a[2]];
     let n=[u[1]*w[2]-u[2]*w[1], u[2]*w[0]-u[0]*w[2], u[0]*w[1]-u[1]*w[0]];
     const L=Math.hypot(n[0],n[1],n[2])||1; n=[n[0]/L,n[1]/L,n[2]/L];
-    /* luz alta y ligeramente a la izquierda, como el foco de una estantería */
     const lit=Math.abs(n[0]*-.45 + n[1]*.72 + n[2]*.53);
-    return {f,z,k:0.42+lit*0.72};
-  }).sort((a,b)=>a.z-b.z);
-  polys.forEach(p=>{
+    /* la capa que se está depositando va en caliente */
+    const fresh = o.clip!==null && hi>o.clip;
+    polys.push({f,z,k:0.42+lit*0.72,fresh});
+  });
+  polys.sort((a,b)=>a.z-b.z);
+  polys.forEach(q=>{
     ctx.beginPath();
-    p.f.forEach((i,j)=>{const q=proj[i];j?ctx.lineTo(q[0],q[1]):ctx.moveTo(q[0],q[1]);});
+    q.f.forEach((i,j)=>{const t=proj[i];j?ctx.lineTo(t[0],t[1]):ctx.moveTo(t[0],t[1]);});
     ctx.closePath();
-    ctx.fillStyle=shade(rgb,p.k+o.metal*0.25);
+    ctx.fillStyle=shade(q.fresh?hot:rgb,q.fresh?1:(q.k+o.metal*0.25));
     ctx.fill();
-    /* un pelín de contorno del mismo tono tapa las costuras entre caras */
     ctx.strokeStyle=ctx.fillStyle; ctx.lineWidth=1; ctx.stroke();
   });
   if(o.layers){
-    /* las capas: solo se pintan encima de la pieza ya dibujada */
     ctx.save(); ctx.globalCompositeOperation='source-atop';
     ctx.strokeStyle='rgba(0,0,0,.10)'; ctx.lineWidth=.8;
     const gap=Math.max(3,Math.round(H/90));
@@ -930,6 +971,29 @@ function priceRange(p){
   });
   return {min,max};
 }
+/* Referencia de tamaño. Un casco de 30 cm no dice nada; verlo contra una
+   cabeza, sí. Una cabeza adulta mide unos 22 cm de alto. */
+function scaleSvg(p){
+  const m=(p.spec||[]).find(r=>/altura/i.test(r[0]));
+  if(!m) return '';
+  const cm=parseFloat(String(m[1]).replace(',','.')); if(!cm) return '';
+  const PXCM=96/22;                       /* la cabeza del dibujo son 22 cm */
+  const h=cm*PXCM, top=143-h/2-24;
+  return '<div class="scale"><svg viewBox="0 0 210 230" role="img" aria-label="Comparación de tamaño con una cabeza adulta">'+
+    '<path d="M18 226C24 184 60 168 105 168s81 16 87 58" fill="var(--sunk)"/>'+
+    '<rect x="92" y="136" width="26" height="38" rx="9" fill="var(--sunk)"/>'+
+    '<ellipse cx="105" cy="95" rx="38" ry="48" fill="var(--sunk)"/>'+
+    '<rect x="'+(105-52)+'" y="'+top+'" width="104" height="'+h+'" rx="10" fill="none" '+
+      'stroke="var(--brand)" stroke-width="2" stroke-dasharray="5 4"/>'+
+    '<line x1="178" y1="'+top+'" x2="178" y2="'+(top+h)+'" stroke="var(--brand)" stroke-width="1.5"/>'+
+    '<line x1="172" y1="'+top+'" x2="184" y2="'+top+'" stroke="var(--brand)" stroke-width="1.5"/>'+
+    '<line x1="172" y1="'+(top+h)+'" x2="184" y2="'+(top+h)+'" stroke="var(--brand)" stroke-width="1.5"/>'+
+    '<text x="192" y="'+(top+h/2+4)+'" font-family="Space Mono,monospace" font-size="13" '+
+      'fill="var(--brand)" transform="rotate(-90 192 '+(top+h/2+4)+')" text-anchor="middle">'+
+      String(cm).replace('.',',')+' cm</text>'+
+    '</svg><p>La pieza mide <b>'+String(cm).replace('.',',')+' cm</b> de alto. '+
+    'Una cabeza adulta ronda los 22 cm, así que te haces una idea de lo que ocupa en la estantería.</p></div>';
+}
 function labelOf(p,sel){
   return optsOf(p).map(o=>{const c=o.ch.find(x=>x.id===sel[o.k])||o.ch[0];return c.label;}).join(' · ');
 }
@@ -953,6 +1017,7 @@ function openSheet(p){
       '<p style="color:var(--soft);font-size:.92rem">'+p.d+'</p>'+
       '<div id="optWrap"></div>'+
       '<table class="tbl"><tbody id="shSpec"></tbody></table>'+
+      (p.photos?scaleSvg(p):'')+
       '<div class="pricebox"><span>Precio</span><b class="mono" id="shPrice">—</b></div>'+
       '<button class="btn btn--p" style="width:100%;margin-top:.9rem" id="shAdd">Añadir al pedido</button>'+
       '<p style="font-size:.78rem;color:var(--faint);margin:.7rem 0 0">'+
@@ -1227,23 +1292,48 @@ const io='IntersectionObserver' in window?new IntersectionObserver(e=>{
   {threshold:.08,rootMargin:'0px 0px -40px'}):null;
 const watch=()=>$$('.rv:not(.in)').forEach(n=>io?io.observe(n):n.classList.add('in'));
 
-/* pieza del hero: gira sola y se puede agarrar */
-(function heroPiece(){
+/* El hero imprime piezas del catálogo en bucle: la malla se corta por altura
+   y la capa que se está depositando se pinta en caliente. */
+(function printer(){
   const cv=$('#heroCv'); if(!cv) return;
-  const mesh=lathe(P.vase,52,1.15);
-  let rx=-.33, ry=.4, raf=null, drag=null;
+  const QUEUE=[
+    {n:'Jarrón espiral',   mesh:lathe(P.vase,48,1.15), col:COLORS.teal,    mm:190, mat:'PLA Silk'},
+    {n:'Maceta hexagonal', mesh:prism(6,.62,1.3,.78),  col:COLORS.verde,   mm:110, mat:'PETG'},
+    {n:'Lámpara de mesa',  mesh:lathe(P.lamp,44,0),    col:COLORS.mostaza, mm:220, mat:'PLA'},
+    {n:'Portalápices',     mesh:prism(12,.55,1.35,.62),col:COLORS.morado,  mm:110, mat:'PLA'},
+    {n:'Trofeo',           mesh:lathe(P.cup,40,0),     col:COLORS.gris,    mm:210, mat:'PLA Silk'}
+  ];
+  const LAYER=0.2;                       /* altura de capa en mm */
   const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
-  const paint=()=>render(cv,mesh,{color:COLORS.teal,rx,ry,scale:1.02,metal:.6});
-  const loop=()=>{ if(!drag) ry+=0.0045; paint(); raf=requestAnimationFrame(loop); };
-  cv.addEventListener('pointerdown',e=>{drag=[e.clientX,e.clientY,ry,rx];cv.setPointerCapture(e.pointerId);});
-  cv.addEventListener('pointermove',e=>{ if(!drag)return;
-    ry=drag[2]+(e.clientX-drag[0])*.01; rx=clamp(drag[3]+(e.clientY-drag[1])*.01,-1.3,1.3); paint(); });
-  const stop=()=>{drag=null;};
-  cv.addEventListener('pointerup',stop); cv.addEventListener('pointerleave',stop);
-  addEventListener('resize',paint);
+  let i=0, t0=performance.now(), ry=.5, raf=null;
+  const SPAN=9000, HOLD=1400;            /* imprimir y quedarse un momento */
+
+  function frame(now){
+    const job=QUEUE[i];
+    let e=(now-t0)/SPAN;
+    let done=false;
+    if(e>=1){ e=1; done=(now-t0)>SPAN+HOLD; }
+    const prog=reduce?1:e;
+    ry+=reduce?0:0.0026;
+    render(cv,job.mesh,{color:job.col,rx:-.30,ry,scale:.74,bed:true,cy:0.44,
+      clip:-1+prog*2.06, layers:true, metal:.25});
+    const layers=Math.round(job.mm/LAYER);
+    $('#slName').textContent=job.n;
+    $('#slPct').textContent=Math.round(prog*100)+' %';
+    $('#slBar').style.width=(prog*100)+'%';
+    $('#slLayer').textContent=Math.round(prog*layers).toLocaleString('es-ES');
+    $('#slZ').textContent=(prog*job.mm).toFixed(1).replace('.',',');
+    $('#slMat').textContent=job.mat;
+    if(done){ i=(i+1)%QUEUE.length; t0=now; }
+    raf=requestAnimationFrame(frame);
+  }
+  addEventListener('resize',()=>render(cv,QUEUE[i].mesh,
+    {color:QUEUE[i].col,rx:-.30,ry,scale:.74,cy:0.44,bed:true,clip:1.1}));
   document.addEventListener('visibilitychange',()=>{
-    if(document.hidden) cancelAnimationFrame(raf); else if(!reduce) loop();});
-  paint(); if(!reduce) loop();
+    if(document.hidden) cancelAnimationFrame(raf);
+    else { t0=performance.now(); raf=requestAnimationFrame(frame); }
+  });
+  raf=requestAnimationFrame(frame);
 })();
 
 /* ── Arranque ──────────────────────────────────────────────────────────── */
