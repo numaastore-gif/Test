@@ -50,11 +50,28 @@ Las constantes están al principio del `<script>`: `SETUP` (preparación) y `HOU
 Tres, con sus fotos incrustadas en el archivo como data URI (recortadas de las
 capturas, sin la interfaz del móvil, a 820 px y JPEG: unos 900 KB en total):
 
-| Producto | Base | Fotos | Opciones |
+| Producto | Raw | Pintado | Fotos |
 |---|---|---|---|
-| Casco de Batman | 65 € | 3 | acabado (sin pintar / imprimado / pintado ×2,40), formato, peana |
-| Máscara Venom / Spider-Man | 95 € | 5 | acabado (pintada / imprimada / en crudo), formato, peana |
-| Casco de Power Ranger amarillo | 130 € | 5 | acabado, visera (ahumada / transparente / sin visera −14 €), formato, peana |
+| Casco de Batman | 65 € | 156 € | 3 |
+| Máscara Venom / Spider-Man | 40 € | 96 € | 5 |
+| Casco de Power Ranger amarillo | 55 € | 132 € | 5 |
+
+Los tres comparten el mismo escalón de acabado, que es como se vende de verdad
+una pieza impresa: **raw** ×1 (sin postprocesar, con las capas a la vista),
+**lijado e imprimado** ×1,55 (listo para pintar) y **pintado a mano** ×2,40. El
+precio base de cada producto es el del raw; la tarjeta enseña el rango completo
+y la ficha abre en el acabado de las fotos.
+
+## Tratamiento de las fotos
+
+`normalize.py` (en el scratchpad de la sesión) lleva todas las fotos a la misma
+estética: recorta la interfaz del móvil, detecta la pieza, encuadra en cuadrado
+con el mismo aire alrededor, iguala luz y saturación, y sustituye el fondo por
+uno de estudio construido desenfocando y aclarando la propia foto hacia un tono
+común. Salida a 1000 × 1000 y JPEG de calidad 80.
+
+Las fotos con **fondo oscuro se dejan sin tocar el fondo**: ahí la máscara no es
+fiable y el remiendo se nota más que el problema.
 
 **Los precios me los he inventado** — hacen falta los tuyos. Están en el campo
 `p` de cada entrada de `REAL`, y los multiplicadores en `opts`.
