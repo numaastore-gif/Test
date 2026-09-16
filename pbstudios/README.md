@@ -79,9 +79,42 @@ se lee como ASCII con una expresión regular sobre los `vertex`. Después:
   triángulo con el origen — vale para cualquier malla cerrada, con concavidades
   y agujeros incluidos;
 - **área** y **caja envolvente** en la misma pasada;
-- para la vista previa la malla se submuestrea a 2600 triángulos, se pasa de
-  Z-arriba (convenio CAD) a Y-arriba y se normaliza por la **diagonal** de la
-  caja, para que no se salga del marco al girarla.
+- para la vista previa la malla se pasa de Z-arriba (convenio CAD) a Y-arriba y
+  se normaliza por la **diagonal** de la caja, para que no se salga del marco al
+  girarla.
+
+## Por qué la pieza se ve sólida y no como una maraña de triángulos
+
+La primera versión se quedaba con uno de cada N triángulos para que el visor
+fuese rápido. Eso abre agujeros en la superficie, se ve el interior de la pieza y
+el modelo parece roto — justo lo contrario de lo que tiene que transmitir la web.
+Ahora entra la malla entera y se dibuja así:
+
+1. **Vértices únicos**: los tres vértices de cada triángulo se funden con los de
+   sus vecinos, que es lo que permite promediar normales.
+2. **Normales suavizadas con arista viva**: la normal de cada vértice es la media
+   de las caras que lo tocan, pesada por área. Cuando una cara se aparta más de
+   unos 57° de esa media, el vértice se **duplica** con la normal de su cara: así
+   una esfera sale lisa pero un chaflán sigue siendo un chaflán.
+3. **Rasterizador con z-buffer** escrito a mano sobre un `ImageData`: cada píxel
+   se queda con el triángulo más cercano. No hay que ordenar caras, no se cuela
+   nada por dentro y no quedan costuras entre triángulos. Se descartan antes las
+   caras que miran hacia atrás, que es la mitad del trabajo.
+4. **Luz**: clave + relleno + un realce de silueta para despegarla del fondo, más
+   un brillo especular corto. El sombreado se interpola entre los tres vértices
+   (Gouraud), así que no se ven las facetas.
+5. Encima, las líneas de capa a un 5 % de intensidad. Ahí sí interesa que se
+   note: es una pieza impresa, no un render de catálogo.
+
+Se dibuja a doble resolución y se escala a la mitad en pantalla, que hace de
+antialiasing. Mientras arrastras baja a resolución simple y vuelve a la buena al
+soltar.
+
+**Archivos grandes**: por encima de 200.000 triángulos no se tiran triángulos —
+se **agrupan vértices por rejilla**, que baja la cuenta sin abrir la superficie.
+Probado con una esfera de 577.600 triángulos (28 MB): la lee en 1,2 s, la dibuja
+sin un solo agujero y gira a unos 30 ms por fotograma. El volumen y las medidas
+se miden siempre sobre la malla original, no sobre la simplificada.
 
 STEP y 3MF se aceptan en el selector pero no se miden aquí: para esos el aviso
 dice que se revisan a mano. Un STEP es geometría paramétrica, no una malla, y
