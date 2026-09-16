@@ -45,6 +45,27 @@ opcional), `prism`, `box`, `gear`, `torus` y `merge` para combinarlos.
 Las constantes están al principio del `<script>`: `SETUP` (preparación) y `HOUR`
 (coste de máquina por hora).
 
+## Productos reales ya cargados
+
+Dos, con sus fotos incrustadas en el archivo como data URI (recortadas de las
+capturas, sin la interfaz del móvil, a 820 px y JPEG: unos 310 KB en total):
+
+| Producto | Base | Opciones |
+|---|---|---|
+| Casco de Batman | 65 € | acabado (sin pintar / imprimado / pintado ×2,40), formato, peana |
+| Máscara Venom / Spider-Man | 95 € | acabado (pintada / imprimada / en crudo), formato, peana |
+
+**Los precios me los he inventado** — hacen falta los tuyos. Están en el campo
+`p` de cada entrada de `REAL`, y los multiplicadores en `opts`.
+
+Cada producto declara sus propias opciones: un casco no se vende por «material y
+talla» como un portalápices, se vende por acabado, que es donde está el trabajo.
+Las piezas de catálogo siguen usando material y talla por defecto.
+
+Los 12 productos generados en 3D siguen ahí marcados con la etiqueta **Ejemplo**,
+para que el catálogo no se vea vacío mientras llegan los tuyos. Se borran
+quitando `DEMO` de la línea `const PRODUCTS=REAL.concat(DEMO);`.
+
 ## Lo que tienes que cambiar
 
 Todo el contenido es **de ejemplo**, porque no pude ver tu Instagram: el proxy de
