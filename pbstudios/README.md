@@ -53,8 +53,8 @@ capturas, sin la interfaz del móvil, a 820 px y JPEG: unos 900 KB en total):
 | Producto | Raw | Pintado | Fotos |
 |---|---|---|---|
 | Casco de Batman | 65 € | 156 € | 3 |
-| Máscara Venom / Spider-Man | 40 € | 96 € | 5 |
-| Casco de Power Ranger amarillo | 55 € | 132 € | 5 |
+| Máscara Venom / Spider-Man | 40 € | 96 € | 4 |
+| Casco de Power Ranger amarillo | 55 € | 132 € | 3 |
 
 Los tres comparten el mismo escalón de acabado, que es como se vende de verdad
 una pieza impresa: **raw** ×1 (sin postprocesar, con las capas a la vista),
@@ -64,14 +64,27 @@ y la ficha abre en el acabado de las fotos.
 
 ## Tratamiento de las fotos
 
-`normalize.py` (en el scratchpad de la sesión) lleva todas las fotos a la misma
-estética: recorta la interfaz del móvil, detecta la pieza, encuadra en cuadrado
-con el mismo aire alrededor, iguala luz y saturación, y sustituye el fondo por
-uno de estudio construido desenfocando y aclarando la propia foto hacia un tono
-común. Salida a 1000 × 1000 y JPEG de calidad 80.
+`extract.py` **recorta la pieza del fondo** y la monta sobre fondo de estudio.
+Sin modelos de IA, porque este entorno no tiene acceso de red a los pesos
+(HuggingFace y GitHub bloqueados), así que va con visión clásica:
 
-Las fotos con **fondo oscuro se dejan sin tocar el fondo**: ahí la máscara no es
-fiable y el remiendo se nota más que el problema.
+1. recorta la interfaz del móvil buscando la franja que no es color plano;
+2. estima el fondo por las esquinas y umbraliza la distancia en espacio LAB con
+   Otsu, invirtiendo la máscara si lo marcado ocupa casi todo el marco;
+3. una **apertura por reconstrucción** se come el brazo y la mano, que son más
+   estrechos que la pieza, y deja solo el casco;
+4. GrabCut afina el borde y se rellenan los huecos;
+5. compone sobre el `--paper` del sitio con una sombra de contacto y encuadre
+   cuadrado idéntico en todas. Salida 1000 × 1000, JPEG 82.
+
+**Tres fotos se descartaron** porque el recorte arrastraba fondo: una del Venom y
+dos del Ranger. Están listadas en el `SETS` del script.
+
+La vía buena para las siguientes: recortar en el móvil (mantener pulsado sobre la
+pieza → copiar sujeto) y pasar el PNG con transparencia. El compositor de
+`extract.py` sirve igual y el borde sale perfecto.
+
+`normalize.py` queda como alternativa: no recorta, solo uniforma encuadre y luz.
 
 **Los precios me los he inventado** — hacen falta los tuyos. Están en el campo
 `p` de cada entrada de `REAL`, y los multiplicadores en `opts`.
