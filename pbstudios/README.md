@@ -48,13 +48,13 @@ Las constantes están al principio del `<script>`: `SETUP` (preparación) y `HOU
 ## Productos reales ya cargados
 
 Tres, con sus fotos incrustadas en el archivo como data URI (recortadas de las
-capturas, sin la interfaz del móvil, a 820 px y JPEG: unos 700 KB en total):
+capturas, sin la interfaz del móvil, a 820 px y JPEG: unos 900 KB en total):
 
 | Producto | Base | Fotos | Opciones |
 |---|---|---|---|
 | Casco de Batman | 65 € | 3 | acabado (sin pintar / imprimado / pintado ×2,40), formato, peana |
 | Máscara Venom / Spider-Man | 95 € | 5 | acabado (pintada / imprimada / en crudo), formato, peana |
-| Casco de Power Ranger amarillo | 130 € | 2 | acabado, visera (ahumada / transparente / sin visera −14 €), formato, peana |
+| Casco de Power Ranger amarillo | 130 € | 5 | acabado, visera (ahumada / transparente / sin visera −14 €), formato, peana |
 
 **Los precios me los he inventado** — hacen falta los tuyos. Están en el campo
 `p` de cada entrada de `REAL`, y los multiplicadores en `opts`.
