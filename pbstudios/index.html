@@ -114,9 +114,9 @@ header.nav{position:fixed;inset:0 0 auto;height:var(--nav-h);z-index:110;display
 header.nav.stuck{border-bottom-color:var(--line)}
 .nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:1rem;width:min(1320px,94vw)}
 .brand{display:flex;align-items:center;gap:.65rem;flex:0 0 auto}
-.brand .mk{width:38px;height:38px;background:var(--ink);border-radius:9px;display:grid;place-items:center;flex:0 0 auto}
+.brand .mk{width:42px;height:42px;flex:0 0 auto;display:block}
 .brand .wd b{font-family:var(--disp);font-weight:800;font-size:1.12rem;letter-spacing:-.04em;display:block;line-height:1}
-.brand .wd span{font-family:var(--mono);font-size:.56rem;letter-spacing:.22em;color:var(--faint);text-transform:uppercase}
+.brand .wd span{font-family:var(--mono);font-size:.5rem;letter-spacing:.17em;color:var(--faint);text-transform:uppercase}
 .menu{display:flex;gap:.1rem}
 .menu a{padding:.5rem .7rem;font-size:.93rem;position:relative}
 .menu a::after{content:"";position:absolute;left:.7rem;right:.7rem;bottom:.3rem;height:2px;background:var(--brand);
@@ -138,7 +138,40 @@ header.nav.stuck{border-bottom-color:var(--line)}
 @media(max-width:560px){ .acts .btn{display:none} }
 
 /* hero */
-.hero{padding:calc(var(--nav-h) + clamp(2.4rem,6vw,4.4rem)) 0 clamp(2.4rem,5vw,3.6rem)}
+/* El hero no es una caja: la cama de impresión es el propio fondo de la
+   sección y la pieza se imprime encima, sin marco que la separe. */
+.hero{position:relative;padding:calc(var(--nav-h) + clamp(2rem,5vw,3.6rem)) 0 0;
+  background:var(--sunk);overflow:hidden}
+.hero .bed{position:absolute;inset:auto 0 0 0;height:74%;pointer-events:none;
+  background-image:linear-gradient(color-mix(in srgb,var(--brand) 22%,transparent) 1px,transparent 1px),
+    linear-gradient(90deg,color-mix(in srgb,var(--brand) 22%,transparent) 1px,transparent 1px);
+  background-size:46px 46px;
+  -webkit-mask-image:linear-gradient(transparent,#000 55%,transparent);
+  mask-image:linear-gradient(transparent,#000 55%,transparent);
+  transform:perspective(520px) rotateX(58deg);transform-origin:bottom;opacity:.5}
+.hero-in{position:relative;z-index:2;display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:clamp(1rem,3vw,2.4rem);align-items:center;
+  padding-bottom:clamp(1.4rem,3vw,2.2rem)}
+@media(max-width:860px){.hero-in{grid-template-columns:1fr}.hero-piece{order:-1}}
+.hero-logo{width:clamp(76px,9vw,104px);height:auto;display:block;margin-bottom:1rem}
+.hero h1{font-size:clamp(2.4rem,5.4vw,4rem)}
+.hero h1 em{font-style:normal;color:var(--brand)}
+.hero-piece{aspect-ratio:1/1;max-height:min(58vh,440px);margin-inline:auto;width:100%}
+.hero-piece canvas{width:100%;height:100%;display:block}
+.hero-live{display:flex;flex-wrap:wrap;align-items:center;gap:.35rem;margin:1.3rem 0 0;
+  font-size:.72rem;color:var(--faint);letter-spacing:.02em}
+.hero-live b{color:var(--txt);font-weight:700}
+.dot-live{width:7px;height:7px;border-radius:50%;background:var(--brand);margin-right:.35rem;
+  box-shadow:0 0 0 0 color-mix(in srgb,var(--brand) 60%,transparent);animation:ping 2s infinite}
+@keyframes ping{70%{box-shadow:0 0 0 7px transparent}100%{box-shadow:0 0 0 0 transparent}}
+/* franja de garantías, pegada al hero para que se lea antes del catálogo */
+.trust{position:relative;z-index:2;border-top:1px solid var(--line);background:var(--surface)}
+.trust-in{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--line)}
+@media(max-width:840px){.trust-in{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:460px){.trust-in{grid-template-columns:1fr}}
+.trust-in div{background:var(--surface);padding:.95rem 1.1rem}
+.trust-in b{display:block;font-family:var(--disp);font-weight:600;font-size:.94rem}
+.trust-in span{font-size:.79rem;color:var(--soft)}
 .hero-grid{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:clamp(1.6rem,4vw,3rem);align-items:center}
 @media(max-width:900px){.hero-grid{grid-template-columns:1fr}}
 .hero h1 em{font-style:normal;color:var(--brand)}
@@ -150,19 +183,7 @@ header.nav.stuck{border-bottom-color:var(--line)}
 .stage canvas:active{cursor:grabbing}
 .stage .hint{position:absolute;left:12px;bottom:10px;font-family:var(--mono);font-size:.62rem;
   letter-spacing:.12em;text-transform:uppercase;color:var(--faint)}
-/* panel de estado, como el de una impresora */
-.slicer{position:absolute;left:0;right:0;bottom:0;padding:.75rem .9rem;
-  background:linear-gradient(transparent,var(--ink) 30%);color:#E9EDF2}
-.slicer-top{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;margin-bottom:.4rem}
-.slicer-top b{font-family:var(--disp);font-weight:600;font-size:.92rem}
-.slicer-top span{font-size:.8rem;color:var(--brand-2);font-weight:700}
-.slicer-bar{height:3px;background:rgba(255,255,255,.18);overflow:hidden}
-.slicer-bar i{display:block;height:100%;background:var(--brand-2);width:0}
-.slicer-grid{display:grid;grid-template-columns:repeat(4,auto);gap:.2rem 1rem;margin-top:.5rem;
-  font-size:.6rem;letter-spacing:.06em;color:#9BA6B4;justify-content:space-between}
-.slicer-grid b{color:#E9EDF2;font-weight:700}
-@media(max-width:520px){.slicer-grid{grid-template-columns:repeat(2,auto)}}
-.stage{cursor:default}
+
 .specs{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:1px;background:var(--line);
   border:1px solid var(--line);margin-top:1.4rem}
 .specs div{background:var(--surface);padding:.65rem .8rem}
@@ -233,6 +254,32 @@ header.nav.stuck{border-bottom-color:var(--line)}
 .tbl td:last-child{text-align:right;font-family:var(--mono)}
 
 /* presupuesto */
+.drop{border:2px dashed var(--line);border-radius:var(--r);background:var(--surface);
+  padding:1.6rem 1.2rem;text-align:center;cursor:pointer;display:grid;gap:.35rem;justify-items:center;
+  color:var(--soft);transition:.16s}
+.drop:hover,.drop.over{border-color:var(--brand);background:color-mix(in srgb,var(--brand) 6%,var(--surface));color:var(--brand)}
+.drop b{font-family:var(--disp);font-size:1rem;color:var(--txt)}
+.drop.over b{color:var(--brand)}
+.drop span{font-size:.78rem}
+.fileinfo{margin-top:.8rem;border:1px solid var(--line);background:var(--surface);border-radius:var(--r);padding:.8rem .95rem}
+.fileinfo .fn{display:flex;justify-content:space-between;gap:1rem;align-items:baseline}
+.fileinfo b{font-family:var(--disp);font-size:.95rem;word-break:break-all}
+.fileinfo .meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:.4rem .8rem;margin-top:.6rem;
+  font-family:var(--mono);font-size:.72rem;color:var(--soft)}
+.fileinfo .meta i{display:block;font-style:normal;color:var(--txt);font-weight:700}
+.fileinfo .warn{margin-top:.6rem;font-size:.78rem;color:var(--hot);display:flex;gap:.4rem;align-items:flex-start}
+.fileinfo button{border:0;background:none;color:var(--bad);cursor:pointer;font-size:1.1rem;line-height:1}
+.manual{margin-top:1rem;font-size:.86rem}
+.manual summary{cursor:pointer;color:var(--brand);font-weight:600}
+.preview{position:relative;aspect-ratio:4/3;background:var(--surface);border:1px solid var(--line);
+  border-radius:var(--r);overflow:hidden;margin-bottom:1rem}
+.preview canvas{width:100%;height:100%;display:block;cursor:grab;touch-action:none}
+.preview canvas:active{cursor:grabbing}
+.preview-empty{position:absolute;inset:0;display:grid;place-items:center;margin:0;padding:1.2rem;
+  text-align:center;font-size:.85rem;color:var(--faint)}
+.preview-empty[hidden],.preview-tag[hidden]{display:none}
+.preview-tag{position:absolute;left:10px;bottom:9px;font-size:.62rem;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--faint)}
 .calc{display:grid;grid-template-columns:minmax(0,320px) minmax(0,1fr);gap:1.6rem;align-items:start}
 @media(max-width:820px){.calc{grid-template-columns:1fr}}
 .dims{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem}
@@ -315,13 +362,63 @@ footer.site a:hover{color:var(--brand-2)}
 </head>
 <body>
 <a class="skip" href="#catalogo">Saltar al catálogo</a>
+<!-- Marca PB Studios, redibujada en vectorial a partir del logo original.
+     Sin fondo, escala a cualquier tamaño y la pieza de dentro se imprime. -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="pbMark" viewBox="0 0 300 300">
+    <!-- destellos de la base -->
+    <g fill="none" stroke="#35DCCB" stroke-width="7" stroke-linecap="round" opacity=".92">
+      <path d="M96 268 L34 292"/><path d="M104 280 L58 300"/>
+      <path d="M224 268 L286 292"/><path d="M216 280 L262 300"/>
+    </g>
+    <!-- cuerpo -->
+    <path d="M70 110 L190 80 L250 110 L130 140 Z" fill="#4A6A8C"/>
+    <path d="M190 80 L250 110 L250 260 L190 230 Z" fill="#2C4763"/>
+    <path d="M70 110 L190 80 L190 230 L70 260 Z" fill="#3E5A78"/>
+    <!-- hueco de impresión -->
+    <path d="M88 132 L172 111 L172 222 L88 243 Z" fill="#16324C"/>
+    <!-- la pieza que se está imprimiendo, la anima el script -->
+    <g id="pbPrint">
+      <path id="pbPart" d="M110 236 L150 226 L150 226 L110 236 Z" fill="#FFFFFF"/>
+    </g>
+    <!-- cama -->
+    <path d="M96 244 L166 227 L166 235 L96 252 Z" fill="#8FA7BE"/>
+    <!-- extrusor -->
+    <g fill="#CBD8E4">
+      <path d="M150 120 L170 115 L170 141 L150 146 Z"/>
+      <path d="M157 146 L163 144 L160 156 Z"/>
+    </g>
+    <rect x="150" y="104" width="46" height="5" rx="2.5" fill="#FFFFFF" transform="rotate(-11 150 104)"/>
+    <circle cx="90" cy="126" r="5" fill="#CBD8E4"/><circle cx="104" cy="122" r="5" fill="#CBD8E4"/>
+    <!-- respiraderos del lateral -->
+    <g stroke="#1F3A54" stroke-width="5" stroke-linecap="round">
+      <path d="M210 118 L210 228"/><path d="M224 125 L224 235"/><path d="M238 132 L238 242"/>
+    </g>
+    <!-- marco -->
+    <g fill="none" stroke="#35DCCB" stroke-width="11" stroke-linejoin="round">
+      <path d="M70 110 L190 80 L250 110 L250 260 L190 230 L70 260 Z"/>
+      <path d="M190 80 L190 230" stroke-width="8"/>
+      <path d="M70 110 L130 140 L250 110" stroke-width="8"/>
+      <path d="M130 140 L130 290" stroke-width="0"/>
+    </g>
+  </symbol>
+  <symbol id="pbLockup" viewBox="0 0 520 420">
+    <use href="#pbMark" x="110" y="10" width="300" height="300"/>
+    <text x="260" y="360" text-anchor="middle" font-family="Sora,sans-serif" font-weight="800"
+          font-size="66" letter-spacing="2" fill="currentColor">PBSTUDIOS</text>
+    <text x="260" y="398" text-anchor="middle" font-family="Space Mono,monospace" font-weight="700"
+          font-size="21" letter-spacing="6.5" fill="#35DCCB">FROM CONCEPT TO CREATION</text>
+  </symbol>
+</svg>
+
+
 <div id="prog" role="progressbar" aria-label="Progreso"></div>
 
 <header class="nav" id="nav">
   <div class="wrap">
     <a class="brand" href="#top" aria-label="PB Studios — inicio">
-      <span class="mk"><span class="layers" aria-hidden="true"><i></i><i></i><i></i></span></span>
-      <span class="wd"><b>PB Studios</b><span>Impresión 3D</span></span>
+      <svg class="mk" viewBox="0 0 300 300" aria-hidden="true"><use href="#pbMark"/></svg>
+      <span class="wd"><b>PBSTUDIOS</b><span>From concept to creation</span></span>
     </a>
     <nav class="menu" id="menu" aria-label="Principal">
       <a href="#catalogo">Catálogo</a>
@@ -353,29 +450,31 @@ footer.site a:hover{color:var(--brand-2)}
 <main id="top">
 <!-- HERO -->
 <section class="hero">
-  <div class="wrap">
-    <div class="hero-grid">
-      <div>
-        <div class="eyebrow"><span class="layers" aria-hidden="true"><i></i><i></i><i></i></span> Impresión 3D bajo pedido</div>
-        <h1>Lo imprimimos<br><em>mientras lo miras.</em></h1>
-        <div class="hero-cta">
-          <a class="btn btn--p" href="#catalogo">Ver el catálogo</a>
-          <a class="btn btn--o" href="#medida">Calcular mi pieza</a>
-        </div>
+  <div class="bed" aria-hidden="true"></div>
+  <div class="wrap hero-in">
+    <div class="hero-txt">
+      <svg class="hero-logo" viewBox="0 0 300 300" role="img" aria-label="PB Studios"><use href="#pbMark"/></svg>
+      <h1>De la idea<br><em>a la pieza.</em></h1>
+      <div class="hero-cta">
+        <a class="btn btn--p" href="#catalogo">Ver el catálogo</a>
+        <a class="btn btn--o" href="#medida">Calcular mi pieza</a>
       </div>
-      <div class="stage">
-        <canvas id="heroCv" aria-label="Simulación de una pieza imprimiéndose capa a capa"></canvas>
-        <div class="slicer" aria-hidden="true">
-          <div class="slicer-top"><b id="slName">—</b><span id="slPct" class="mono">0 %</span></div>
-          <div class="slicer-bar"><i id="slBar"></i></div>
-          <div class="slicer-grid mono">
-            <span>Capa <b id="slLayer">0</b></span>
-            <span>Altura <b id="slZ">0,0</b> mm</span>
-            <span>Boquilla <b>205 °C</b></span>
-            <span>Material <b id="slMat">PLA</b></span>
-          </div>
-        </div>
-      </div>
+      <p class="hero-live mono" aria-live="polite">
+        <span class="dot-live"></span>Imprimiendo ahora ·
+        <b id="slName">—</b> · capa <b id="slLayer">0</b> ·
+        <b id="slZ">0,0</b> mm · <b id="slMat">PLA</b> · <b id="slPct">0 %</b>
+      </p>
+    </div>
+    <div class="hero-piece">
+      <canvas id="heroCv" aria-label="Pieza imprimiéndose capa a capa"></canvas>
+    </div>
+  </div>
+  <div class="trust">
+    <div class="wrap trust-in">
+      <div><b>Licencia comercial</b><span>Compramos los modelos a sus diseñadores</span></div>
+      <div><b>Foto antes de enviar</b><span>Ves tu pieza terminada antes de que salga</span></div>
+      <div><b>Si sale mal, se repite</b><span>Reimprimimos sin coste los defectos</span></div>
+      <div><b>Entrega 24–48 h</b><span>O en mano sin coste, una vez impresa</span></div>
     </div>
   </div>
 </section>
@@ -410,20 +509,22 @@ footer.site a:hover{color:var(--brand-2)}
   <div class="wrap">
     <div class="head rv">
       <div class="eyebrow"><span class="layers" aria-hidden="true"><i></i><i></i><i></i></span> Encargos a medida</div>
-      <h2>¿Cuánto me costaría mi pieza?</h2>
-      <p>Mete las medidas aproximadas y el acabado que quieres. Te calculamos material, tiempo de máquina y precio con el desglose a la vista, para que sepas de dónde sale cada euro.</p>
+      <h2>Sube tu archivo y te damos precio</h2>
+      <p>Suelta aquí tu STL y lo leemos en tu propio navegador: calculamos el volumen real de la pieza —no una estimación por su caja— y te damos precio al momento. El archivo no sale de tu ordenador hasta que tú decides mandárnoslo.</p>
     </div>
     <div class="calc">
       <div class="rv">
-        <div class="field">
-          <label>Medidas de la pieza (cm)</label>
-          <div class="dims">
-            <input id="dx" type="number" min="1" max="25" step="0.5" value="8" aria-label="Ancho">
-            <input id="dy" type="number" min="1" max="25" step="0.5" value="8" aria-label="Fondo">
-            <input id="dz" type="number" min="1" max="25" step="0.5" value="12" aria-label="Alto">
-          </div>
+        <div class="drop" id="drop" tabindex="0" role="button"
+             aria-label="Subir archivo 3D">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+            <path d="M12 16V4m0 0L8 8m4-4 4 4"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg>
+          <b>Arrastra tu archivo aquí</b>
+          <span>o pulsa para elegirlo · STL, 3MF, STEP, OBJ · hasta 60 MB</span>
+          <input type="file" id="file" accept=".stl,.3mf,.step,.stp,.obj" hidden>
         </div>
-        <div class="field"><label for="cMat">Material</label><select id="cMat"></select></div>
+        <div id="fileInfo" class="fileinfo" hidden></div>
+
+        <div class="field" style="margin-top:1rem"><label for="cMat">Material</label><select id="cMat"></select></div>
         <div class="field"><label for="cFill">Relleno</label>
           <select id="cFill">
             <option value="0.10">10 % — decorativo</option>
@@ -441,8 +542,26 @@ footer.site a:hover{color:var(--brand-2)}
         <label style="display:flex;gap:.5rem;align-items:center;font-size:.88rem;color:var(--soft)">
           <input type="checkbox" id="cSup"> Necesita soportes o postprocesado
         </label>
+
+        <details class="manual">
+          <summary>No tengo archivo: prefiero dar las medidas</summary>
+          <div class="field" style="margin-top:.7rem">
+            <label>Medidas aproximadas (cm)</label>
+            <div class="dims">
+              <input id="dx" type="number" min="1" max="25" step="0.5" value="8" aria-label="Ancho">
+              <input id="dy" type="number" min="1" max="25" step="0.5" value="8" aria-label="Fondo">
+              <input id="dz" type="number" min="1" max="25" step="0.5" value="12" aria-label="Alto">
+            </div>
+          </div>
+        </details>
       </div>
+
       <div class="rv">
+        <div class="preview" id="preview">
+          <canvas id="stlCv" aria-label="Vista previa de tu pieza"></canvas>
+          <p class="preview-empty" id="previewEmpty">Aquí verás tu pieza girando en cuanto subas el archivo</p>
+          <span class="preview-tag mono" id="previewTag" hidden></span>
+        </div>
         <div class="out">
           <div class="big"><span>Precio estimado</span><b class="mono" id="cTotal">—</b></div>
           <ul id="cBreak"></ul>
@@ -455,8 +574,8 @@ footer.site a:hover{color:var(--brand-2)}
             <div class="trk"><i id="bTime"></i></div>
           </div>
         </div>
-        <p style="font-size:.82rem;color:var(--soft);margin-top:.9rem">Es una estimación sobre el volumen que ocupa la pieza. El precio final depende de la geometría real: mándanos el STL por Instagram y te lo confirmamos el mismo día.</p>
-        <button class="btn btn--p" id="cSend" style="margin-top:.4rem">Enviar esta consulta</button>
+        <p id="calcNote" style="font-size:.82rem;color:var(--soft);margin-top:.9rem"></p>
+        <button class="btn btn--p" id="cSend">Enviar esta consulta</button>
       </div>
     </div>
   </div>
@@ -532,11 +651,7 @@ footer.site a:hover{color:var(--brand-2)}
   <div class="wrap">
     <div class="fgrid">
       <div>
-        <div style="display:flex;align-items:center;gap:.65rem">
-          <span style="width:38px;height:38px;background:#23272F;border-radius:9px;display:grid;place-items:center">
-            <span class="layers" aria-hidden="true"><i></i><i></i><i></i></span></span>
-          <span style="font-family:var(--disp);font-weight:800;font-size:1.12rem;color:#fff;letter-spacing:-.04em">PB Studios</span>
-        </div>
+        <svg viewBox="0 0 520 420" style="width:168px;height:auto;display:block;color:#fff" role="img" aria-label="PB Studios"><use href="#pbLockup"/></svg>
         <p style="margin-top:.9rem;font-size:.88rem">Impresión 3D bajo pedido: piezas de catálogo y encargos a medida, impresas de una en una.</p>
       </div>
       <div><h4>Tienda</h4><ul>
@@ -1170,24 +1285,163 @@ function openModalHtml(html){
   $('#mbody').innerHTML=html; $('#modal').classList.add('on'); document.body.classList.add('lock'); $('#mx').focus();
 }
 
-/* ── 6. Presupuesto a medida ───────────────────────────────────────────── */
-const SETUP=3.50, HOUR=2.20;   /* preparación del archivo y coste de máquina */
+/* ── 6. Presupuesto a partir del archivo del cliente ───────────────────── */
+const SETUP=3.50, HOUR=2.20, MAXMM=250;
+let model=null;                    /* lo que se saca del STL subido */
+
+/* Lee un STL, binario o de texto. El binario trae el número de triángulos en
+   el byte 80; si el tamaño no cuadra, es ASCII. */
+function parseSTL(buf){
+  const dv=new DataView(buf), tris=[];
+  const n = buf.byteLength>=84 ? dv.getUint32(80,true) : 0;
+  if(n>0 && buf.byteLength===84+n*50){
+    let o=84;
+    for(let i=0;i<n;i++){
+      o+=12;                                     /* la normal no hace falta */
+      const t=[];
+      for(let k=0;k<3;k++){
+        t.push([dv.getFloat32(o,true),dv.getFloat32(o+4,true),dv.getFloat32(o+8,true)]);
+        o+=12;
+      }
+      o+=2; tris.push(t);
+    }
+    return tris;
+  }
+  const txt=new TextDecoder().decode(buf);
+  const re=/vertex\s+(-?[\d.]+(?:[eE][-+]?\d+)?)\s+(-?[\d.]+(?:[eE][-+]?\d+)?)\s+(-?[\d.]+(?:[eE][-+]?\d+)?)/g;
+  let m, acc=[];
+  while((m=re.exec(txt))){
+    acc.push([+m[1],+m[2],+m[3]]);
+    if(acc.length===3){ tris.push(acc); acc=[]; }
+  }
+  return tris;
+}
+/* Volumen real por suma de tetraedros con signo, y área de la superficie */
+function measure(tris){
+  let vol=0, area=0;
+  const lo=[Infinity,Infinity,Infinity], hi=[-Infinity,-Infinity,-Infinity];
+  for(const [a,b,c] of tris){
+    vol += (a[0]*(b[1]*c[2]-b[2]*c[1]) - a[1]*(b[0]*c[2]-b[2]*c[0]) + a[2]*(b[0]*c[1]-b[1]*c[0]))/6;
+    const u=[b[0]-a[0],b[1]-a[1],b[2]-a[2]], w=[c[0]-a[0],c[1]-a[1],c[2]-a[2]];
+    area += Math.hypot(u[1]*w[2]-u[2]*w[1], u[2]*w[0]-u[0]*w[2], u[0]*w[1]-u[1]*w[0])/2;
+    for(const v of [a,b,c]) for(let k=0;k<3;k++){ if(v[k]<lo[k])lo[k]=v[k]; if(v[k]>hi[k])hi[k]=v[k]; }
+  }
+  return {vol:Math.abs(vol), area, bbox:[hi[0]-lo[0],hi[1]-lo[1],hi[2]-lo[2]], lo, hi};
+}
+/* Malla lista para el visor: se submuestrea, se centra y se pone Z arriba */
+function toMesh(tris,m){
+  const MAX=2600;
+  const step=Math.max(1,Math.ceil(tris.length/MAX));
+  /* por la diagonal, para que no se salga del marco al girar */
+  const size=(Math.hypot(m.bbox[0],m.bbox[1],m.bbox[2])||1)/1.7;
+  const cx=(m.lo[0]+m.hi[0])/2, cy=(m.lo[1]+m.hi[1])/2, cz=(m.lo[2]+m.hi[2])/2;
+  const v=[], f=[];
+  for(let i=0;i<tris.length;i+=step){
+    const base=v.length;
+    for(const q of tris[i])
+      v.push([(q[0]-cx)/size*2, (q[2]-cz)/size*2, -(q[1]-cy)/size*2]);   /* Z del STL es la vertical */
+    f.push([base,base+1,base+2]);
+  }
+  return {v,f};
+}
+const fmt=n=>n.toLocaleString('es-ES',{maximumFractionDigits:1});
+
+function showFile(file,tris){
+  const box=$('#fileInfo'); box.hidden=false;
+  const mb=(file.size/1048576).toFixed(1).replace('.',',');
+  if(!tris){
+    box.innerHTML='<div class="fn"><b>'+file.name+'</b><button aria-label="Quitar">×</button></div>'+
+      '<div class="meta"><span>Tamaño<i>'+mb+' MB</i></span></div>'+
+      '<p class="warn">⚠ Este formato no lo puedo medir aquí. Mándanoslo y te pasamos precio a mano; '+
+      'mientras tanto puedes darnos las medidas aproximadas abajo.</p>';
+  }else{
+    const m=model;
+    const big=Math.max.apply(null,m.bbox)>MAXMM;
+    box.innerHTML='<div class="fn"><b>'+file.name+'</b><button aria-label="Quitar">×</button></div>'+
+      '<div class="meta">'+
+        '<span>Volumen<i>'+fmt(m.vol/1000)+' cm³</i></span>'+
+        '<span>Medidas<i>'+m.bbox.map(x=>fmt(x)).join(' × ')+' mm</i></span>'+
+        '<span>Triángulos<i>'+tris.length.toLocaleString('es-ES')+'</i></span>'+
+        '<span>Archivo<i>'+mb+' MB</i></span>'+
+      '</div>'+
+      (big?'<p class="warn">⚠ Pasa de 25 cm por algún lado: habría que partirla en piezas y unirlas. '+
+           'Se puede hacer, pero cuéntanoslo y lo calculamos bien.</p>':'');
+  }
+  $('button',box).addEventListener('click',clearFile);
+}
+function clearFile(){
+  model=null; $('#fileInfo').hidden=true; $('#file').value='';
+  $('#previewEmpty').hidden=false; $('#previewTag').hidden=true;
+  const cv=$('#stlCv'); cv.getContext('2d').clearRect(0,0,cv.width,cv.height);
+  calc();
+}
+let pv={rx:-.4,ry:.6,raf:null};
+function drawPreview(){
+  if(!model) return;
+  render($('#stlCv'),model.mesh,{color:COLORS.teal,rx:pv.rx,ry:pv.ry,scale:.92,layers:true,metal:.2});
+}
+(function previewDrag(){
+  const cv=$('#stlCv'); if(!cv) return;
+  let d=null;
+  cv.addEventListener('pointerdown',e=>{d=[e.clientX,e.clientY,pv.ry,pv.rx];cv.setPointerCapture(e.pointerId);});
+  cv.addEventListener('pointermove',e=>{ if(!d||!model)return;
+    pv.ry=d[2]+(e.clientX-d[0])*.01; pv.rx=clamp(d[3]+(e.clientY-d[1])*.01,-1.3,1.3); drawPreview(); });
+  const stop=()=>{d=null;};
+  cv.addEventListener('pointerup',stop); cv.addEventListener('pointerleave',stop);
+})();
+
+async function takeFile(file){
+  if(!file) return;
+  if(file.size>60*1048576){ toast('El archivo pasa de 60 MB. Mándanoslo por WeTransfer.'); return; }
+  const ext=(file.name.split('.').pop()||'').toLowerCase();
+  if(ext!=='stl'){ model=null; showFile(file,null); $('#previewEmpty').hidden=false; calc(); return; }
+  try{
+    const buf=await file.arrayBuffer();
+    const tris=parseSTL(buf);
+    if(!tris.length){ showFile(file,null); calc(); return; }
+    const m=measure(tris);
+    model={name:file.name,size:file.size,tris:tris.length,vol:m.vol,area:m.area,bbox:m.bbox,
+           mesh:toMesh(tris,m)};
+    showFile(file,tris);
+    $('#previewEmpty').hidden=true;
+    $('#previewTag').hidden=false; $('#previewTag').textContent='Arrastra para girar';
+    pv.rx=-.4; pv.ry=.6; drawPreview();
+    calc();
+    toast('Archivo leído: '+fmt(m.vol/1000)+' cm³ de material sólido');
+  }catch(e){ showFile(file,null); calc(); }
+}
+(function dropzone(){
+  const dz=$('#drop'), inp=$('#file'); if(!dz) return;
+  dz.addEventListener('click',()=>inp.click());
+  dz.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();inp.click();}});
+  inp.addEventListener('change',()=>takeFile(inp.files[0]));
+  ['dragenter','dragover'].forEach(ev=>dz.addEventListener(ev,e=>{e.preventDefault();dz.classList.add('over');}));
+  ['dragleave','drop'].forEach(ev=>dz.addEventListener(ev,e=>{e.preventDefault();dz.classList.remove('over');}));
+  dz.addEventListener('drop',e=>takeFile(e.dataTransfer.files[0]));
+  addEventListener('dragover',e=>e.preventDefault());
+  addEventListener('drop',e=>e.preventDefault());
+})();
+
 function calc(){
-  const x=+$('#dx').value||1, y=+$('#dy').value||1, z=+$('#dz').value||1;
   const mat=MATS.find(m=>m.id===$('#cMat').value)||MATS[0];
-  const fill=+$('#cFill').value, layer=+$('#cQual').value, qty=clamp(+$('#cQty').value||1,1,200);
-  const sup=$('#cSup').checked;
-  /* de la caja que ocupa la pieza a material real: una pieza típica llena
-     como un 35 % de su caja entre paredes y relleno */
-  const bbox=x*y*z;
-  const solid=bbox*(0.14+fill*0.42);
+  const fill=+$('#cFill').value, layer=+$('#cQual').value;
+  const qty=clamp(+$('#cQty').value||1,1,200), sup=$('#cSup').checked;
+  let solid, source;
+  if(model){
+    /* con el archivo se mide de verdad: cáscara de 1,2 mm más el relleno */
+    const volCm=model.vol/1000, areaCm=model.area/100;
+    const shell=Math.min(volCm, areaCm*0.12);
+    solid=shell+Math.max(0,volCm-shell)*fill;
+    source='de tu archivo';
+  }else{
+    const x=+$('#dx').value||1, y=+$('#dy').value||1, z=+$('#dz').value||1;
+    solid=(x*y*z)*(0.14+fill*0.42);
+    source='estimado por las medidas';
+  }
   const grams=solid*mat.d;
   const hours=(grams/13)*(0.20/layer)*(sup?1.18:1);
-  const material=grams*mat.e;
-  const machine=hours*HOUR;
-  const extra=sup?2.5:0;
+  const material=grams*mat.e, machine=hours*HOUR, extra=sup?2.5:0;
   const unit=SETUP+material+machine+extra;
-  /* a partir de 10 iguales se prepara una sola vez y se imprimen en tanda */
   const disc=qty>=50?0.72:qty>=25?0.80:qty>=10?0.88:1;
   const total=unit*qty*disc;
   $('#cTotal').textContent=eur(total);
@@ -1204,20 +1458,31 @@ function calc(){
     $('#bMat').style.width=Math.round(material/mx*100)+'%';
     $('#bTime').style.width=Math.round(machine/mx*100)+'%';
   });
-  return {x,y,z,mat,fill,layer,qty,sup,grams:Math.round(grams),hours,total};
+  $('#calcNote').textContent = model
+    ? 'Calculado sobre el volumen real de tu archivo ('+fmt(model.vol/1000)+' cm³ de sólido). '+
+      'El precio final puede moverse un poco según cómo se oriente la pieza y los soportes que pida.'
+    : 'Estimación sobre la caja que ocupa la pieza. Sube el STL y el cálculo pasa a ser sobre su volumen real.';
+  return {mat,fill,layer,qty,sup,grams:Math.round(grams),hours,total,source};
 }
-['#dx','#dy','#dz','#cMat','#cFill','#cQual','#cQty','#cSup'].forEach(s=>{
-  const n=$(s); n.addEventListener('input',calc); n.addEventListener('change',calc);
+['#cMat','#cFill','#cQual','#cQty','#cSup','#dx','#dy','#dz'].forEach(s=>{
+  const n=$(s); if(!n) return;
+  n.addEventListener('input',calc); n.addEventListener('change',calc);
 });
 $('#cSend').addEventListener('click',()=>{
   const c=calc();
-  const txt='¡Hola PB Studios! Quiero presupuesto para una pieza a medida:\n'+
-    '· Medidas: '+c.x+' × '+c.y+' × '+c.z+' cm\n'+
+  const head = model
+    ? '· Archivo: '+model.name+'\n· Volumen: '+fmt(model.vol/1000)+' cm³\n'+
+      '· Medidas: '+model.bbox.map(x=>fmt(x)).join(' × ')+' mm\n'
+    : '· Medidas: '+$('#dx').value+' × '+$('#dy').value+' × '+$('#dz').value+' cm\n';
+  const txt='¡Hola PB Studios! Quiero presupuesto para una pieza a medida:\n'+head+
     '· Material: '+c.mat.n+'\n· Relleno: '+Math.round(c.fill*100)+' %\n'+
     '· Capa: '+c.layer+' mm\n· Unidades: '+c.qty+(c.sup?'\n· Lleva soportes o postprocesado':'')+
-    '\nVuestra web me estima '+eur(c.total)+'. ¿Me lo confirmáis?';
+    '\nVuestra web me estima '+eur(c.total)+' ('+c.source+'). ¿Me lo confirmáis?'+
+    (model?'\n\nOs paso el archivo por aquí.':'');
   openModalHtml('<h2 style="font-size:1.4rem;margin-bottom:.6rem">Consulta preparada</h2>'+
-    '<p style="color:var(--soft);font-size:.92rem">Mándanosla por Instagram junto con el archivo STL si ya lo tienes. Te contestamos con precio cerrado el mismo día.</p>'+
+    '<p style="color:var(--soft);font-size:.92rem">'+(model
+      ?'Mándanosla por Instagram y adjunta el mismo archivo que has subido aquí: tu STL no ha salido de tu ordenador, el cálculo se ha hecho en tu navegador.'
+      :'Mándanosla por Instagram junto con el archivo si lo tienes. Te contestamos con precio cerrado el mismo día.')+'</p>'+
     '<pre style="white-space:pre-wrap;background:var(--sunk);padding:1rem;border-radius:3px;font-family:var(--mono);font-size:.82rem">'+
       txt.replace(/</g,'&lt;')+'</pre>'+
     '<div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:1rem">'+
@@ -1292,8 +1557,8 @@ const io='IntersectionObserver' in window?new IntersectionObserver(e=>{
   {threshold:.08,rootMargin:'0px 0px -40px'}):null;
 const watch=()=>$$('.rv:not(.in)').forEach(n=>io?io.observe(n):n.classList.add('in'));
 
-/* El hero imprime piezas del catálogo en bucle: la malla se corta por altura
-   y la capa que se está depositando se pinta en caliente. */
+/* El hero imprime piezas del catálogo en bucle, y la impresora del logo
+   imprime al mismo tiempo: la pieza de dentro crece con el mismo progreso. */
 (function printer(){
   const cv=$('#heroCv'); if(!cv) return;
   const QUEUE=[
@@ -1303,24 +1568,29 @@ const watch=()=>$$('.rv:not(.in)').forEach(n=>io?io.observe(n):n.classList.add('
     {n:'Portalápices',     mesh:prism(12,.55,1.35,.62),col:COLORS.morado,  mm:110, mat:'PLA'},
     {n:'Trofeo',           mesh:lathe(P.cup,40,0),     col:COLORS.gris,    mm:210, mat:'PLA Silk'}
   ];
-  const LAYER=0.2;                       /* altura de capa en mm */
+  const LAYER=0.2, SPAN=9000, HOLD=1400;
   const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
   let i=0, t0=performance.now(), ry=.5, raf=null;
-  const SPAN=9000, HOLD=1400;            /* imprimir y quedarse un momento */
+  const part=$('#pbPart');
 
+  function logoGrow(prog){
+    if(!part) return;
+    const h=62*prog;                       /* la pieza dentro del logo */
+    part.setAttribute('d','M110 236 L150 226 L150 '+(226-h).toFixed(1)+
+      ' L110 '+(236-h).toFixed(1)+' Z');
+  }
   function frame(now){
     const job=QUEUE[i];
-    let e=(now-t0)/SPAN;
-    let done=false;
+    let e=(now-t0)/SPAN, done=false;
     if(e>=1){ e=1; done=(now-t0)>SPAN+HOLD; }
     const prog=reduce?1:e;
     ry+=reduce?0:0.0026;
-    render(cv,job.mesh,{color:job.col,rx:-.30,ry,scale:.74,bed:true,cy:0.44,
+    render(cv,job.mesh,{color:job.col,rx:-.30,ry,scale:.80,bed:true,cy:0.47,
       clip:-1+prog*2.06, layers:true, metal:.25});
+    logoGrow(prog);
     const layers=Math.round(job.mm/LAYER);
     $('#slName').textContent=job.n;
     $('#slPct').textContent=Math.round(prog*100)+' %';
-    $('#slBar').style.width=(prog*100)+'%';
     $('#slLayer').textContent=Math.round(prog*layers).toLocaleString('es-ES');
     $('#slZ').textContent=(prog*job.mm).toFixed(1).replace('.',',');
     $('#slMat').textContent=job.mat;
@@ -1328,7 +1598,7 @@ const watch=()=>$$('.rv:not(.in)').forEach(n=>io?io.observe(n):n.classList.add('
     raf=requestAnimationFrame(frame);
   }
   addEventListener('resize',()=>render(cv,QUEUE[i].mesh,
-    {color:QUEUE[i].col,rx:-.30,ry,scale:.74,cy:0.44,bed:true,clip:1.1}));
+    {color:QUEUE[i].col,rx:-.30,ry,scale:.80,cy:0.47,bed:true,clip:1.1}));
   document.addEventListener('visibilitychange',()=>{
     if(document.hidden) cancelAnimationFrame(raf);
     else { t0=performance.now(); raf=requestAnimationFrame(frame); }

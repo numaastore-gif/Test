@@ -7,11 +7,11 @@ sin build, sin backend y sin dependencias: solo Google Fonts.
 
 Un cliente entra, ve las piezas, las gira en 3D, elige material, color y tamaño,
 ve el precio cambiar y cierra el pedido por Instagram. Y si lo que quiere no está
-en el catálogo, se calcula él mismo el presupuesto de su pieza.
+en el catálogo, **sube su propio archivo** y la web se lo presupuesta sola.
 
-## Sin fotos: las piezas se dibujan en 3D
+## Las piezas de ejemplo se dibujan en 3D
 
-No hay ni una imagen en el sitio. Cada producto es una **malla generada por
+Los productos reales llevan foto; los de ejemplo, ni una. Cada uno es una **malla generada por
 código y renderizada en canvas**: se rota, se proyecta en perspectiva, se ordenan
 las caras de atrás hacia delante y se iluminan con luz plana. Encima se pintan
 las **líneas de capa**, que es lo que delata una pieza impresa de verdad.
@@ -27,12 +27,15 @@ opcional), `prism`, `box`, `gear`, `torus` y `merge` para combinarlos.
 
 | Módulo | Detalle |
 |---|---|
-| **Hero** | Una pieza del catálogo se imprime capa a capa sobre la cama, con la capa activa en caliente y un panel de estado que cuenta capas, altura y material. Va encadenando piezas en bucle. El motor corta la malla por altura (`opt.clip`), no es un vídeo. |
+| **Hero** | Sin caja ni marco: la **cama de impresión es el fondo de la sección**, en perspectiva y desvaneciéndose hacia arriba. Sobre ella una pieza se imprime capa a capa, con la capa activa en caliente, mientras el logo imprime su propia pieza en sincronía y una línea de estado en monoespaciada canta capa, altura y material. Va encadenando piezas en bucle. El motor corta la malla por altura (`opt.clip`), no es un vídeo. |
+| **Logo** | Redibujado como vector (`#pbMark` / `#pbLockup`), sin fondo, así que sirve igual en claro y en oscuro y escala sin pixelarse. Su pieza interior (`#pbPart`) crece con el mismo progreso que la impresión del hero: el logo no es un adorno, está contando lo que hace el taller. |
+| **Confianza** | Tira de cuatro compromisos bajo el hero: licencia comercial, foto antes de enviar, si sale mal se repite, entrega 24–48 h. |
+| **Presupuesto por archivo** | El cliente **suelta su STL** y la web lo lee en el navegador: triángulos, volumen real, caja envolvente y previsualización 3D arrastrable. Con eso, más material, relleno, altura de capa, soportes y unidades, sale el precio con el desglose. Avisa si la pieza no cabe en 250 mm. |
 | **Escala** | En las fichas con foto, un esquema compara la altura de la pieza con una cabeza adulta (22 cm). Responde a la pregunta que de verdad frena la compra. |
 | **Catálogo** | 12 piezas con filtro por categoría, buscador y orden por ventas, precio o novedad. Cada tarjeta lleva su render 3D. |
 | **Ficha de producto** | Visor 3D que gira solo y se puede arrastrar. Color, material y tamaño cambian el render, el peso, el tiempo de impresión y el precio al momento. |
 | **Carrito** | Panel lateral, persistente en el navegador. El pedido se genera como texto listo para mandar por Instagram o WhatsApp. |
-| **Presupuesto a medida** | Metes medidas, material, relleno, acabado y unidades, y calcula gramos, horas de máquina y precio **con el desglose a la vista**. Descuento automático por tanda a partir de 10 unidades. |
+| **Medidas a mano** | Alternativa plegada dentro del módulo anterior, para quien todavía no tiene el archivo: medidas de la caja, material y relleno. Descuento automático por tanda a partir de 10 unidades. |
 | **Materiales** | PLA, PLA Silk, PETG y TPU, cada uno con para qué sirve, densidad y precio por gramo. |
 | **Resto** | Cómo funciona en cuatro pasos, preguntas frecuentes, contacto, tema claro/oscuro y barra de progreso. |
 
@@ -40,9 +43,11 @@ opcional), `prism`, `box`, `gear`, `torus` y `merge` para combinarlos.
 
 - **Catálogo:** `precio base × (0,35 + 0,65 × escala³) × (1 + (coste material − 1) × 0,45)`.
   En PLA y talla M da exactamente el precio anunciado en la tarjeta.
-- **A medida:** del volumen de la caja que ocupa la pieza se estima el material
-  real (paredes + relleno), de ahí los gramos, y de los gramos las horas. Precio =
-  preparación + material + máquina + postprocesado.
+- **A medida:** con archivo, el volumen es el **real de la malla** (suma de
+  tetraedros con signo sobre cada triángulo) y el área sirve para estimar la
+  pared de 1,2 mm; el resto del volumen va al relleno elegido. Sin archivo se
+  parte del volumen de la caja. De ahí los gramos, y de los gramos las horas.
+  Precio = preparación + material + máquina + soportes.
 
 Las constantes están al principio del `<script>`: `SETUP` (preparación) y `HOUR`
 (coste de máquina por hora).
@@ -63,6 +68,27 @@ una pieza impresa: **raw** ×1 (sin postprocesar, con las capas a la vista),
 **lijado e imprimado** ×1,55 (listo para pintar) y **pintado a mano** ×2,40. El
 precio base de cada producto es el del raw; la tarjeta enseña el rango completo
 y la ficha abre en el acabado de las fotos.
+
+## Leer el archivo en el navegador
+
+No hay backend, así que el STL se parsea en el propio navegador. Se detecta si es
+binario comprobando que `byteLength === 84 + nº_triángulos × 50`; si no cuadra,
+se lee como ASCII con una expresión regular sobre los `vertex`. Después:
+
+- **volumen**: suma del volumen con signo de los tetraedros que forma cada
+  triángulo con el origen — vale para cualquier malla cerrada, con concavidades
+  y agujeros incluidos;
+- **área** y **caja envolvente** en la misma pasada;
+- para la vista previa la malla se submuestrea a 2600 triángulos, se pasa de
+  Z-arriba (convenio CAD) a Y-arriba y se normaliza por la **diagonal** de la
+  caja, para que no se salga del marco al girarla.
+
+STEP y 3MF se aceptan en el selector pero no se miden aquí: para esos el aviso
+dice que se revisan a mano. Un STEP es geometría paramétrica, no una malla, y
+medirlo pide un kernel CAD completo.
+
+Verificado con un cubo de 40 mm generado a propósito: lo lee como 64 cm³ exactos,
+40 × 40 × 40 mm y 12 triángulos.
 
 ## Tratamiento de las fotos
 
@@ -123,6 +149,7 @@ buscadores. Está todo junto en las constantes del principio del `<script>`:
 | `SIZES` | las tallas y su factor de escala |
 | `FAQS` | las preguntas frecuentes |
 | `SETUP`, `HOUR` | tus costes para el presupuesto a medida |
+| `MAXMM` | el lado máximo que entra en tu cama (ahora 250 mm) |
 
 Además hay un número de WhatsApp de relleno (`34600000000`) en tres sitios, y las
 medidas del hero (volumen máximo, alturas de capa, plazos) están en el marcado.
