@@ -1,0 +1,1094 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PB Studios</title>
+<meta name="description" content="PB Studios — impresión 3D bajo pedido. Catálogo de piezas listas para imprimir, elige material, color y tamaño, y presupuesto al momento para encargos a medida.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='16' fill='%23171A1F'/%3E%3Cg stroke='%230E8C86' stroke-width='9' stroke-linecap='round'%3E%3Cpath d='M28 74h44'/%3E%3Cpath d='M32 58h36'/%3E%3Cpath d='M37 42h26'/%3E%3Cpath d='M43 26h14'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Work+Sans:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ==========================================================================
+   PB STUDIOS — impresión 3D bajo pedido
+   El motivo de toda la página es la LÍNEA DE CAPA: filetes horizontales
+   finos en los bordes, y piezas dibujadas en 3D con sus capas visibles.
+   Sin fotos: cada producto se renderiza en canvas.
+   ========================================================================== */
+:root{
+  --brand:#0E8C86; --brand-2:#13B0A8; --brand-deep:#0A6F6A;
+  --hot:#E2543C;
+  --ink:#171A1F;
+  --paper:#F3F1EC; --surface:#FFFFFF; --sunk:#E9E6DE;
+  --txt:#23272F; --soft:#5E6572; --faint:#8D95A3;
+  --line:#DFDACE; --rule:#CCC5B7;
+  --ok:#1E7A4F; --warn:#B0740E; --bad:#C0392F;
+  --r:3px; --nav-h:70px;
+  --disp:Sora,system-ui,sans-serif;
+  --mono:"Space Mono",ui-monospace,monospace;
+  --shadow:0 20px 44px -34px rgba(23,26,31,.6);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#121418; --surface:#1A1E24; --sunk:#232830;
+    --txt:#E7EAEF; --soft:#9AA3B2; --faint:#79828F;
+    --line:#2A313B; --rule:#39424E;
+    --brand:#21B7AE; --brand-2:#3ED0C6; --brand-deep:#189B93;
+    --ink:#0D0F12; --shadow:0 22px 48px -32px #000;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#121418; --surface:#1A1E24; --sunk:#232830;
+  --txt:#E7EAEF; --soft:#9AA3B2; --faint:#79828F;
+  --line:#2A313B; --rule:#39424E;
+  --brand:#21B7AE; --brand-2:#3ED0C6; --brand-deep:#189B93;
+  --ink:#0D0F12; --shadow:0 22px 48px -32px #000;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--txt);
+  font-family:"Work Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  font-size:16.5px;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body.lock{overflow:hidden}
+h1,h2,h3,h4{font-family:var(--disp);font-weight:700;margin:0;line-height:1.08;
+  letter-spacing:-.025em;text-wrap:balance;color:var(--txt)}
+h1{font-size:clamp(2.3rem,5.6vw,3.9rem);font-weight:800}
+h2{font-size:clamp(1.65rem,3.2vw,2.4rem)}
+h3{font-size:1.06rem;font-weight:600;letter-spacing:-.01em}
+p{margin:0 0 1rem}
+a{color:inherit;text-decoration:none}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--brand);outline-offset:3px}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.wrap{width:min(1240px,92vw);margin-inline:auto}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.skip{position:absolute;left:-999px;z-index:300;background:var(--brand);color:#fff;padding:.7rem 1.1rem;font-weight:600}
+.skip:focus{left:1rem;top:1rem}
+
+/* el gesto de la casa: tres filetes = capas */
+.layers{display:flex;flex-direction:column;gap:3px;width:26px}
+.layers i{height:2px;background:var(--brand);display:block}
+.layers i:nth-child(1){width:100%}
+.layers i:nth-child(2){width:74%}
+.layers i:nth-child(3){width:48%}
+
+.block{padding:clamp(3rem,6vw,5rem) 0;border-top:1px solid var(--line)}
+.block--sunk{background:var(--sunk);border-top:0}
+.head{max-width:58ch;margin-bottom:clamp(1.6rem,3vw,2.4rem)}
+.head p{margin:.8rem 0 0;color:var(--soft)}
+.eyebrow{display:flex;align-items:center;gap:.6rem;font-family:var(--mono);font-size:.68rem;
+  letter-spacing:.18em;text-transform:uppercase;color:var(--brand);margin-bottom:.8rem}
+.lead{color:var(--soft);max-width:60ch}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;border:0;cursor:pointer;
+  font-family:var(--disp);font-weight:600;font-size:.96rem;white-space:nowrap;border-radius:var(--r);
+  padding:.78rem 1.4rem;transition:transform .14s,filter .14s,box-shadow .14s}
+.btn:hover{transform:translateY(-2px)}
+.btn--p{background:var(--brand);color:#fff}
+.btn--p:hover{filter:brightness(1.08)}
+.btn--d{background:var(--ink);color:#F3F1EC}
+:root[data-theme="dark"] .btn--d{background:var(--surface);color:var(--txt);box-shadow:inset 0 0 0 1px var(--rule)}
+.btn--o{background:transparent;box-shadow:inset 0 0 0 1.5px var(--rule)}
+.btn--o:hover{box-shadow:inset 0 0 0 1.5px var(--brand)}
+.btn--sm{padding:.48rem .9rem;font-size:.86rem}
+.btn[disabled]{opacity:.45;cursor:not-allowed;transform:none}
+
+.chip{border:1px solid var(--line);background:var(--surface);padding:.42rem .85rem;border-radius:99px;
+  cursor:pointer;font-size:.85rem;color:var(--txt);transition:.15s}
+.chip:hover{border-color:var(--brand)}
+.chip[aria-pressed="true"]{background:var(--brand);border-color:var(--brand);color:#fff}
+
+.field{display:flex;flex-direction:column;gap:.3rem;margin-bottom:.8rem}
+.field label{font-family:var(--mono);font-size:.64rem;letter-spacing:.13em;text-transform:uppercase;color:var(--faint)}
+.field input,.field select,.field textarea{background:var(--surface);border:1px solid var(--line);
+  border-radius:var(--r);padding:.62rem .75rem}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--brand);
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--brand) 18%,transparent)}
+
+/* nav */
+#prog{position:fixed;top:0;left:0;height:2px;width:0;background:var(--brand);z-index:120}
+header.nav{position:fixed;inset:0 0 auto;height:var(--nav-h);z-index:110;display:flex;align-items:center;
+  background:color-mix(in srgb,var(--paper) 90%,transparent);backdrop-filter:blur(14px);
+  border-bottom:1px solid transparent;transition:border-color .2s}
+header.nav.stuck{border-bottom-color:var(--line)}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:1rem;width:min(1320px,94vw)}
+.brand{display:flex;align-items:center;gap:.65rem;flex:0 0 auto}
+.brand .mk{width:38px;height:38px;background:var(--ink);border-radius:9px;display:grid;place-items:center;flex:0 0 auto}
+.brand .wd b{font-family:var(--disp);font-weight:800;font-size:1.12rem;letter-spacing:-.04em;display:block;line-height:1}
+.brand .wd span{font-family:var(--mono);font-size:.56rem;letter-spacing:.22em;color:var(--faint);text-transform:uppercase}
+.menu{display:flex;gap:.1rem}
+.menu a{padding:.5rem .7rem;font-size:.93rem;position:relative}
+.menu a::after{content:"";position:absolute;left:.7rem;right:.7rem;bottom:.3rem;height:2px;background:var(--brand);
+  transform:scaleX(0);transform-origin:left;transition:transform .2s}
+.menu a:hover::after,.menu a.act::after{transform:scaleX(1)}
+.acts{display:flex;align-items:center;gap:.45rem;flex:0 0 auto}
+.ico{width:37px;height:37px;border-radius:var(--r);border:1px solid var(--line);background:transparent;
+  display:grid;place-items:center;cursor:pointer;position:relative}
+.ico:hover{border-color:var(--brand)}
+#cartBtn b{position:absolute;top:-7px;right:-7px;background:var(--hot);color:#fff;font-family:var(--mono);
+  font-size:.6rem;min-width:17px;height:17px;border-radius:99px;display:grid;place-items:center;padding:0 4px}
+#burger{display:none}
+.drawer{position:fixed;inset:var(--nav-h) 0 0;background:var(--paper);z-index:105;transform:translateX(100%);
+  transition:transform .3s;padding:1.4rem 6vw;overflow:auto}
+.drawer.open{transform:none}
+.drawer a{display:block;padding:.85rem 0;border-bottom:1px solid var(--line);font-family:var(--disp);
+  font-weight:700;font-size:1.4rem}
+@media(max-width:940px){ .menu{display:none} #burger{display:grid} }
+@media(max-width:560px){ .acts .btn{display:none} }
+
+/* hero */
+.hero{padding:calc(var(--nav-h) + clamp(2rem,5vw,3.4rem)) 0 clamp(2rem,4vw,3rem)}
+.hero-grid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:clamp(1.6rem,4vw,3rem);align-items:center}
+@media(max-width:900px){.hero-grid{grid-template-columns:1fr}}
+.hero h1 em{font-style:normal;color:var(--brand)}
+.hero-cta{display:flex;flex-wrap:wrap;gap:.7rem;margin-top:1.6rem}
+.stage{position:relative;aspect-ratio:1/1;background:
+  radial-gradient(120% 100% at 50% 20%,color-mix(in srgb,var(--brand) 12%,transparent),transparent 62%),var(--sunk);
+  border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.stage canvas{width:100%;height:100%;display:block;cursor:grab;touch-action:none}
+.stage canvas:active{cursor:grabbing}
+.stage .hint{position:absolute;left:12px;bottom:10px;font-family:var(--mono);font-size:.62rem;
+  letter-spacing:.12em;text-transform:uppercase;color:var(--faint)}
+.specs{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:1px;background:var(--line);
+  border:1px solid var(--line);margin-top:1.4rem}
+.specs div{background:var(--surface);padding:.65rem .8rem}
+.specs small{display:block;font-family:var(--mono);font-size:.6rem;letter-spacing:.11em;text-transform:uppercase;color:var(--faint)}
+.specs b{font-family:var(--disp);font-size:1.15rem}
+
+/* catálogo */
+.bar{display:flex;flex-wrap:wrap;gap:.7rem;align-items:center;justify-content:space-between;margin-bottom:1.3rem}
+.filters{display:flex;gap:.35rem;flex-wrap:wrap}
+.tools{display:flex;gap:.5rem;flex-wrap:wrap}
+.tools input,.tools select{border:1px solid var(--line);background:var(--surface);border-radius:var(--r);padding:.5rem .8rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(232px,1fr));gap:1px;
+  background:var(--line);border:1px solid var(--line)}
+.card{background:var(--surface);display:flex;flex-direction:column;cursor:pointer;
+  border:0;text-align:left;padding:0;transition:background .16s}
+.card:hover{background:var(--sunk)}
+.card .pic{aspect-ratio:4/3;background:
+  linear-gradient(180deg,color-mix(in srgb,var(--brand) 7%,transparent),transparent);position:relative}
+.card .pic canvas{width:100%;height:100%;display:block}
+.card .pic .flag{position:absolute;top:8px;left:8px;font-family:var(--mono);font-size:.58rem;letter-spacing:.1em;
+  text-transform:uppercase;padding:.16rem .4rem;border-radius:2px;background:var(--hot);color:#fff}
+.card .pic .flag.new{background:var(--brand)}
+.card .txt{padding:.85rem .9rem 1rem;display:flex;flex-direction:column;gap:.25rem;flex:1}
+.card .cat{font-family:var(--mono);font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;color:var(--faint)}
+.card h3{font-size:1rem}
+.card .dsc{font-size:.84rem;color:var(--soft);flex:1}
+.card .foot{display:flex;justify-content:space-between;align-items:baseline;margin-top:.5rem}
+.card .price{font-family:var(--disp);font-weight:700;font-size:1.2rem}
+.card .price s{font-family:var(--mono);font-size:.68rem;font-weight:400;color:var(--faint);
+  margin-right:.35rem;text-decoration:none;letter-spacing:.06em;text-transform:uppercase}
+.swatches{display:flex;gap:3px}
+.swatches i{width:11px;height:11px;border-radius:99px;display:block;box-shadow:inset 0 0 0 1px rgba(0,0,0,.14)}
+.empty{grid-column:1/-1;background:var(--surface);padding:2.4rem 1rem;text-align:center;color:var(--soft)}
+
+/* ficha */
+.sheet{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:1.4rem}
+@media(max-width:760px){.sheet{grid-template-columns:1fr}}
+.opt-row{margin-bottom:.9rem}
+.opt-row>span{display:block;font-family:var(--mono);font-size:.62rem;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--faint);margin-bottom:.35rem}
+.opts{display:flex;gap:.35rem;flex-wrap:wrap}
+.col{width:30px;height:30px;border-radius:99px;border:2px solid transparent;cursor:pointer;padding:0;
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.16)}
+.col[aria-pressed="true"]{border-color:var(--txt)}
+.pricebox{border-top:1px solid var(--line);margin-top:1rem;padding-top:1rem;
+  display:flex;justify-content:space-between;align-items:baseline}
+.pricebox b{font-family:var(--disp);font-weight:800;font-size:2rem}
+.tbl{width:100%;border-collapse:collapse;font-size:.85rem;margin:.6rem 0 0}
+.tbl td{padding:.35rem 0;border-bottom:1px solid var(--line)}
+.tbl td:last-child{text-align:right;font-family:var(--mono)}
+
+/* presupuesto */
+.calc{display:grid;grid-template-columns:minmax(0,320px) minmax(0,1fr);gap:1.6rem;align-items:start}
+@media(max-width:820px){.calc{grid-template-columns:1fr}}
+.dims{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem}
+.out{border:1px solid var(--line);background:var(--surface)}
+.out .big{padding:1.2rem 1.3rem;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:baseline}
+.out .big b{font-family:var(--disp);font-weight:800;font-size:2.2rem}
+.out ul{list-style:none;margin:0;padding:1rem 1.3rem;display:grid;gap:.45rem;font-size:.88rem}
+.out li{display:flex;justify-content:space-between;gap:1rem}
+.out li span:last-child{font-family:var(--mono)}
+.bars{padding:0 1.3rem 1.2rem}
+.trk{height:6px;background:var(--sunk);overflow:hidden;margin-top:.3rem}
+.trk i{display:block;height:100%;background:var(--brand);width:0;transition:width .5s}
+
+/* proceso */
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:1px;background:var(--line);border:1px solid var(--line)}
+.step{background:var(--surface);padding:1.2rem}
+.step .n{font-family:var(--mono);font-size:.68rem;color:var(--brand);letter-spacing:.14em}
+.step h3{margin:.5rem 0 .35rem}
+.step p{font-size:.88rem;color:var(--soft);margin:0}
+
+/* materiales */
+.mats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1px;background:var(--line);border:1px solid var(--line)}
+.mat{background:var(--surface);padding:1.1rem}
+.mat b{font-family:var(--disp);font-size:1.05rem}
+.mat .tag{font-family:var(--mono);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:var(--brand)}
+.mat p{font-size:.85rem;color:var(--soft);margin:.4rem 0 0}
+
+/* faq + contacto */
+.split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(1.5rem,4vw,3rem);align-items:start}
+@media(max-width:860px){.split{grid-template-columns:1fr}}
+.faq{border-top:1px solid var(--line)}
+.q{border-bottom:1px solid var(--line)}
+.q>button{width:100%;display:flex;justify-content:space-between;gap:1rem;align-items:center;padding:.9rem 0;
+  background:none;border:0;cursor:pointer;text-align:left;font-weight:600;font-size:.98rem}
+.q .pm{color:var(--soft);transition:transform .2s;flex:0 0 auto}
+.q.on .pm{transform:rotate(45deg);color:var(--brand)}
+.q .a{max-height:0;overflow:hidden;transition:max-height .32s;color:var(--soft);font-size:.92rem}
+.q.on .a{padding-bottom:.9rem}
+.contact-row{display:flex;gap:.8rem;padding:.75rem 0;border-bottom:1px solid var(--line)}
+
+/* carrito */
+.panel{position:fixed;top:0;right:0;bottom:0;width:min(400px,92vw);background:var(--surface);z-index:160;
+  transform:translateX(102%);transition:transform .3s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;
+  border-left:1px solid var(--rule)}
+.panel.open{transform:none}
+.panel header{padding:1.1rem 1.2rem;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
+.panel .body{flex:1;overflow:auto;padding:1rem 1.2rem;display:grid;gap:.7rem;align-content:start}
+.panel footer{padding:1.1rem 1.2rem;border-top:1px solid var(--line)}
+.ci{display:grid;grid-template-columns:52px 1fr auto;gap:.7rem;align-items:center;font-size:.86rem}
+.ci canvas{width:52px;height:52px;background:var(--sunk);border-radius:2px}
+.ci .rm{border:0;background:none;color:var(--bad);cursor:pointer;font-size:1.05rem;line-height:1}
+.scrim{position:fixed;inset:0;background:rgba(23,26,31,.5);z-index:155;opacity:0;pointer-events:none;transition:opacity .28s}
+.scrim.on{opacity:1;pointer-events:auto}
+
+/* modal */
+.modal{position:fixed;inset:0;z-index:170;display:none;place-items:center;padding:1rem;background:rgba(23,26,31,.66)}
+.modal.on{display:grid}
+.mbox{background:var(--surface);border:1px solid var(--rule);border-radius:5px;width:min(880px,96vw);
+  max-height:90vh;overflow:auto;padding:1.4rem}
+.mbox .x{float:right;border:0;background:none;font-size:1.5rem;cursor:pointer;color:var(--soft);line-height:1}
+#toasts{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);z-index:200;display:grid;gap:.5rem;width:min(400px,92vw)}
+.toast{background:var(--ink);color:#F3F1EC;border-left:3px solid var(--brand);padding:.7rem 1rem;font-size:.86rem;border-radius:2px}
+
+footer.site{background:var(--ink);color:#ADB4C0;padding:2.8rem 0 1.3rem}
+footer.site h4{color:#fff;font-size:.98rem;margin-bottom:.6rem}
+footer.site ul{list-style:none;margin:0;padding:0;display:grid;gap:.35rem;font-size:.88rem}
+footer.site a:hover{color:var(--brand-2)}
+.fgrid{display:grid;grid-template-columns:1.6fr 1fr 1fr;gap:2rem}
+@media(max-width:700px){.fgrid{grid-template-columns:1fr}}
+.copy{border-top:1px solid rgba(255,255,255,.12);margin-top:2rem;padding-top:1rem;font-size:.78rem;
+  display:flex;flex-wrap:wrap;gap:.6rem;justify-content:space-between}
+
+.rv{opacity:0;transform:translateY(14px);transition:opacity .5s,transform .5s}
+.rv.in{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){
+  .rv{opacity:1;transform:none;transition:none}
+  *,*::before,*::after{animation-duration:.001s!important;transition-duration:.05s!important}
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#catalogo">Saltar al catálogo</a>
+<div id="prog" role="progressbar" aria-label="Progreso"></div>
+
+<header class="nav" id="nav">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="PB Studios — inicio">
+      <span class="mk"><span class="layers" aria-hidden="true"><i></i><i></i><i></i></span></span>
+      <span class="wd"><b>PB Studios</b><span>Impresión 3D</span></span>
+    </a>
+    <nav class="menu" id="menu" aria-label="Principal">
+      <a href="#catalogo">Catálogo</a>
+      <a href="#medida">A medida</a>
+      <a href="#proceso">Cómo funciona</a>
+      <a href="#materiales">Materiales</a>
+      <a href="#contacto">Contacto</a>
+    </nav>
+    <div class="acts">
+      <button class="ico" id="theme" type="button" aria-label="Cambiar tema">◐</button>
+      <button class="ico" id="cartBtn" type="button" aria-label="Ver carrito">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M3 4h2l2.4 11.4a1 1 0 0 0 1 .8h8.7a1 1 0 0 0 1-.78L20 8H6.2"/><circle cx="10" cy="20" r="1.2"/><circle cx="18" cy="20" r="1.2"/></svg>
+        <b id="cartN" hidden>0</b>
+      </button>
+      <a class="btn btn--p btn--sm" href="#medida">Pedir a medida</a>
+      <button class="ico" id="burger" type="button" aria-label="Menú" aria-expanded="false">
+        <svg width="18" height="12" viewBox="0 0 18 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M0 1h18M0 6h18M0 11h18"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<nav class="drawer" id="drawer" aria-label="Menú móvil">
+  <a href="#catalogo">Catálogo</a><a href="#medida">A medida</a><a href="#proceso">Cómo funciona</a>
+  <a href="#materiales">Materiales</a><a href="#faq">Preguntas</a><a href="#contacto">Contacto</a>
+</nav>
+
+<main id="top">
+<!-- HERO -->
+<section class="hero">
+  <div class="wrap">
+    <div class="hero-grid">
+      <div>
+        <div class="eyebrow"><span class="layers" aria-hidden="true"><i></i><i></i><i></i></span> Piezas impresas bajo pedido</div>
+        <h1>Lo diseñas o lo eliges.<br><em>Nosotros lo imprimimos.</em></h1>
+        <p class="lead" style="margin-top:1rem">Catálogo de piezas listas, con el material, el color y el tamaño que tú elijas. Y si lo que buscas no está, mándanos el archivo o la idea y te damos precio al momento.</p>
+        <div class="hero-cta">
+          <a class="btn btn--p" href="#catalogo">Ver el catálogo</a>
+          <a class="btn btn--o" href="#medida">Calcular mi pieza</a>
+        </div>
+        <div class="specs">
+          <div><small>Volumen máximo</small><b class="mono">25×25×25 cm</b></div>
+          <div><small>Altura de capa</small><b class="mono">0,12–0,28 mm</b></div>
+          <div><small>Entrega</small><b class="mono">3–7 días</b></div>
+          <div><small>Materiales</small><b class="mono">PLA · PETG · TPU</b></div>
+        </div>
+      </div>
+      <div class="stage">
+        <canvas id="heroCv" aria-label="Pieza 3D girando"></canvas>
+        <span class="hint">Arrastra para girar</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CATÁLOGO -->
+<section class="block" id="catalogo">
+  <div class="wrap">
+    <div class="head rv">
+      <div class="eyebrow"><span class="layers" aria-hidden="true"><i></i><i></i><i></i></span> Catálogo</div>
+      <h2>Piezas listas para imprimir</h2>
+      <p>Cada una se imprime cuando la pides, así que eliges material, color y tamaño. Pincha en cualquiera para verla en 3D y configurarla.</p>
+    </div>
+    <div class="bar rv">
+      <div class="filters" id="cats" role="group" aria-label="Categorías"></div>
+      <div class="tools">
+        <input id="q" type="search" placeholder="Buscar pieza…" aria-label="Buscar">
+        <select id="sort" aria-label="Ordenar">
+          <option value="pop">Más vendidos</option>
+          <option value="asc">Precio: de menor a mayor</option>
+          <option value="desc">Precio: de mayor a menor</option>
+          <option value="new">Novedades</option>
+        </select>
+      </div>
+    </div>
+    <div class="grid" id="grid"></div>
+    <p class="mono rv" style="font-size:.76rem;color:var(--faint);margin-top:.9rem" id="count"></p>
+  </div>
+</section>
+
+<!-- A MEDIDA -->
+<section class="block block--sunk" id="medida">
+  <div class="wrap">
+    <div class="head rv">
+      <div class="eyebrow"><span class="layers" aria-hidden="true"><i></i><i></i><i></i></span> Encargos a medida</div>
+      <h2>¿Cuánto me costaría mi pieza?</h2>
+      <p>Mete las medidas aproximadas y el acabado que quieres. Te calculamos material, tiempo de máquina y precio con el desglose a la vista, para que sepas de dónde sale cada euro.</p>
+    </div>
+    <div class="calc">
+      <div class="rv">
+        <div class="field">
+          <label>Medidas de la pieza (cm)</label>
+          <div class="dims">
+            <input id="dx" type="number" min="1" max="25" step="0.5" value="8" aria-label="Ancho">
+            <input id="dy" type="number" min="1" max="25" step="0.5" value="8" aria-label="Fondo">
+            <input id="dz" type="number" min="1" max="25" step="0.5" value="12" aria-label="Alto">
+          </div>
+        </div>
+        <div class="field"><label for="cMat">Material</label><select id="cMat"></select></div>
+        <div class="field"><label for="cFill">Relleno</label>
+          <select id="cFill">
+            <option value="0.10">10 % — decorativo</option>
+            <option value="0.20" selected>20 % — uso normal</option>
+            <option value="0.40">40 % — resistente</option>
+            <option value="0.70">70 % — pieza de carga</option>
+          </select></div>
+        <div class="field"><label for="cQual">Acabado</label>
+          <select id="cQual">
+            <option value="0.28">Rápido · capa 0,28 mm</option>
+            <option value="0.20" selected>Estándar · capa 0,20 mm</option>
+            <option value="0.12">Fino · capa 0,12 mm</option>
+          </select></div>
+        <div class="field"><label for="cQty">Unidades</label><input id="cQty" type="number" min="1" max="200" value="1"></div>
+        <label style="display:flex;gap:.5rem;align-items:center;font-size:.88rem;color:var(--soft)">
+          <input type="checkbox" id="cSup"> Necesita soportes o postprocesado
+        </label>
+      </div>
+      <div class="rv">
+        <div class="out">
+          <div class="big"><span>Precio estimado</span><b class="mono" id="cTotal">—</b></div>
+          <ul id="cBreak"></ul>
+          <div class="bars">
+            <div style="display:flex;justify-content:space-between;font-size:.78rem;color:var(--faint)">
+              <span class="mono">Material</span><span class="mono" id="pMat">—</span></div>
+            <div class="trk"><i id="bMat"></i></div>
+            <div style="display:flex;justify-content:space-between;font-size:.78rem;color:var(--faint);margin-top:.6rem">
+              <span class="mono">Máquina</span><span class="mono" id="pTime">—</span></div>
+            <div class="trk"><i id="bTime"></i></div>
+          </div>
+        </div>
+        <p style="font-size:.82rem;color:var(--soft);margin-top:.9rem">Es una estimación sobre el volumen que ocupa la pieza. El precio final depende de la geometría real: mándanos el STL por Instagram y te lo confirmamos el mismo día.</p>
+        <button class="btn btn--p" id="cSend" style="margin-top:.4rem">Enviar esta consulta</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESO -->
+<section class="block" id="proceso">
+  <div class="wrap">
+    <div class="head rv">
+      <div class="eyebrow"><span class="layers" aria-hidden="true"><i></i><i></i><i></i></span> Cómo funciona</div>
+      <h2>De la idea a tu mesa en cuatro pasos</h2>
+    </div>
+    <div class="steps rv">
+      <div class="step"><div class="n">PASO 01</div><h3>Eliges o mandas</h3><p>Coges una pieza del catálogo con su material y color, o nos mandas tu STL, un boceto o hasta una foto de lo que necesitas.</p></div>
+      <div class="step"><div class="n">PASO 02</div><h3>Te confirmamos</h3><p>Revisamos que la pieza sea imprimible, te decimos precio cerrado y plazo, y si algo no va a salir bien te proponemos cómo arreglarlo.</p></div>
+      <div class="step"><div class="n">PASO 03</div><h3>Se imprime</h3><p>Entra en cola con la altura de capa que hayamos acordado. Te mandamos una foto de la pieza recién salida antes de enviarla.</p></div>
+      <div class="step"><div class="n">PASO 04</div><h3>Recoges o te llega</h3><p>Entrega en mano sin coste o envío a península en 24–48 h una vez impresa.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- MATERIALES -->
+<section class="block block--sunk" id="materiales">
+  <div class="wrap">
+    <div class="head rv">
+      <div class="eyebrow"><span class="layers" aria-hidden="true"><i></i><i></i><i></i></span> Materiales</div>
+      <h2>Con qué se imprime cada cosa</h2>
+      <p>No todos valen para todo. Esto es lo que usamos y para qué sirve cada uno.</p>
+    </div>
+    <div class="mats rv" id="mats"></div>
+  </div>
+</section>
+
+<!-- FAQ + CONTACTO -->
+<section class="block" id="contacto">
+  <div class="wrap">
+    <div class="head rv">
+      <div class="eyebrow"><span class="layers" aria-hidden="true"><i></i><i></i><i></i></span> Antes de encargar</div>
+      <h2>Dudas y cómo escribirnos</h2>
+    </div>
+    <div class="split">
+      <div class="rv" id="faq">
+        <h3 style="margin-bottom:.8rem">Preguntas frecuentes</h3>
+        <div class="faq" id="faqL"></div>
+      </div>
+      <div class="rv">
+        <div class="contact-row"><span>📷</span><div><b>Instagram</b><br>
+          <a href="https://www.instagram.com/_pbstudios/" target="_blank" rel="noopener" style="color:var(--brand)">@_PBStudios</a>
+          <div style="font-size:.85rem;color:var(--soft)">Es el canal principal: mándanos un DM con tu idea o tu archivo.</div></div></div>
+        <div class="contact-row"><span>💬</span><div><b>WhatsApp</b><br>
+          <a href="#" id="waLink" style="color:var(--brand)">Escríbenos directamente</a>
+          <div style="font-size:.85rem;color:var(--soft)">Para pedidos urgentes o encargos grandes.</div></div></div>
+        <div class="contact-row"><span>📦</span><div><b>Entrega</b><br><span style="color:var(--soft)">En mano sin coste, o envío a península en 24–48 h una vez impresa la pieza.</span></div></div>
+        <div class="contact-row" style="border:0"><span>📐</span><div><b>¿Tienes el archivo?</b><br><span style="color:var(--soft)">Aceptamos STL, 3MF, OBJ y STEP. Si no tienes archivo, también diseñamos la pieza desde cero.</span></div></div>
+        <a class="btn btn--d" style="width:100%;margin-top:1rem" href="https://www.instagram.com/_pbstudios/" target="_blank" rel="noopener">Abrir Instagram y escribirnos</a>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <div class="fgrid">
+      <div>
+        <div style="display:flex;align-items:center;gap:.65rem">
+          <span style="width:38px;height:38px;background:#23272F;border-radius:9px;display:grid;place-items:center">
+            <span class="layers" aria-hidden="true"><i></i><i></i><i></i></span></span>
+          <span style="font-family:var(--disp);font-weight:800;font-size:1.12rem;color:#fff;letter-spacing:-.04em">PB Studios</span>
+        </div>
+        <p style="margin-top:.9rem;font-size:.88rem">Impresión 3D bajo pedido: piezas de catálogo y encargos a medida, impresas de una en una.</p>
+      </div>
+      <div><h4>Tienda</h4><ul>
+        <li><a href="#catalogo">Catálogo</a></li><li><a href="#medida">Pedir a medida</a></li>
+        <li><a href="#materiales">Materiales</a></li><li><a href="#proceso">Cómo funciona</a></li></ul></div>
+      <div><h4>Contacto</h4><ul>
+        <li><a href="https://www.instagram.com/_pbstudios/" target="_blank" rel="noopener">@_PBStudios</a></li>
+        <li><a href="#faq">Preguntas frecuentes</a></li>
+        <li><a href="#" data-modal="envios">Envíos y devoluciones</a></li>
+        <li><a href="#" data-modal="legal">Aviso legal</a></li></ul></div>
+    </div>
+    <div class="copy">
+      <span>© <span id="yr"></span> PB Studios</span>
+      <span class="mono" style="color:#79828F">Piezas y precios de ejemplo — pendientes de sustituir por los reales</span>
+    </div>
+  </div>
+</footer>
+
+<div class="scrim" id="scrim"></div>
+<aside class="panel" id="cart" aria-label="Carrito" aria-hidden="true">
+  <header><b style="font-family:var(--disp);font-size:1.05rem">Tu pedido</b>
+    <button class="ico" id="cartClose" aria-label="Cerrar">×</button></header>
+  <div class="body" id="cartBody"></div>
+  <footer>
+    <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:.8rem">
+      <span>Total</span><b class="mono" id="cartTotal" style="font-family:var(--disp);font-size:1.6rem">0,00 €</b></div>
+    <button class="btn btn--p" style="width:100%" id="order" disabled>Enviar pedido por Instagram</button>
+    <button class="btn btn--o btn--sm" style="width:100%;margin-top:.5rem" id="cartClear">Vaciar</button>
+    <p style="font-size:.76rem;color:var(--faint);margin:.8rem 0 0">Se guarda en este navegador. El pedido se cierra por mensaje: te confirmamos precio final y plazo antes de cobrar nada.</p>
+  </footer>
+</aside>
+
+<div class="modal" id="modal" role="dialog" aria-modal="true"><div class="mbox"><button class="x" id="mx" aria-label="Cerrar">×</button><div id="mbody"></div></div></div>
+<div id="toasts" aria-live="polite"></div>
+
+<script>
+/* ==========================================================================
+   PB STUDIOS — app.js
+   1 motor 3D (canvas, sin librerías) · 2 catálogo · 3 ficha · 4 carrito
+   5 presupuesto a medida · 6 materiales/FAQ · 7 interfaz
+   ========================================================================== */
+(function(){
+'use strict';
+const $=(s,c)=>(c||document).querySelector(s), $$=(s,c)=>Array.from((c||document).querySelectorAll(s));
+const el=(t,a,h)=>{const n=document.createElement(t);if(a)for(const k in a)k==='class'?n.className=a[k]:n.setAttribute(k,a[k]);if(h!=null)n.innerHTML=h;return n;};
+const eur=n=>(Math.round(n*100)/100).toLocaleString('es-ES',{minimumFractionDigits:2,maximumFractionDigits:2})+' €';
+const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
+const store={get(k,f){try{const v=localStorage.getItem('pb.'+k);return v===null?f:JSON.parse(v);}catch(e){return f;}},
+             set(k,v){try{localStorage.setItem('pb.'+k,JSON.stringify(v));}catch(e){}}};
+function toast(m){const t=el('div',{class:'toast'},m);$('#toasts').appendChild(t);
+  setTimeout(()=>{t.style.transition='opacity .35s';t.style.opacity=0;setTimeout(()=>t.remove(),350);},3200);}
+
+/* ── 1. Motor 3D ───────────────────────────────────────────────────────────
+   Malla = {v:[[x,y,z]], f:[[índices]]}. Se rota, se proyecta en perspectiva,
+   se ordenan las caras de atrás hacia delante y se rellenan con luz plana.
+   Encima se pintan las líneas de capa, que es lo que delata una pieza
+   impresa de verdad.                                                        */
+function lathe(profile,seg,twist){
+  const v=[],f=[];
+  for(let i=0;i<profile.length;i++){
+    const [r,y]=profile[i];
+    const tw=(twist||0)*(i/(profile.length-1));
+    for(let s=0;s<seg;s++){
+      const a=s/seg*Math.PI*2+tw;
+      v.push([Math.cos(a)*r,y,Math.sin(a)*r]);
+    }
+  }
+  for(let i=0;i<profile.length-1;i++)
+    for(let s=0;s<seg;s++){
+      const n=(s+1)%seg;
+      f.push([i*seg+s,i*seg+n,(i+1)*seg+n,(i+1)*seg+s]);
+    }
+  /* tapa inferior */
+  const base=[]; for(let s=seg-1;s>=0;s--) base.push(s); f.push(base);
+  return {v,f};
+}
+function prism(sides,r,h,rTop){
+  const v=[],f=[],rt=rTop===undefined?r:rTop;
+  for(let s=0;s<sides;s++){const a=s/sides*Math.PI*2+Math.PI/sides;
+    v.push([Math.cos(a)*r,-h/2,Math.sin(a)*r]);}
+  for(let s=0;s<sides;s++){const a=s/sides*Math.PI*2+Math.PI/sides;
+    v.push([Math.cos(a)*rt,h/2,Math.sin(a)*rt]);}
+  for(let s=0;s<sides;s++){const n=(s+1)%sides;f.push([s,n,sides+n,sides+s]);}
+  const bot=[],top=[];
+  for(let s=sides-1;s>=0;s--) bot.push(s);
+  for(let s=0;s<sides;s++) top.push(sides+s);
+  f.push(bot); f.push(top);
+  return {v,f};
+}
+function box(w,h,d,ox,oy,oz){
+  const X=w/2,Y=h/2,Z=d/2,x=ox||0,y=oy||0,z=oz||0;
+  const v=[[-X,-Y,-Z],[X,-Y,-Z],[X,Y,-Z],[-X,Y,-Z],[-X,-Y,Z],[X,-Y,Z],[X,Y,Z],[-X,Y,Z]]
+    .map(p=>[p[0]+x,p[1]+y,p[2]+z]);
+  return {v,f:[[0,1,2,3],[5,4,7,6],[4,0,3,7],[1,5,6,2],[3,2,6,7],[4,5,1,0]]};
+}
+function merge(){
+  const v=[],f=[];
+  for(const m of arguments){ const o=v.length; m.v.forEach(p=>v.push(p)); m.f.forEach(q=>f.push(q.map(i=>i+o))); }
+  return {v,f};
+}
+function gear(teeth,r,h,depth){
+  const prof=[],seg=teeth*4;
+  for(let s=0;s<seg;s++){ const ph=s%4; prof.push(ph<2?r:r-depth); }
+  const v=[],f=[];
+  for(let s=0;s<seg;s++){const a=s/seg*Math.PI*2;
+    v.push([Math.cos(a)*prof[s],-h/2,Math.sin(a)*prof[s]]);}
+  for(let s=0;s<seg;s++){const a=s/seg*Math.PI*2;
+    v.push([Math.cos(a)*prof[s],h/2,Math.sin(a)*prof[s]]);}
+  for(let s=0;s<seg;s++){const n=(s+1)%seg;f.push([s,n,seg+n,seg+s]);}
+  const bot=[],top=[];
+  for(let s=seg-1;s>=0;s--)bot.push(s);
+  for(let s=0;s<seg;s++)top.push(seg+s);
+  f.push(bot);f.push(top);
+  return {v,f};
+}
+function torus(R,r,seg,ring){
+  const v=[],f=[];
+  for(let i=0;i<seg;i++){const u=i/seg*Math.PI*2;
+    for(let j=0;j<ring;j++){const w=j/ring*Math.PI*2;
+      v.push([(R+r*Math.cos(w))*Math.cos(u), r*Math.sin(w), (R+r*Math.cos(w))*Math.sin(u)]);}}
+  for(let i=0;i<seg;i++)for(let j=0;j<ring;j++){
+    const i2=(i+1)%seg,j2=(j+1)%ring;
+    f.push([i*ring+j,i2*ring+j,i2*ring+j2,i*ring+j2]);}
+  return {v,f};
+}
+/* perfiles de revolución */
+const P={
+  vase:[[.30,-1],[.46,-.86],[.60,-.5],[.52,-.1],[.38,.35],[.46,.72],[.52,.95],[.50,1]],
+  lamp:[[.24,-1],[.26,-.9],[.30,-.8],[.70,.15],[.78,.6],[.74,1]],
+  cup :[[.18,-1],[.30,-.92],[.24,-.7],[.20,-.35],[.42,.1],[.54,.6],[.56,1]],
+  pot :[[.30,-1],[.50,-.92],[.58,-.4],[.64,.5],[.70,.95],[.66,1]]
+};
+function hex2rgb(h){h=h.replace('#','');return [parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)];}
+function shade(rgb,k){return 'rgb('+rgb.map(c=>clamp(Math.round(c*k),0,255)).join(',')+')';}
+
+function render(cv,mesh,opt){
+  const o=Object.assign({rx:-.38,ry:.6,color:'#0E8C86',scale:1,layers:true,metal:0},opt||{});
+  const ctx=cv.getContext('2d');
+  const dpr=Math.min(devicePixelRatio||1,2);
+  const W=cv.clientWidth||cv.width, H=cv.clientHeight||cv.height;
+  if(!W||!H) return;
+  cv.width=W*dpr; cv.height=H*dpr; ctx.setTransform(dpr,0,0,dpr,0,0);
+  ctx.clearRect(0,0,W,H);
+  const cx=Math.cos(o.rx),sx=Math.sin(o.rx),cy=Math.cos(o.ry),sy=Math.sin(o.ry);
+  const pts=mesh.v.map(p=>{
+    let x=p[0]*cy - p[2]*sy, z=p[0]*sy + p[2]*cy;      /* giro en Y */
+    let y=p[1]*cx - z*sx;    z=p[1]*sx + z*cx;          /* giro en X */
+    return [x,y,z];
+  });
+  const dist=4.2, S=Math.min(W,H)*0.40*o.scale;
+  const proj=pts.map(p=>{const k=S*dist/(p[2]+dist);return [W/2+p[0]*k, H/2 - p[1]*k];});
+  const rgb=hex2rgb(o.color);
+  const polys=mesh.f.map(f=>{
+    let z=0; f.forEach(i=>z+=pts[i][2]); z/=f.length;
+    const a=pts[f[0]],b=pts[f[1]],c=pts[f[2]];
+    const u=[b[0]-a[0],b[1]-a[1],b[2]-a[2]], w=[c[0]-a[0],c[1]-a[1],c[2]-a[2]];
+    let n=[u[1]*w[2]-u[2]*w[1], u[2]*w[0]-u[0]*w[2], u[0]*w[1]-u[1]*w[0]];
+    const L=Math.hypot(n[0],n[1],n[2])||1; n=[n[0]/L,n[1]/L,n[2]/L];
+    /* luz alta y ligeramente a la izquierda, como el foco de una estantería */
+    const lit=Math.abs(n[0]*-.45 + n[1]*.72 + n[2]*.53);
+    return {f,z,k:0.42+lit*0.72};
+  }).sort((a,b)=>a.z-b.z);
+  polys.forEach(p=>{
+    ctx.beginPath();
+    p.f.forEach((i,j)=>{const q=proj[i];j?ctx.lineTo(q[0],q[1]):ctx.moveTo(q[0],q[1]);});
+    ctx.closePath();
+    ctx.fillStyle=shade(rgb,p.k+o.metal*0.25);
+    ctx.fill();
+    /* un pelín de contorno del mismo tono tapa las costuras entre caras */
+    ctx.strokeStyle=ctx.fillStyle; ctx.lineWidth=1; ctx.stroke();
+  });
+  if(o.layers){
+    /* las capas: solo se pintan encima de la pieza ya dibujada */
+    ctx.save(); ctx.globalCompositeOperation='source-atop';
+    ctx.strokeStyle='rgba(0,0,0,.10)'; ctx.lineWidth=.8;
+    const gap=Math.max(3,Math.round(H/90));
+    for(let y=0;y<H;y+=gap){ctx.beginPath();ctx.moveTo(0,y+.5);ctx.lineTo(W,y+.5);ctx.stroke();}
+    ctx.restore();
+  }
+}
+
+/* ── 2. Catálogo (datos de ejemplo: sustituir por los reales) ─────────────── */
+const MATS=[
+  {id:'pla', n:'PLA',        d:1.24,e:0.045,t:'El de siempre',      dsc:'Rígido, con buen acabado y en todos los colores. Para decoración y piezas que no van a pasar calor ni sol directo.'},
+  {id:'silk',n:'PLA Silk',   d:1.24,e:0.062,t:'Acabado brillante',  dsc:'Mismo comportamiento que el PLA pero con brillo metalizado. Es el que mejor queda en jarrones y regalos.'},
+  {id:'petg',n:'PETG',       d:1.27,e:0.055,t:'Aguanta fuera',      dsc:'Más duro y resistente al calor y a la humedad. El indicado para macetas, piezas de coche o cualquier cosa que viva en la calle.'},
+  {id:'tpu', n:'TPU flexible',d:1.21,e:0.078,t:'Se dobla',          dsc:'Goma: se dobla y vuelve. Para fundas, tapones, topes y piezas que tengan que absorber golpes.'}
+];
+const COLORS={
+  negro:'#2B2E33', blanco:'#E8E6E0', teal:'#0E8C86', mostaza:'#D9A62E',
+  coral:'#E2543C', azul:'#2F5FB3', verde:'#3E8E4C', gris:'#8A8F98',
+  madera:'#9C6B3F', morado:'#6B4E9E'
+};
+const PRODUCTS=[
+  {id:'vaso-espiral',n:'Jarrón espiral',c:'Hogar',p:18,pop:97,new:false,
+   d:'Impreso en espiral continua, sin costura visible. Queda espectacular en PLA Silk y aguanta agua si lo sellas por dentro.',
+   dim:'Ø11 × 19 cm',g:95,mesh:()=>lathe(P.vase,44,1.15),cols:['teal','coral','mostaza','negro','morado']},
+  {id:'maceta-hex',n:'Maceta hexagonal',c:'Hogar',p:14,pop:88,new:false,
+   d:'Con plato integrado y agujero de drenaje. En PETG aguanta el riego y el sol de la terraza sin deformarse.',
+   dim:'12 × 12 × 11 cm',g:78,mesh:()=>merge(prism(6,.62,1.3,.78),prism(6,.86,.1,.86)),cols:['blanco','verde','gris','negro','madera']},
+  {id:'lampara',n:'Lámpara de mesa',c:'Hogar',p:26,pop:74,new:true,
+   d:'La pantalla se imprime a una sola pared, así que la luz atraviesa las capas y dibuja el patrón en la pared.',
+   dim:'Ø16 × 22 cm',g:140,mesh:()=>lathe(P.lamp,48,0),cols:['blanco','mostaza','madera','coral']},
+  {id:'organizador',n:'Organizador de escritorio',c:'Escritorio',p:22,pop:91,new:false,
+   d:'Tres compartimentos y una bandeja baja para lo pequeño. Encaja con el resto de piezas modulares de la serie.',
+   dim:'18 × 9 × 7 cm',g:120,mesh:()=>merge(box(1.7,.55,.9,0,-.3,0),box(.5,.75,.8,-.55,.1,0),box(.5,.55,.8,.05,0,0),box(.5,.35,.8,.62,-.1,0)),cols:['negro','blanco','teal','gris']},
+  {id:'soporte-movil',n:'Soporte de móvil',c:'Escritorio',p:9,pop:99,new:false,
+   d:'Ángulo pensado para videollamadas, con hueco para el cable y base antideslizante en TPU si lo pides así.',
+   dim:'8 × 8 × 9 cm',g:42,mesh:()=>merge(box(1.0,.16,.8,0,-.6,0),box(.16,1.1,.8,.38,-.05,0),box(.7,.16,.8,-.1,-.42,.0)),cols:['negro','teal','coral','blanco','azul']},
+  {id:'portalapices',n:'Portalápices facetado',c:'Escritorio',p:11,pop:83,new:false,
+   d:'Doce caras que rompen la luz y disimulan las capas. Uno de los que más se vende como regalo de oficina.',
+   dim:'Ø9 × 11 cm',g:64,mesh:()=>prism(12,.55,1.35,.62),cols:['negro','mostaza','teal','morado','gris']},
+  {id:'bandeja',n:'Vaciabolsillos',c:'Hogar',p:13,pop:70,new:false,
+   d:'Para llaves, cartera y monedas en la entrada de casa. Fondo con textura para que no resbale nada.',
+   dim:'16 × 11 × 3 cm',g:70,mesh:()=>merge(box(1.55,.16,1.05,0,-.35,0),box(1.55,.4,.1,0,-.1,.52),box(1.55,.4,.1,0,-.1,-.52),box(.1,.4,1.05,.77,-.1,0),box(.1,.4,1.05,-.77,-.1,0)),cols:['madera','negro','blanco','verde']},
+  {id:'soporte-cascos',n:'Soporte para auriculares',c:'Escritorio',p:16,pop:86,new:false,
+   d:'Arco ancho para que la diadema no se marque, con contrapeso en la base. En negro mate pasa desapercibido.',
+   dim:'12 × 10 × 24 cm',g:105,mesh:()=>merge(box(.9,.18,.8,0,-.85,0),box(.2,1.5,.5,0,-.1,0),lathe([[.06,-.1],[.5,.5],[.55,.8],[.5,.95]],26,0)),cols:['negro','gris','teal','coral']},
+  {id:'engranaje',n:'Fidget de engranajes',c:'Regalo',p:12,pop:95,new:true,
+   d:'Sale montado de la impresora: los engranajes ya giran cuando lo despegas de la cama. Adictivo y barato de regalar.',
+   dim:'Ø8 × 2 cm',g:38,mesh:()=>merge(gear(14,.75,.22,.14),gear(9,.34,.3,.09)),cols:['teal','coral','mostaza','negro','azul']},
+  {id:'nudo',n:'Nudo decorativo',c:'Regalo',p:19,pop:62,new:false,
+   d:'Una sola pieza continua, imposible de fabricar de otra forma. Es la que ponemos en la estantería para explicar qué hace una impresora 3D.',
+   dim:'14 × 14 × 6 cm',g:88,mesh:()=>torus(.68,.22,40,16),cols:['morado','teal','mostaza','negro']},
+  {id:'trofeo',n:'Trofeo personalizable',c:'Regalo',p:24,pop:68,new:false,
+   d:'Le grabamos el texto que quieras en la peana. Lo usan sobre todo para torneos de peñas y premios de empresa.',
+   dim:'Ø10 × 21 cm',g:130,mesh:()=>merge(lathe(P.cup,40,0),prism(8,.62,.22,.62)),cols:['mostaza','gris','negro','blanco']},
+  {id:'llavero',n:'Llavero personalizado',c:'Regalo',p:5,pop:100,new:false,
+   d:'Con tu nombre, un logo o la matrícula. A partir de 10 unidades el precio por pieza baja bastante, avísanos.',
+   dim:'6 × 3 × 0,5 cm',g:9,mesh:()=>merge(box(1.3,.5,.12,0,0,0),lathe([[.12,-.06],[.2,0],[.12,.06]],18,0)),cols:['coral','teal','mostaza','negro','blanco','azul']}
+];
+const SIZES=[{id:'s',n:'S',f:0.8},{id:'m',n:'M',f:1},{id:'l',n:'L',f:1.3}];
+const FAQS=[
+  {q:'¿Cuánto tarda un pedido?',a:'Las piezas de catálogo salen en 3 a 5 días laborables, porque se imprimen cuando las pides. Un encargo a medida depende del tamaño, pero te damos plazo cerrado antes de empezar.'},
+  {q:'¿Puedo pedir un color que no esté en la lista?',a:'Casi siempre sí. Los que ves son los que tenemos cargados ahora mismo; si quieres otro, escríbenos y te decimos si lo tenemos o cuánto tarda en llegar.'},
+  {q:'¿Qué archivo necesito mandaros?',a:'Lo ideal es un STL o un 3MF. También abrimos OBJ y STEP. Y si no tienes nada de eso, con un boceto acotado o unas fotos con medidas nos apañamos: el diseño lo hacemos nosotros.'},
+  {q:'¿Las piezas aguantan al sol o en el coche?',a:'En PLA no: se reblandece a partir de unos 55 °C y el salpicadero de un coche en agosto pasa de eso de sobra. Para exterior o calor usa PETG, y te lo recomendamos nosotros si vemos que hace falta.'},
+  {q:'¿Se ven las líneas de capa?',a:'Sí, es lo normal en impresión 3D y forma parte del acabado. Con capa de 0,12 mm casi no se notan, y en PLA Silk el brillo las disimula bastante. Si quieres acabado liso total, se puede lijar y pintar, pero eso ya es trabajo aparte.'},
+  {q:'¿Hacéis cantidades grandes?',a:'Sí, y a partir de 10 unidades iguales el precio por pieza baja. Para tiradas de más de 50 cuéntanoslo con margen, que hay que planificar las máquinas.'},
+  {q:'¿Y si la pieza me llega mal?',a:'Si viene defectuosa o no se parece a lo acordado, la reimprimimos sin coste. Lo que no podemos aceptar es la devolución de una pieza personalizada que salió como pediste.'}
+];
+
+/* ── 3. Catálogo en pantalla ───────────────────────────────────────────── */
+let cat='todas', sortBy='pop', query='';
+const CATS=['todas'].concat([...new Set(PRODUCTS.map(p=>p.c))]);
+function drawCats(){
+  const box=$('#cats'); box.innerHTML='';
+  CATS.forEach(c=>{
+    const b=el('button',{class:'chip',type:'button','aria-pressed':String(c===cat)},
+      c==='todas'?'Todas':c);
+    b.addEventListener('click',()=>{cat=c;drawCats();drawGrid();});
+    box.appendChild(b);
+  });
+}
+function visible(){
+  let list=PRODUCTS.filter(p=>(cat==='todas'||p.c===cat)&&
+    (p.n+' '+p.d+' '+p.c).toLowerCase().includes(query.toLowerCase()));
+  const by={pop:(a,b)=>b.pop-a.pop, asc:(a,b)=>a.p-b.p, desc:(a,b)=>b.p-a.p,
+            new:(a,b)=>(b.new?1:0)-(a.new?1:0)||b.pop-a.pop};
+  return list.sort(by[sortBy]);
+}
+function drawGrid(){
+  const g=$('#grid'); g.innerHTML='';
+  const list=visible();
+  if(!list.length){ g.appendChild(el('div',{class:'empty'},'No hay nada con esa búsqueda. Prueba con otra palabra o quita el filtro.'));
+    $('#count').textContent=''; return; }
+  list.forEach(p=>{
+    const card=el('button',{class:'card',type:'button','aria-label':p.n+', '+eur(p.p)});
+    card.innerHTML=
+      '<div class="pic">'+(p.new?'<span class="flag new">Nuevo</span>':'')+'<canvas></canvas></div>'+
+      '<div class="txt"><span class="cat">'+p.c+'</span><h3>'+p.n+'</h3>'+
+      '<p class="dsc">'+p.d.split('.')[0]+'.</p>'+
+      '<div class="foot"><span class="price"><s>desde</s>'+eur(p.p)+'</span>'+
+      '<span class="swatches">'+p.cols.slice(0,5).map(c=>'<i style="background:'+COLORS[c]+'"></i>').join('')+'</span></div></div>';
+    card.addEventListener('click',()=>openSheet(p));
+    g.appendChild(card);
+    /* el render se hace una vez por tarjeta, no en bucle */
+    requestAnimationFrame(()=>render($('canvas',card),p.mesh(),{color:COLORS[p.cols[0]],rx:-.34,ry:.7,scale:1.12}));
+  });
+  $('#count').textContent=list.length+' de '+PRODUCTS.length+' piezas';
+}
+$('#q').addEventListener('input',e=>{query=e.target.value;drawGrid();});
+$('#sort').addEventListener('change',e=>{sortBy=e.target.value;drawGrid();});
+
+/* ── 4. Ficha de producto ──────────────────────────────────────────────── */
+let sheet=null;
+function priceOf(p,matId,sizeId){
+  const mat=MATS.find(m=>m.id===matId)||MATS[0];
+  const size=SIZES.find(s=>s.id===sizeId)||SIZES[1];
+  /* el volumen crece al cubo, pero no todo el precio es material */
+  const vol=Math.pow(size.f,3);              /* el material crece al cubo */
+  const matK=mat.e/MATS[0].e;                /* PLA es la referencia: ×1   */
+  return p.p*(0.35+0.65*vol)*(1+(matK-1)*0.45);
+}
+function openSheet(p){
+  sheet={p,mat:'pla',size:'m',col:p.cols[0],rx:-.35,ry:.6,raf:null};
+  $('#mbody').innerHTML=
+    '<div class="sheet">'+
+      '<div><div class="stage" style="aspect-ratio:1/1"><canvas id="shCv"></canvas>'+
+        '<span class="hint">Arrastra para girar</span></div></div>'+
+      '<div>'+
+        '<span class="cat mono" style="font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--faint)">'+p.c+'</span>'+
+        '<h2 style="font-size:1.7rem;margin:.3rem 0 .5rem">'+p.n+'</h2>'+
+        '<p style="color:var(--soft);font-size:.92rem">'+p.d+'</p>'+
+        '<div class="opt-row"><span>Color</span><div class="opts" id="optCol"></div></div>'+
+        '<div class="opt-row"><span>Material</span><div class="opts" id="optMat"></div></div>'+
+        '<div class="opt-row"><span>Tamaño</span><div class="opts" id="optSize"></div></div>'+
+        '<table class="tbl"><tbody id="shSpec"></tbody></table>'+
+        '<div class="pricebox"><span>Precio</span><b class="mono" id="shPrice">—</b></div>'+
+        '<button class="btn btn--p" style="width:100%;margin-top:.9rem" id="shAdd">Añadir al pedido</button>'+
+        '<p style="font-size:.78rem;color:var(--faint);margin:.7rem 0 0">Se imprime al pedirla: 3–5 días laborables. El pedido se cierra por mensaje.</p>'+
+      '</div></div>';
+  $('#modal').classList.add('on'); document.body.classList.add('lock');
+  buildOpts(); paintSheet(); $('#mx').focus();
+  const cv=$('#shCv');
+  let drag=null;
+  cv.addEventListener('pointerdown',e=>{drag=[e.clientX,e.clientY,sheet.ry,sheet.rx];cv.setPointerCapture(e.pointerId);});
+  cv.addEventListener('pointermove',e=>{
+    if(!drag)return;
+    sheet.ry=drag[2]+(e.clientX-drag[0])*.01;
+    sheet.rx=clamp(drag[3]+(e.clientY-drag[1])*.01,-1.3,1.3);
+    paintSheet(true);
+  });
+  const stop=()=>{drag=null;};
+  cv.addEventListener('pointerup',stop); cv.addEventListener('pointerleave',stop);
+  spin();
+}
+function spin(){
+  if(!sheet) return;
+  cancelAnimationFrame(sheet.raf);
+  if(matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+  const step=()=>{ if(!sheet)return; sheet.ry+=0.006; paintSheet(true); sheet.raf=requestAnimationFrame(step); };
+  sheet.raf=requestAnimationFrame(step);
+}
+function buildOpts(){
+  const p=sheet.p;
+  const c=$('#optCol'); c.innerHTML='';
+  p.cols.forEach(k=>{
+    const b=el('button',{class:'col',type:'button','aria-pressed':String(k===sheet.col),
+      'aria-label':k,style:'background:'+COLORS[k]});
+    b.addEventListener('click',()=>{sheet.col=k;buildOpts();paintSheet();});
+    c.appendChild(b);
+  });
+  const m=$('#optMat'); m.innerHTML='';
+  MATS.forEach(x=>{
+    const b=el('button',{class:'chip',type:'button','aria-pressed':String(x.id===sheet.mat)},x.n);
+    b.addEventListener('click',()=>{sheet.mat=x.id;buildOpts();paintSheet();});
+    m.appendChild(b);
+  });
+  const s=$('#optSize'); s.innerHTML='';
+  SIZES.forEach(x=>{
+    const b=el('button',{class:'chip',type:'button','aria-pressed':String(x.id===sheet.size)},
+      x.n+' · '+Math.round(x.f*100)+' %');
+    b.addEventListener('click',()=>{sheet.size=x.id;buildOpts();paintSheet();});
+    s.appendChild(b);
+  });
+}
+function paintSheet(onlyCanvas){
+  if(!sheet) return;
+  const {p}=sheet, mat=MATS.find(m=>m.id===sheet.mat), size=SIZES.find(s=>s.id===sheet.size);
+  const cv=$('#shCv'); if(cv) render(cv,p.mesh(),{color:COLORS[sheet.col],rx:sheet.rx,ry:sheet.ry,
+    scale:0.95*(0.88+size.f*0.14), metal:sheet.mat==='silk'?1:0});
+  if(onlyCanvas) return;
+  const grams=Math.round(p.g*Math.pow(size.f,3)*(mat.d/1.24));
+  const hours=Math.max(.4,grams/13);
+  $('#shSpec').innerHTML=
+    '<tr><td>Medidas</td><td>'+p.dim+(size.f!==1?' · al '+Math.round(size.f*100)+' %':'')+'</td></tr>'+
+    '<tr><td>Material</td><td>'+mat.n+'</td></tr>'+
+    '<tr><td>Peso aproximado</td><td>'+grams+' g</td></tr>'+
+    '<tr><td>Tiempo de impresión</td><td>'+(hours<1?Math.round(hours*60)+' min':hours.toFixed(1).replace('.',',')+' h')+'</td></tr>';
+  $('#shPrice').textContent=eur(priceOf(p,sheet.mat,sheet.size));
+  $('#shAdd').onclick=()=>{
+    addToCart({id:p.id,n:p.n,mat:sheet.mat,size:sheet.size,col:sheet.col,
+      price:priceOf(p,sheet.mat,sheet.size),qty:1});
+    closeModal(); openCart();
+  };
+}
+function closeModal(){
+  if(sheet){cancelAnimationFrame(sheet.raf);sheet=null;}
+  $('#modal').classList.remove('on'); document.body.classList.remove('lock');
+}
+$('#mx').addEventListener('click',closeModal);
+$('#modal').addEventListener('click',e=>{if(e.target.id==='modal')closeModal();});
+addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();closeCart();
+  if($('#drawer').classList.contains('open'))$('#burger').click();}});
+
+/* ── 5. Carrito ────────────────────────────────────────────────────────── */
+let cart=store.get('cart',[]);
+function addToCart(item){
+  const same=cart.find(x=>x.id===item.id&&x.mat===item.mat&&x.size===item.size&&x.col===item.col);
+  if(same) same.qty++; else cart.push(item);
+  store.set('cart',cart); drawCart();
+  toast(item.n+' añadido al pedido');
+}
+function drawCart(){
+  const b=$('#cartBody'); b.innerHTML='';
+  if(!cart.length) b.appendChild(el('div',{class:'empty',style:'border:1px dashed var(--line);background:transparent'},
+    'Todavía no has añadido nada. Elige una pieza del catálogo.'));
+  let total=0, units=0;
+  cart.forEach((it,i)=>{
+    total+=it.price*it.qty; units+=it.qty;
+    const p=PRODUCTS.find(x=>x.id===it.id);
+    const mat=MATS.find(m=>m.id===it.mat), size=SIZES.find(s=>s.id===it.size);
+    const row=el('div',{class:'ci'},
+      '<canvas></canvas>'+
+      '<div><b>'+it.n+'</b><br><small style="color:var(--soft)">'+mat.n+' · '+size.n+' · '+it.col+' × '+it.qty+'</small></div>'+
+      '<div style="text-align:right"><b class="mono">'+eur(it.price*it.qty)+'</b><br><button class="rm" aria-label="Quitar">×</button></div>');
+    $('.rm',row).addEventListener('click',()=>{cart.splice(i,1);store.set('cart',cart);drawCart();});
+    b.appendChild(row);
+    if(p) requestAnimationFrame(()=>render($('canvas',row),p.mesh(),{color:COLORS[it.col],rx:-.35,ry:.7,scale:.9,layers:false}));
+  });
+  $('#cartTotal').textContent=eur(total);
+  $('#order').disabled=!cart.length;
+  const n=$('#cartN'); n.textContent=units; n.hidden=!units;
+}
+function openCart(){$('#cart').classList.add('open');$('#scrim').classList.add('on');
+  $('#cart').setAttribute('aria-hidden','false');document.body.classList.add('lock');}
+function closeCart(){$('#cart').classList.remove('open');$('#scrim').classList.remove('on');
+  $('#cart').setAttribute('aria-hidden','true');document.body.classList.remove('lock');}
+$('#cartBtn').addEventListener('click',openCart);
+$('#cartClose').addEventListener('click',closeCart);
+$('#scrim').addEventListener('click',closeCart);
+$('#cartClear').addEventListener('click',()=>{cart=[];store.set('cart',cart);drawCart();});
+$('#order').addEventListener('click',()=>{
+  const lines=cart.map(it=>{const mat=MATS.find(m=>m.id===it.mat),size=SIZES.find(s=>s.id===it.size);
+    return '· '+it.qty+' × '+it.n+' ('+mat.n+', talla '+size.n+', '+it.col+') — '+eur(it.price*it.qty);}).join('\n');
+  const total=cart.reduce((s,i)=>s+i.price*i.qty,0);
+  const txt='¡Hola PB Studios! Quiero encargar:\n'+lines+'\nTOTAL: '+eur(total);
+  openModalHtml('<h2 style="font-size:1.4rem;margin-bottom:.6rem">Tu pedido, listo para enviar</h2>'+
+    '<p style="color:var(--soft);font-size:.92rem">Cópialo y mándanoslo por Instagram, o ábrelo directamente en WhatsApp. Te confirmamos precio final y plazo antes de cobrar nada.</p>'+
+    '<pre style="white-space:pre-wrap;background:var(--sunk);padding:1rem;border-radius:3px;font-family:var(--mono);font-size:.82rem">'+
+      txt.replace(/</g,'&lt;')+'</pre>'+
+    '<div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:1rem">'+
+      '<a class="btn btn--p" target="_blank" rel="noopener" href="https://www.instagram.com/_pbstudios/">Abrir Instagram</a>'+
+      '<a class="btn btn--o" target="_blank" rel="noopener" href="https://wa.me/34600000000?text='+encodeURIComponent(txt)+'">WhatsApp</a>'+
+      '<button class="btn btn--o" id="cpOrder">Copiar pedido</button></div>');
+  $('#cpOrder').addEventListener('click',async()=>{
+    let ok=false;
+    try{await navigator.clipboard.writeText(txt);ok=true;}catch(e){
+      const ta=el('textarea');ta.value=txt;ta.style.position='fixed';ta.style.opacity=0;
+      document.body.appendChild(ta);ta.select();try{ok=document.execCommand('copy');}catch(_){}ta.remove();}
+    toast(ok?'Pedido copiado al portapapeles':'No se pudo copiar, selecciónalo a mano');
+  });
+});
+function openModalHtml(html){
+  if(sheet){cancelAnimationFrame(sheet.raf);sheet=null;}
+  $('#mbody').innerHTML=html; $('#modal').classList.add('on'); document.body.classList.add('lock'); $('#mx').focus();
+}
+
+/* ── 6. Presupuesto a medida ───────────────────────────────────────────── */
+const SETUP=3.50, HOUR=2.20;   /* preparación del archivo y coste de máquina */
+function calc(){
+  const x=+$('#dx').value||1, y=+$('#dy').value||1, z=+$('#dz').value||1;
+  const mat=MATS.find(m=>m.id===$('#cMat').value)||MATS[0];
+  const fill=+$('#cFill').value, layer=+$('#cQual').value, qty=clamp(+$('#cQty').value||1,1,200);
+  const sup=$('#cSup').checked;
+  /* de la caja que ocupa la pieza a material real: una pieza típica llena
+     como un 35 % de su caja entre paredes y relleno */
+  const bbox=x*y*z;
+  const solid=bbox*(0.14+fill*0.42);
+  const grams=solid*mat.d;
+  const hours=(grams/13)*(0.20/layer)*(sup?1.18:1);
+  const material=grams*mat.e;
+  const machine=hours*HOUR;
+  const extra=sup?2.5:0;
+  const unit=SETUP+material+machine+extra;
+  /* a partir de 10 iguales se prepara una sola vez y se imprimen en tanda */
+  const disc=qty>=50?0.72:qty>=25?0.80:qty>=10?0.88:1;
+  const total=unit*qty*disc;
+  $('#cTotal').textContent=eur(total);
+  $('#cBreak').innerHTML=
+    '<li><span>Material · '+Math.round(grams)+' g de '+mat.n+'</span><span>'+eur(material)+'</span></li>'+
+    '<li><span>Máquina · '+hours.toFixed(1).replace('.',',')+' h a '+eur(HOUR)+'/h</span><span>'+eur(machine)+'</span></li>'+
+    '<li><span>Preparación del archivo</span><span>'+eur(SETUP)+'</span></li>'+
+    (sup?'<li><span>Soportes y postprocesado</span><span>'+eur(extra)+'</span></li>':'')+
+    '<li style="border-top:1px solid var(--line);padding-top:.45rem"><span><b>Precio por unidad</b></span><span><b>'+eur(unit)+'</b></span></li>'+
+    (qty>1?'<li><span>'+qty+' unidades'+(disc<1?' · −'+Math.round((1-disc)*100)+' % por tanda':'')+'</span><span>'+eur(total)+'</span></li>':'');
+  const mx=Math.max(material,machine,1);
+  $('#pMat').textContent=eur(material); $('#pTime').textContent=eur(machine);
+  requestAnimationFrame(()=>{
+    $('#bMat').style.width=Math.round(material/mx*100)+'%';
+    $('#bTime').style.width=Math.round(machine/mx*100)+'%';
+  });
+  return {x,y,z,mat,fill,layer,qty,sup,grams:Math.round(grams),hours,total};
+}
+['#dx','#dy','#dz','#cMat','#cFill','#cQual','#cQty','#cSup'].forEach(s=>{
+  const n=$(s); n.addEventListener('input',calc); n.addEventListener('change',calc);
+});
+$('#cSend').addEventListener('click',()=>{
+  const c=calc();
+  const txt='¡Hola PB Studios! Quiero presupuesto para una pieza a medida:\n'+
+    '· Medidas: '+c.x+' × '+c.y+' × '+c.z+' cm\n'+
+    '· Material: '+c.mat.n+'\n· Relleno: '+Math.round(c.fill*100)+' %\n'+
+    '· Capa: '+c.layer+' mm\n· Unidades: '+c.qty+(c.sup?'\n· Lleva soportes o postprocesado':'')+
+    '\nVuestra web me estima '+eur(c.total)+'. ¿Me lo confirmáis?';
+  openModalHtml('<h2 style="font-size:1.4rem;margin-bottom:.6rem">Consulta preparada</h2>'+
+    '<p style="color:var(--soft);font-size:.92rem">Mándanosla por Instagram junto con el archivo STL si ya lo tienes. Te contestamos con precio cerrado el mismo día.</p>'+
+    '<pre style="white-space:pre-wrap;background:var(--sunk);padding:1rem;border-radius:3px;font-family:var(--mono);font-size:.82rem">'+
+      txt.replace(/</g,'&lt;')+'</pre>'+
+    '<div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:1rem">'+
+      '<a class="btn btn--p" target="_blank" rel="noopener" href="https://www.instagram.com/_pbstudios/">Abrir Instagram</a>'+
+      '<a class="btn btn--o" target="_blank" rel="noopener" href="https://wa.me/34600000000?text='+encodeURIComponent(txt)+'">WhatsApp</a></div>');
+});
+
+/* ── 7. Materiales, FAQ e interfaz ─────────────────────────────────────── */
+function drawMats(){
+  $('#mats').innerHTML=MATS.map(m=>
+    '<div class="mat"><span class="tag">'+m.t+'</span><br><b>'+m.n+'</b>'+
+    '<p>'+m.dsc+'</p>'+
+    '<p class="mono" style="font-size:.74rem;color:var(--faint);margin-top:.5rem">'+
+      m.d.toFixed(2).replace('.',',')+' g/cm³ · '+eur(m.e)+'/g</p></div>').join('');
+  $('#cMat').innerHTML=MATS.map(m=>'<option value="'+m.id+'">'+m.n+'</option>').join('');
+}
+function drawFaq(){
+  const box=$('#faqL'); box.innerHTML='';
+  FAQS.forEach((f,i)=>{
+    const q=el('div',{class:'q'},'<button aria-expanded="false" aria-controls="a'+i+'"><span>'+f.q+
+      '</span><span class="pm">+</span></button><div class="a" id="a'+i+'"><p style="margin:0">'+f.a+'</p></div>');
+    const btn=$('button',q), a=$('.a',q);
+    btn.addEventListener('click',()=>{
+      const open=q.classList.contains('on');
+      $$('#faqL .q').forEach(o=>{o.classList.remove('on');$('.a',o).style.maxHeight=null;
+        $('button',o).setAttribute('aria-expanded','false');});
+      if(!open){q.classList.add('on');a.style.maxHeight=a.scrollHeight+24+'px';btn.setAttribute('aria-expanded','true');}
+    });
+    box.appendChild(q);
+  });
+}
+const LEGAL={
+ envios:['Envíos y devoluciones','<p>Entrega en mano sin coste en la zona, o envío a península en 24–48 horas una vez impresa la pieza. El plazo que te damos cuenta desde que confirmamos el pedido, no desde que lo pides.</p><p>Si una pieza llega defectuosa o no se corresponde con lo acordado, la reimprimimos sin coste. Las piezas personalizadas (con nombre, logo o medidas tuyas) no admiten devolución si salieron como se pidió.</p>'],
+ legal:['Aviso legal','<p>PB Studios · impresión 3D bajo pedido. Esta web es una demostración: las piezas, los precios y los plazos son de ejemplo y deben confirmarse por mensaje antes de cualquier encargo.</p><p>No enviamos tus datos a ningún servidor: el pedido se cierra por Instagram o WhatsApp y el carrito vive solo en el almacenamiento local de tu navegador.</p>']
+};
+$$('[data-modal]').forEach(a=>a.addEventListener('click',e=>{
+  e.preventDefault(); const d=LEGAL[a.dataset.modal];
+  openModalHtml('<h2 style="font-size:1.4rem;margin-bottom:.6rem">'+d[0]+'</h2>'+d[1]);
+}));
+
+$('#yr').textContent=new Date().getFullYear();
+$('#waLink').href='https://wa.me/34600000000';
+
+const saved=store.get('theme',null);
+function setTheme(m){document.documentElement.setAttribute('data-theme',m);
+  $('#theme').textContent=m==='dark'?'☀':'◐';store.set('theme',m);
+  drawGrid(); drawCart(); if(sheet) paintSheet();}
+setTheme(saved||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'));
+$('#theme').addEventListener('click',()=>
+  setTheme(document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark'));
+
+const burger=$('#burger'), drawer=$('#drawer');
+burger.addEventListener('click',()=>{const o=drawer.classList.toggle('open');
+  burger.setAttribute('aria-expanded',String(o));document.body.classList.toggle('lock',o);});
+$$('#drawer a').forEach(a=>a.addEventListener('click',()=>{
+  drawer.classList.remove('open');burger.setAttribute('aria-expanded','false');document.body.classList.remove('lock');}));
+
+const secs=$$('main section[id]');
+let tick=false;
+function onScroll(){
+  const y=scrollY,h=document.documentElement.scrollHeight-innerHeight;
+  $('#prog').style.width=(h>0?y/h*100:0)+'%';
+  $('#nav').classList.toggle('stuck',y>8);
+  let cur=''; secs.forEach(s=>{if(y>=s.offsetTop-130)cur=s.id;});
+  $$('#menu a').forEach(a=>a.classList.toggle('act',a.getAttribute('href')==='#'+cur));
+  tick=false;
+}
+addEventListener('scroll',()=>{if(!tick){requestAnimationFrame(onScroll);tick=true;}},{passive:true});
+
+const io='IntersectionObserver' in window?new IntersectionObserver(e=>{
+  e.forEach(x=>{if(x.isIntersecting){x.target.classList.add('in');io.unobserve(x.target);}});},
+  {threshold:.08,rootMargin:'0px 0px -40px'}):null;
+const watch=()=>$$('.rv:not(.in)').forEach(n=>io?io.observe(n):n.classList.add('in'));
+
+/* pieza del hero: gira sola y se puede agarrar */
+(function heroPiece(){
+  const cv=$('#heroCv'); if(!cv) return;
+  const mesh=lathe(P.vase,52,1.15);
+  let rx=-.33, ry=.4, raf=null, drag=null;
+  const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const paint=()=>render(cv,mesh,{color:COLORS.teal,rx,ry,scale:1.02,metal:.6});
+  const loop=()=>{ if(!drag) ry+=0.0045; paint(); raf=requestAnimationFrame(loop); };
+  cv.addEventListener('pointerdown',e=>{drag=[e.clientX,e.clientY,ry,rx];cv.setPointerCapture(e.pointerId);});
+  cv.addEventListener('pointermove',e=>{ if(!drag)return;
+    ry=drag[2]+(e.clientX-drag[0])*.01; rx=clamp(drag[3]+(e.clientY-drag[1])*.01,-1.3,1.3); paint(); });
+  const stop=()=>{drag=null;};
+  cv.addEventListener('pointerup',stop); cv.addEventListener('pointerleave',stop);
+  addEventListener('resize',paint);
+  document.addEventListener('visibilitychange',()=>{
+    if(document.hidden) cancelAnimationFrame(raf); else if(!reduce) loop();});
+  paint(); if(!reduce) loop();
+})();
+
+/* ── Arranque ──────────────────────────────────────────────────────────── */
+drawCats(); drawMats(); drawGrid(); drawFaq(); drawCart(); calc(); watch(); onScroll();
+addEventListener('resize',()=>{ clearTimeout(window.__rz);
+  window.__rz=setTimeout(()=>{drawGrid();if(sheet)paintSheet(true);},250); });
+})();
+</script>
+</body>
+</html>
