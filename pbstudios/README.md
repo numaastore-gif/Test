@@ -97,6 +97,16 @@ Los 12 productos generados en 3D siguen ahí marcados con la etiqueta **Ejemplo*
 para que el catálogo no se vea vacío mientras llegan los tuyos. Se borran
 quitando `DEMO` de la línea `const PRODUCTS=REAL.concat(DEMO);`.
 
+## Autoría de los modelos
+
+Cada producto tiene un campo `designer`. Cuando está relleno, la ficha muestra
+un distintivo: *«Modelo de X, impreso bajo licencia comercial»*. Es un argumento
+de venta frente a quien vende lo mismo con archivos pirateados, y hay una
+pregunta frecuente que lo explica.
+
+Ahora mismo solo el Batman lo tiene (**Yosh Studios**). Falta saber de quién son
+los modelos del Venom y del Ranger — el campo está puesto y vacío.
+
 ## Lo que tienes que cambiar
 
 Todo el contenido es **de ejemplo**, porque no pude ver tu Instagram: el proxy de

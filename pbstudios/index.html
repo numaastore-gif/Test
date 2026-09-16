@@ -187,6 +187,11 @@ header.nav.stuck{border-bottom-color:var(--line)}
 .empty{grid-column:1/-1;background:var(--surface);padding:2.4rem 1rem;text-align:center;color:var(--soft)}
 
 /* ficha */
+.licence svg{flex:0 0 auto}
+.licence{display:flex;align-items:center;gap:.45rem;font-size:.78rem;color:var(--brand);line-height:1.35;
+  background:color-mix(in srgb,var(--brand) 9%,transparent);border-radius:99px;
+  padding:.32rem .7rem;margin:0 0 .8rem;width:fit-content}
+.licence b{font-weight:600}
 .gal img{width:100%;display:block;border-radius:4px;background:#F3F1EC;aspect-ratio:1/1;object-fit:contain}
 .thumbs{display:flex;gap:.4rem;margin-top:.5rem;flex-wrap:wrap}
 .thumbs button{width:58px;height:58px;padding:0;border:2px solid transparent;border-radius:3px;
@@ -713,7 +718,7 @@ const REAL=[
   {id:'casco-batman',n:'Casco de Batman',c:'Cosplay',p:65,pop:100,new:true,
    d:'Casco completo de Batman impreso por partes y unido, con la textura marcada en el propio molde. Te lo llevas <b>raw</b>, tal cual sale de la impresora y con las capas a la vista, para lijarlo y pintarlo tú; lijado e imprimado, listo para pintar; o pintado a mano por nosotros. Talla adulto, para llevar puesto o para expositor.',
    dim:'Talla adulto · 30 cm de alto aprox.', g:780,
-   photos:PHOTOS.batman, credit:'Render del modelo original: Yosh Studios',
+   photos:PHOTOS.batman, designer:'Yosh Studios',
    opts:[
      {k:'fin',label:'Acabado',i0:2,ch:[
        {id:'raw',  label:'Raw · sin postprocesar', mul:1},
@@ -732,7 +737,7 @@ const REAL=[
   {id:'mascara-venom',n:'Máscara Venom / Spider-Man',c:'Cosplay',p:40,pop:99,new:true,
    d:'La máscara del simbionte partiendo la cara de Spider-Man, pintada a mano capa a capa: negro con acabado húmedo, el rojo de la máscara y los dientes y la lengua sombreados uno a uno. Cada una sale distinta porque la pintura es artesanal. También se vende <b>raw</b>, sin lijar ni pintar, si prefieres hacerle tú el postprocesado.',
    dim:'Talla adulto · 26 cm de alto aprox.', g:620,
-   photos:PHOTOS.venom,
+   photos:PHOTOS.venom, designer:'',      /* ¿de quién es este modelo? */
    opts:[
      {k:'fin',label:'Acabado',i0:2,ch:[
        {id:'raw',  label:'Raw · sin postprocesar', mul:1},
@@ -750,7 +755,7 @@ const REAL=[
 {id:'casco-ranger',n:'Casco de Power Ranger amarillo',c:'Cosplay',p:55,pop:98,new:true,
    d:'Casco completo del Ranger amarillo, pintado a mano en amarillo brillante con el frontal y la boca en plata. Lleva visera ahumada de policarbonato recortada a medida, así que se ve desde dentro y se puede llevar puesto. También en <b>raw</b> si quieres pintarlo tú. Talla adulto.',
    dim:'Talla adulto · 32 cm de alto aprox.', g:940,
-   photos:PHOTOS.ranger,
+   photos:PHOTOS.ranger, designer:'',      /* ¿de quién es este modelo? */
    opts:[
      {k:'fin',label:'Acabado',i0:2,ch:[
        {id:'raw',  label:'Raw · sin postprocesar', mul:1},
@@ -819,6 +824,7 @@ const FAQS=[
   {q:'¿Qué archivo necesito mandaros?',a:'Lo ideal es un STL o un 3MF. También abrimos OBJ y STEP. Y si no tienes nada de eso, con un boceto acotado o unas fotos con medidas nos apañamos: el diseño lo hacemos nosotros.'},
   {q:'¿Las piezas aguantan al sol o en el coche?',a:'En PLA no: se reblandece a partir de unos 55 °C y el salpicadero de un coche en agosto pasa de eso de sobra. Para exterior o calor usa PETG, y te lo recomendamos nosotros si vemos que hace falta.'},
   {q:'¿Se ven las líneas de capa?',a:'Sí, es lo normal en impresión 3D y forma parte del acabado. Con capa de 0,12 mm casi no se notan, y en PLA Silk el brillo las disimula bastante. Si quieres acabado liso total, se puede lijar y pintar, pero eso ya es trabajo aparte.'},
+  {q:'¿Los modelos son vuestros? ¿Podéis venderlos?',a:'Los cascos y máscaras de catálogo son diseños de estudios que se dedican a esto, y compramos sus archivos con licencia comercial antes de imprimir y vender nada. En la ficha de cada pieza verás de quién es el modelo original. No descargamos archivos pirateados: además de que no toca, los modelos de pago vienen mucho mejor preparados para imprimir.'},
   {q:'¿Hacéis cantidades grandes?',a:'Sí, y a partir de 10 unidades iguales el precio por pieza baja. Para tiradas de más de 50 cuéntanoslo con margen, que hay que planificar las máquinas.'},
   {q:'¿Y si la pieza me llega mal?',a:'Si viene defectuosa o no se parece a lo acordado, la reimprimimos sin coste. Lo que no podemos aceptar es la devolución de una pieza personalizada que salió como pediste.'}
 ];
@@ -934,13 +940,16 @@ function openSheet(p){
       '<div class="thumbs" id="shThumbs">'+p.photos.map((s,i)=>
         '<button type="button" data-i="'+i+'" aria-label="Foto '+(i+1)+'"'+(i?'':' class="on"')+
         '><img src="'+s+'" alt=""></button>').join('')+'</div>'+
-      (p.credit?'<p class="mono" style="font-size:.64rem;color:var(--faint);margin:.5rem 0 0">'+p.credit+'</p>':'')+
       '</div>'
     : '<div class="stage" style="aspect-ratio:1/1"><canvas id="shCv"></canvas><span class="hint">Arrastra para girar</span></div>';
   $('#mbody').innerHTML=
     '<div class="sheet"><div>'+media+'</div><div>'+
       '<span class="mono" style="font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--faint)">'+p.c+'</span>'+
       '<h2 style="font-size:1.7rem;margin:.3rem 0 .5rem">'+p.n+'</h2>'+
+      (p.designer?'<p class="licence"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" '+
+        'stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"/>'+
+        '<circle cx="12" cy="12" r="9"/></svg><span>Modelo de <b>'+p.designer+
+        '</b>, impreso bajo licencia comercial</span></p>':'')+
       '<p style="color:var(--soft);font-size:.92rem">'+p.d+'</p>'+
       '<div id="optWrap"></div>'+
       '<table class="tbl"><tbody id="shSpec"></tbody></table>'+
