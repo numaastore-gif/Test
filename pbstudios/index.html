@@ -221,7 +221,6 @@ header.nav.stuck{border-bottom-color:var(--line)}
 .card .pic{aspect-ratio:1/1;background:#F3F1EC;position:relative}
 .card .pic canvas{width:100%;height:100%;display:block}
 .card .pic img{width:100%;height:100%;object-fit:contain;display:block}
-.card .pic .flag.demo{left:auto;right:8px;background:var(--faint)}
 .card .pic .flag{position:absolute;top:8px;left:8px;font-family:var(--mono);font-size:.58rem;letter-spacing:.1em;
   text-transform:uppercase;padding:.16rem .4rem;border-radius:2px;background:var(--hot);color:#fff}
 .card .pic .flag.new{background:var(--brand)}
@@ -733,155 +732,10 @@ function toast(m){const t=el('div',{class:'toast'},m);$('#toasts').appendChild(t
   setTimeout(()=>{t.style.transition='opacity .35s';t.style.opacity=0;setTimeout(()=>t.remove(),350);},3200);}
 
 /* ── 1. Motor 3D ───────────────────────────────────────────────────────────
-   Malla = {v:[[x,y,z]], f:[[índices]]}. Se rota, se proyecta en perspectiva,
-   se ordenan las caras de atrás hacia delante y se rellenan con luz plana.
-   Encima se pintan las líneas de capa, que es lo que delata una pieza
-   impresa de verdad.                                                        */
-function lathe(profile,seg,twist){
-  const v=[],f=[];
-  for(let i=0;i<profile.length;i++){
-    const [r,y]=profile[i];
-    const tw=(twist||0)*(i/(profile.length-1));
-    for(let s=0;s<seg;s++){
-      const a=s/seg*Math.PI*2+tw;
-      v.push([Math.cos(a)*r,y,Math.sin(a)*r]);
-    }
-  }
-  for(let i=0;i<profile.length-1;i++)
-    for(let s=0;s<seg;s++){
-      const n=(s+1)%seg;
-      f.push([i*seg+s,i*seg+n,(i+1)*seg+n,(i+1)*seg+s]);
-    }
-  /* tapa inferior */
-  const base=[]; for(let s=seg-1;s>=0;s--) base.push(s); f.push(base);
-  return {v,f};
-}
-function prism(sides,r,h,rTop){
-  const v=[],f=[],rt=rTop===undefined?r:rTop;
-  for(let s=0;s<sides;s++){const a=s/sides*Math.PI*2+Math.PI/sides;
-    v.push([Math.cos(a)*r,-h/2,Math.sin(a)*r]);}
-  for(let s=0;s<sides;s++){const a=s/sides*Math.PI*2+Math.PI/sides;
-    v.push([Math.cos(a)*rt,h/2,Math.sin(a)*rt]);}
-  for(let s=0;s<sides;s++){const n=(s+1)%sides;f.push([s,n,sides+n,sides+s]);}
-  const bot=[],top=[];
-  for(let s=sides-1;s>=0;s--) bot.push(s);
-  for(let s=0;s<sides;s++) top.push(sides+s);
-  f.push(bot); f.push(top);
-  return {v,f};
-}
-function box(w,h,d,ox,oy,oz){
-  const X=w/2,Y=h/2,Z=d/2,x=ox||0,y=oy||0,z=oz||0;
-  const v=[[-X,-Y,-Z],[X,-Y,-Z],[X,Y,-Z],[-X,Y,-Z],[-X,-Y,Z],[X,-Y,Z],[X,Y,Z],[-X,Y,Z]]
-    .map(p=>[p[0]+x,p[1]+y,p[2]+z]);
-  return {v,f:[[0,1,2,3],[5,4,7,6],[4,0,3,7],[1,5,6,2],[3,2,6,7],[4,5,1,0]]};
-}
-function merge(){
-  const v=[],f=[];
-  for(const m of arguments){ const o=v.length; m.v.forEach(p=>v.push(p)); m.f.forEach(q=>f.push(q.map(i=>i+o))); }
-  return {v,f};
-}
-function gear(teeth,r,h,depth){
-  const prof=[],seg=teeth*4;
-  for(let s=0;s<seg;s++){ const ph=s%4; prof.push(ph<2?r:r-depth); }
-  const v=[],f=[];
-  for(let s=0;s<seg;s++){const a=s/seg*Math.PI*2;
-    v.push([Math.cos(a)*prof[s],-h/2,Math.sin(a)*prof[s]]);}
-  for(let s=0;s<seg;s++){const a=s/seg*Math.PI*2;
-    v.push([Math.cos(a)*prof[s],h/2,Math.sin(a)*prof[s]]);}
-  for(let s=0;s<seg;s++){const n=(s+1)%seg;f.push([s,n,seg+n,seg+s]);}
-  const bot=[],top=[];
-  for(let s=seg-1;s>=0;s--)bot.push(s);
-  for(let s=0;s<seg;s++)top.push(seg+s);
-  f.push(bot);f.push(top);
-  return {v,f};
-}
-function torus(R,r,seg,ring){
-  const v=[],f=[];
-  for(let i=0;i<seg;i++){const u=i/seg*Math.PI*2;
-    for(let j=0;j<ring;j++){const w=j/ring*Math.PI*2;
-      v.push([(R+r*Math.cos(w))*Math.cos(u), r*Math.sin(w), (R+r*Math.cos(w))*Math.sin(u)]);}}
-  for(let i=0;i<seg;i++)for(let j=0;j<ring;j++){
-    const i2=(i+1)%seg,j2=(j+1)%ring;
-    f.push([i*ring+j,i2*ring+j,i2*ring+j2,i*ring+j2]);}
-  return {v,f};
-}
-/* perfiles de revolución */
-const P={
-  vase:[[.30,-1],[.46,-.86],[.60,-.5],[.52,-.1],[.38,.35],[.46,.72],[.52,.95],[.50,1]],
-  lamp:[[.24,-1],[.26,-.9],[.30,-.8],[.70,.15],[.78,.6],[.74,1]],
-  cup :[[.18,-1],[.30,-.92],[.24,-.7],[.20,-.35],[.42,.1],[.54,.6],[.56,1]],
-  pot :[[.30,-1],[.50,-.92],[.58,-.4],[.64,.5],[.70,.95],[.66,1]]
-};
+   Todo lo que se dibuja en 3D viene de un archivo del cliente: se lee, se le
+   sacan vértices únicos y normales, y se rasteriza con z-buffer. Ver
+   `buildMesh` y `rasterize`, más abajo, junto al presupuesto.               */
 function hex2rgb(h){h=h.replace('#','');return [parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)];}
-function shade(rgb,k){return 'rgb('+rgb.map(c=>clamp(Math.round(c*k),0,255)).join(',')+')';}
-
-function render(cv,mesh,opt){
-  const o=Object.assign({rx:-.38,ry:.6,color:'#0E8C86',scale:1,layers:true,metal:0,
-                         clip:null,bed:false,hot:'#E2543C',cy:0.5},opt||{});
-  const ctx=cv.getContext('2d');
-  const dpr=Math.min(devicePixelRatio||1,2);
-  const W=cv.clientWidth||cv.width, H=cv.clientHeight||cv.height;
-  if(!W||!H) return;
-  cv.width=W*dpr; cv.height=H*dpr; ctx.setTransform(dpr,0,0,dpr,0,0);
-  ctx.clearRect(0,0,W,H);
-  const cx=Math.cos(o.rx),sx=Math.sin(o.rx),cy=Math.cos(o.ry),sy=Math.sin(o.ry);
-  const dist=4.2, S=Math.min(W,H)*0.40*o.scale;
-  const turn=p=>{
-    let x=p[0]*cy - p[2]*sy, z=p[0]*sy + p[2]*cy;
-    let y=p[1]*cx - z*sx;    z=p[1]*sx + z*cx;
-    return [x,y,z];
-  };
-  const flat=p=>{const k=S*dist/(p[2]+dist);return [W/2+p[0]*k, H*o.cy - p[1]*k];};
-  const pr=p=>flat(turn(p));
-
-  if(o.bed){
-    /* la cama de impresión, para que se vea que la pieza crece desde algo */
-    ctx.strokeStyle='rgba(14,140,134,.22)'; ctx.lineWidth=1;
-    const R=1.55, y=-1.02, N=8;
-    for(let i=0;i<=N;i++){
-      const t=-R+2*R*i/N;
-      let a=pr([t,y,-R]), b=pr([t,y,R]);
-      ctx.beginPath(); ctx.moveTo(a[0],a[1]); ctx.lineTo(b[0],b[1]); ctx.stroke();
-      a=pr([-R,y,t]); b=pr([R,y,t]);
-      ctx.beginPath(); ctx.moveTo(a[0],a[1]); ctx.lineTo(b[0],b[1]); ctx.stroke();
-    }
-  }
-
-  const pts=mesh.v.map(turn);
-  const proj=pts.map(flat);
-  const rgb=hex2rgb(o.color), hot=hex2rgb(o.hot);
-  const polys=[];
-  mesh.f.forEach(f=>{
-    let lo=Infinity, hi=-Infinity;
-    f.forEach(i=>{ const y=mesh.v[i][1]; if(y<lo)lo=y; if(y>hi)hi=y; });
-    if(o.clip!==null && lo>o.clip) return;             /* aún no se ha impreso */
-    let z=0; f.forEach(i=>z+=pts[i][2]); z/=f.length;
-    const a=pts[f[0]],b=pts[f[1]],c=pts[f[2]];
-    const u=[b[0]-a[0],b[1]-a[1],b[2]-a[2]], w=[c[0]-a[0],c[1]-a[1],c[2]-a[2]];
-    let n=[u[1]*w[2]-u[2]*w[1], u[2]*w[0]-u[0]*w[2], u[0]*w[1]-u[1]*w[0]];
-    const L=Math.hypot(n[0],n[1],n[2])||1; n=[n[0]/L,n[1]/L,n[2]/L];
-    const lit=Math.abs(n[0]*-.45 + n[1]*.72 + n[2]*.53);
-    /* la capa que se está depositando va en caliente */
-    const fresh = o.clip!==null && hi>o.clip;
-    polys.push({f,z,k:0.42+lit*0.72,fresh});
-  });
-  polys.sort((a,b)=>a.z-b.z);
-  polys.forEach(q=>{
-    ctx.beginPath();
-    q.f.forEach((i,j)=>{const t=proj[i];j?ctx.lineTo(t[0],t[1]):ctx.moveTo(t[0],t[1]);});
-    ctx.closePath();
-    ctx.fillStyle=shade(q.fresh?hot:rgb,q.fresh?1:(q.k+o.metal*0.25));
-    ctx.fill();
-    ctx.strokeStyle=ctx.fillStyle; ctx.lineWidth=1; ctx.stroke();
-  });
-  if(o.layers){
-    ctx.save(); ctx.globalCompositeOperation='source-atop';
-    ctx.strokeStyle='rgba(0,0,0,.10)'; ctx.lineWidth=.8;
-    const gap=Math.max(3,Math.round(H/90));
-    for(let y=0;y<H;y+=gap){ctx.beginPath();ctx.moveTo(0,y+.5);ctx.lineTo(W,y+.5);ctx.stroke();}
-    ctx.restore();
-  }
-}
 
 /* ── 2. Catálogo ───────────────────────────────────────────────────────── */
 /* Fotos reales de los productos, incrustadas en el propio archivo */
@@ -899,7 +753,7 @@ const COLORS={
   madera:'#9C6B3F', morado:'#6B4E9E'
 };
 const REAL=[
-  {id:'casco-batman',n:'Casco de Batman',c:'Cosplay',p:65,pop:100,new:true,
+  {id:'casco-batman',n:'Casco de Batman',c:'Cascos',p:65,pop:100,new:true,
    d:'Casco completo de Batman impreso por partes y unido, con la textura marcada en el propio molde. Te lo llevas <b>raw</b>, tal cual sale de la impresora y con las capas a la vista, para lijarlo y pintarlo tú; lijado e imprimado, listo para pintar; o pintado a mano por nosotros. Talla adulto, para llevar puesto o para expositor.',
    dim:'Talla adulto · 30 cm de alto aprox.', g:780,
    photos:PHOTOS.batman, designer:'Yosh Studios',
@@ -918,7 +772,7 @@ const REAL=[
    spec:[['Altura','30 cm aprox.'],['Material','PLA+ reforzado'],
          ['Se imprime en','5 partes unidas y masilladas'],['Plazo','7–12 días según acabado']]},
 
-  {id:'mascara-venom',n:'Máscara Venom / Spider-Man',c:'Cosplay',p:40,pop:99,new:true,
+  {id:'mascara-venom',n:'Máscara Venom / Spider-Man',c:'Máscaras',p:40,pop:99,new:true,
    d:'La máscara del simbionte partiendo la cara de Spider-Man, pintada a mano capa a capa: negro con acabado húmedo, el rojo de la máscara y los dientes y la lengua sombreados uno a uno. Cada una sale distinta porque la pintura es artesanal. También se vende <b>raw</b>, sin lijar ni pintar, si prefieres hacerle tú el postprocesado.',
    dim:'Talla adulto · 26 cm de alto aprox.', g:620,
    photos:PHOTOS.venom, designer:'',      /* ¿de quién es este modelo? */
@@ -936,7 +790,7 @@ const REAL=[
    ],
    spec:[['Altura','26 cm aprox.'],['Material','PLA+ y resina en los dientes'],
          ['Pintura','Acrílico y barniz brillante'],['Plazo','10–15 días, se pinta a mano']]},
-{id:'casco-ranger',n:'Casco de Power Ranger amarillo',c:'Cosplay',p:55,pop:98,new:true,
+{id:'casco-ranger',n:'Casco de Power Ranger amarillo',c:'Cascos',p:55,pop:98,new:true,
    d:'Casco completo del Ranger amarillo, pintado a mano en amarillo brillante con el frontal y la boca en plata. Lleva visera ahumada de policarbonato recortada a medida, así que se ve desde dentro y se puede llevar puesto. También en <b>raw</b> si quieres pintarlo tú. Talla adulto.',
    dim:'Talla adulto · 32 cm de alto aprox.', g:940,
    photos:PHOTOS.ranger, designer:'',      /* ¿de quién es este modelo? */
@@ -962,45 +816,7 @@ const REAL=[
 ];
 
 
-const DEMO=[
-  {id:'vaso-espiral',n:'Jarrón espiral',c:'Hogar',p:18,pop:97,new:false,
-   d:'Impreso en espiral continua, sin costura visible. Queda espectacular en PLA Silk y aguanta agua si lo sellas por dentro.',
-   dim:'Ø11 × 19 cm',g:95,mesh:()=>lathe(P.vase,44,1.15),cols:['teal','coral','mostaza','negro','morado']},
-  {id:'maceta-hex',n:'Maceta hexagonal',c:'Hogar',p:14,pop:88,new:false,
-   d:'Con plato integrado y agujero de drenaje. En PETG aguanta el riego y el sol de la terraza sin deformarse.',
-   dim:'12 × 12 × 11 cm',g:78,mesh:()=>merge(prism(6,.62,1.3,.78),prism(6,.86,.1,.86)),cols:['blanco','verde','gris','negro','madera']},
-  {id:'lampara',n:'Lámpara de mesa',c:'Hogar',p:26,pop:74,new:true,
-   d:'La pantalla se imprime a una sola pared, así que la luz atraviesa las capas y dibuja el patrón en la pared.',
-   dim:'Ø16 × 22 cm',g:140,mesh:()=>lathe(P.lamp,48,0),cols:['blanco','mostaza','madera','coral']},
-  {id:'organizador',n:'Organizador de escritorio',c:'Escritorio',p:22,pop:91,new:false,
-   d:'Tres compartimentos y una bandeja baja para lo pequeño. Encaja con el resto de piezas modulares de la serie.',
-   dim:'18 × 9 × 7 cm',g:120,mesh:()=>merge(box(1.7,.55,.9,0,-.3,0),box(.5,.75,.8,-.55,.1,0),box(.5,.55,.8,.05,0,0),box(.5,.35,.8,.62,-.1,0)),cols:['negro','blanco','teal','gris']},
-  {id:'soporte-movil',n:'Soporte de móvil',c:'Escritorio',p:9,pop:96,new:false,
-   d:'Ángulo pensado para videollamadas, con hueco para el cable y base antideslizante en TPU si lo pides así.',
-   dim:'8 × 8 × 9 cm',g:42,mesh:()=>merge(box(1.0,.16,.8,0,-.6,0),box(.16,1.1,.8,.38,-.05,0),box(.7,.16,.8,-.1,-.42,.0)),cols:['negro','teal','coral','blanco','azul']},
-  {id:'portalapices',n:'Portalápices facetado',c:'Escritorio',p:11,pop:83,new:false,
-   d:'Doce caras que rompen la luz y disimulan las capas. Uno de los que más se vende como regalo de oficina.',
-   dim:'Ø9 × 11 cm',g:64,mesh:()=>prism(12,.55,1.35,.62),cols:['negro','mostaza','teal','morado','gris']},
-  {id:'bandeja',n:'Vaciabolsillos',c:'Hogar',p:13,pop:70,new:false,
-   d:'Para llaves, cartera y monedas en la entrada de casa. Fondo con textura para que no resbale nada.',
-   dim:'16 × 11 × 3 cm',g:70,mesh:()=>merge(box(1.55,.16,1.05,0,-.35,0),box(1.55,.4,.1,0,-.1,.52),box(1.55,.4,.1,0,-.1,-.52),box(.1,.4,1.05,.77,-.1,0),box(.1,.4,1.05,-.77,-.1,0)),cols:['madera','negro','blanco','verde']},
-  {id:'soporte-cascos',n:'Soporte para auriculares',c:'Escritorio',p:16,pop:86,new:false,
-   d:'Arco ancho para que la diadema no se marque, con contrapeso en la base. En negro mate pasa desapercibido.',
-   dim:'12 × 10 × 24 cm',g:105,mesh:()=>merge(box(.9,.18,.8,0,-.85,0),box(.2,1.5,.5,0,-.1,0),lathe([[.06,-.1],[.5,.5],[.55,.8],[.5,.95]],26,0)),cols:['negro','gris','teal','coral']},
-  {id:'engranaje',n:'Fidget de engranajes',c:'Regalo',p:12,pop:95,new:true,
-   d:'Sale montado de la impresora: los engranajes ya giran cuando lo despegas de la cama. Adictivo y barato de regalar.',
-   dim:'Ø8 × 2 cm',g:38,mesh:()=>merge(gear(14,.75,.22,.14),gear(9,.34,.3,.09)),cols:['teal','coral','mostaza','negro','azul']},
-  {id:'nudo',n:'Nudo decorativo',c:'Regalo',p:19,pop:62,new:false,
-   d:'Una sola pieza continua, imposible de fabricar de otra forma. Es la que ponemos en la estantería para explicar qué hace una impresora 3D.',
-   dim:'14 × 14 × 6 cm',g:88,mesh:()=>torus(.68,.22,40,16),cols:['morado','teal','mostaza','negro']},
-  {id:'trofeo',n:'Trofeo personalizable',c:'Regalo',p:24,pop:68,new:false,
-   d:'Le grabamos el texto que quieras en la peana. Lo usan sobre todo para torneos de peñas y premios de empresa.',
-   dim:'Ø10 × 21 cm',g:130,mesh:()=>merge(lathe(P.cup,40,0),prism(8,.62,.22,.62)),cols:['mostaza','gris','negro','blanco']},
-  {id:'llavero',n:'Llavero personalizado',c:'Regalo',p:5,pop:92,new:false,
-   d:'Con tu nombre, un logo o la matrícula. A partir de 10 unidades el precio por pieza baja bastante, avísanos.',
-   dim:'6 × 3 × 0,5 cm',g:9,mesh:()=>merge(box(1.3,.5,.12,0,0,0),lathe([[.12,-.06],[.2,0],[.12,.06]],18,0)),cols:['coral','teal','mostaza','negro','blanco','azul']}
-].map(x=>Object.assign(x,{demo:true}));
-const PRODUCTS=REAL.concat(DEMO);
+const PRODUCTS=REAL;
 const SIZES=[{id:'s',n:'S',f:0.8},{id:'m',n:'M',f:1},{id:'l',n:'L',f:1.3}];
 const FAQS=[
   {q:'¿Cuánto tarda un pedido?',a:'Las piezas de catálogo salen en 3 a 5 días laborables, porque se imprimen cuando las pides. Un encargo a medida depende del tamaño, pero te damos plazo cerrado antes de empezar.'},
@@ -1054,8 +870,7 @@ function drawGrid(){
     const card=el('button',{class:'card',type:'button','aria-label':p.n+', '+eur(p.p)});
     card.innerHTML=
       '<div class="pic">'+(p.new?'<span class="flag new">Nuevo</span>':'')+
-        (p.demo?'<span class="flag demo">Ejemplo</span>':'')+
-        (p.photos?'<img src="'+p.photos[0]+'" alt="'+p.n+'" loading="lazy">':'<canvas></canvas>')+'</div>'+
+        '<img src="'+p.photos[0]+'" alt="'+p.n+'" loading="lazy">'+'</div>'+
       '<div class="txt"><span class="cat">'+p.c+'</span><h3>'+p.n+'</h3>'+
       '<p class="dsc">'+short(p.d)+'</p>'+
       '<div class="foot"><span class="price">'+priceTag(p)+'</span>'+
@@ -1065,7 +880,6 @@ function drawGrid(){
     card.addEventListener('click',()=>openSheet(p));
     g.appendChild(card);
     /* el render se hace una vez por tarjeta, no en bucle */
-    if(!p.photos) requestAnimationFrame(()=>render($('canvas',card),p.mesh(),{color:COLORS[p.cols[0]],rx:-.34,ry:.7,scale:1.12}));
   });
   $('#count').textContent=list.length+' de '+PRODUCTS.length+' piezas';
 }
@@ -1141,16 +955,14 @@ function labelOf(p,sel){
   return optsOf(p).map(o=>{const c=o.ch.find(x=>x.id===sel[o.k])||o.ch[0];return c.label;}).join(' · ');
 }
 function openSheet(p){
-  sheet={p,sel:defaults(p),rx:-.35,ry:.6,raf:null,shot:0};
-  const media = p.photos
-    ? '<div class="gal"><img id="shImg" src="'+p.photos[0]+'" alt="'+p.n+'">'+
+  sheet={p,sel:defaults(p),shot:0};
+  $('#mbody').innerHTML=
+    '<div class="sheet"><div>'+
+      '<div class="gal"><img id="shImg" src="'+p.photos[0]+'" alt="'+p.n+'">'+
       '<div class="thumbs" id="shThumbs">'+p.photos.map((s,i)=>
         '<button type="button" data-i="'+i+'" aria-label="Foto '+(i+1)+'"'+(i?'':' class="on"')+
-        '><img src="'+s+'" alt=""></button>').join('')+'</div>'+
-      '</div>'
-    : '<div class="stage" style="aspect-ratio:1/1"><canvas id="shCv"></canvas><span class="hint">Arrastra para girar</span></div>';
-  $('#mbody').innerHTML=
-    '<div class="sheet"><div>'+media+'</div><div>'+
+        '><img src="'+s+'" alt=""></button>').join('')+'</div></div>'+
+    '</div><div>'+
       '<span class="mono" style="font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--faint)">'+p.c+'</span>'+
       '<h2 style="font-size:1.7rem;margin:.3rem 0 .5rem">'+p.n+'</h2>'+
       (p.designer?'<p class="licence"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" '+
@@ -1160,41 +972,18 @@ function openSheet(p){
       '<p style="color:var(--soft);font-size:.92rem">'+p.d+'</p>'+
       '<div id="optWrap"></div>'+
       '<table class="tbl"><tbody id="shSpec"></tbody></table>'+
-      (p.photos?scaleSvg(p):'')+
+      scaleSvg(p)+
       '<div class="pricebox"><span>Precio</span><b class="mono" id="shPrice">—</b></div>'+
       '<button class="btn btn--p" style="width:100%;margin-top:.9rem" id="shAdd">Añadir al pedido</button>'+
       '<p style="font-size:.78rem;color:var(--faint);margin:.7rem 0 0">'+
-        (p.photos?'Se fabrica al pedirla. Te confirmamos plazo exacto al cerrar el pedido.'
-                 :'Se imprime al pedirla: 3–5 días laborables. El pedido se cierra por mensaje.')+'</p>'+
+        'Se fabrica al pedirla. Te confirmamos plazo exacto al cerrar el pedido.</p>'+
     '</div></div>';
   $('#modal').classList.add('on'); document.body.classList.add('lock');
   buildOpts(); paintSheet(); $('#mx').focus();
-  if(p.photos){
-    $$('#shThumbs button').forEach(b=>b.addEventListener('click',()=>{
-      sheet.shot=+b.dataset.i; $('#shImg').src=p.photos[sheet.shot];
-      $$('#shThumbs button').forEach(x=>x.classList.toggle('on',x===b));
-    }));
-    return;
-  }
-  const cv=$('#shCv');
-  let drag=null;
-  cv.addEventListener('pointerdown',e=>{drag=[e.clientX,e.clientY,sheet.ry,sheet.rx];cv.setPointerCapture(e.pointerId);});
-  cv.addEventListener('pointermove',e=>{
-    if(!drag)return;
-    sheet.ry=drag[2]+(e.clientX-drag[0])*.01;
-    sheet.rx=clamp(drag[3]+(e.clientY-drag[1])*.01,-1.3,1.3);
-    paintSheet(true);
-  });
-  const stop=()=>{drag=null;};
-  cv.addEventListener('pointerup',stop); cv.addEventListener('pointerleave',stop);
-  spin();
-}
-function spin(){
-  if(!sheet||sheet.p.photos) return;
-  cancelAnimationFrame(sheet.raf);
-  if(matchMedia('(prefers-reduced-motion:reduce)').matches) return;
-  const step=()=>{ if(!sheet)return; sheet.ry+=0.006; paintSheet(true); sheet.raf=requestAnimationFrame(step); };
-  sheet.raf=requestAnimationFrame(step);
+  $$('#shThumbs button').forEach(b=>b.addEventListener('click',()=>{
+    sheet.shot=+b.dataset.i; $('#shImg').src=p.photos[sheet.shot];
+    $$('#shThumbs button').forEach(x=>x.classList.toggle('on',x===b));
+  }));
 }
 function buildOpts(){
   const p=sheet.p, wrap=$('#optWrap'); wrap.innerHTML='';
@@ -1218,24 +1007,8 @@ function buildOpts(){
 function paintSheet(onlyCanvas){
   if(!sheet) return;
   const p=sheet.p, sel=sheet.sel;
-  if(!p.photos){
-    const size=SIZES.find(s=>s.id===sel.size)||SIZES[1];
-    const cv=$('#shCv');
-    if(cv) render(cv,p.mesh(),{color:COLORS[sel.col],rx:sheet.rx,ry:sheet.ry,
-      scale:0.95*(0.88+size.f*0.14), metal:sel.mat==='silk'?1:0});
-    if(onlyCanvas) return;
-    const mat=MATS.find(m=>m.id===sel.mat)||MATS[0];
-    const grams=Math.round(p.g*Math.pow(size.f,3)*(mat.d/1.24));
-    const hours=Math.max(.4,grams/13);
-    $('#shSpec').innerHTML=
-      '<tr><td>Medidas</td><td>'+p.dim+(size.f!==1?' · al '+Math.round(size.f*100)+' %':'')+'</td></tr>'+
-      '<tr><td>Material</td><td>'+mat.n+'</td></tr>'+
-      '<tr><td>Peso aproximado</td><td>'+grams+' g</td></tr>'+
-      '<tr><td>Tiempo de impresión</td><td>'+(hours<1?Math.round(hours*60)+' min':hours.toFixed(1).replace('.',',')+' h')+'</td></tr>';
-  }else{
-    if(onlyCanvas) return;
-    $('#shSpec').innerHTML=p.spec.map(r=>'<tr><td>'+r[0]+'</td><td>'+r[1]+'</td></tr>').join('');
-  }
+  if(onlyCanvas) return;
+  $('#shSpec').innerHTML=p.spec.map(r=>'<tr><td>'+r[0]+'</td><td>'+r[1]+'</td></tr>').join('');
   $('#shPrice').textContent=eur(priceOf(p,sel));
   $('#shAdd').onclick=()=>{
     addToCart({id:p.id,n:p.n,sel:Object.assign({},sel),label:labelOf(p,sel),price:priceOf(p,sel),qty:1});
@@ -1243,7 +1016,7 @@ function paintSheet(onlyCanvas){
   };
 }
 function closeModal(){
-  if(sheet){cancelAnimationFrame(sheet.raf);sheet=null;}
+  sheet=null;
   $('#modal').classList.remove('on'); document.body.classList.remove('lock');
 }
 $('#mx').addEventListener('click',closeModal);
@@ -1268,13 +1041,11 @@ function drawCart(){
     total+=it.price*it.qty; units+=it.qty;
     const p=PRODUCTS.find(x=>x.id===it.id);
     const row=el('div',{class:'ci'},
-      (p&&p.photos?'<img src="'+p.photos[0]+'" alt="">':'<canvas></canvas>')+
+      (p?'<img src="'+p.photos[0]+'" alt="">':'')+
       '<div><b>'+it.n+'</b><br><small style="color:var(--soft)">'+(it.label||'')+' × '+it.qty+'</small></div>'+
       '<div style="text-align:right"><b class="mono">'+eur(it.price*it.qty)+'</b><br><button class="rm" aria-label="Quitar">×</button></div>');
     $('.rm',row).addEventListener('click',()=>{cart.splice(i,1);store.set('cart',cart);drawCart();});
     b.appendChild(row);
-    if(p&&!p.photos) requestAnimationFrame(()=>render($('canvas',row),p.mesh(),
-      {color:COLORS[it.sel&&it.sel.col?it.sel.col:p.cols[0]],rx:-.35,ry:.7,scale:.9,layers:false}));
   });
   $('#cartTotal').textContent=eur(total);
   $('#order').disabled=!cart.length;
@@ -1983,7 +1754,7 @@ function logoGrow(prog){
 /* ── Arranque ──────────────────────────────────────────────────────────── */
 drawCats(); drawMats(); drawGrid(); drawFaq(); drawCart(); calc(); watch(); onScroll();
 addEventListener('resize',()=>{ clearTimeout(window.__rz);
-  window.__rz=setTimeout(()=>{drawGrid();if(sheet)paintSheet(true);},250); });
+  window.__rz=setTimeout(drawGrid,250); });
 })();
 </script>
 </body>

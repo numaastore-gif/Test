@@ -9,19 +9,18 @@ Un cliente entra, ve las piezas, las gira en 3D, elige material, color y tamaño
 ve el precio cambiar y cierra el pedido por Instagram. Y si lo que quiere no está
 en el catálogo, **sube su propio archivo** y la web se lo presupuesta sola.
 
-## Las piezas de ejemplo se dibujan en 3D
+## Solo máscaras y cascos
 
-Los productos reales llevan foto; los de ejemplo, ni una. Cada uno es una **malla generada por
-código y renderizada en canvas**: se rota, se proyecta en perspectiva, se ordenan
-las caras de atrás hacia delante y se iluminan con luz plana. Encima se pintan
-las **líneas de capa**, que es lo que delata una pieza impresa de verdad.
+El catálogo son las tres piezas reales y nada más. Las doce piezas de ejemplo
+generadas por código (jarrones, macetas, portalápices…) están fuera, y con
+ellas el motor de mallas paramétricas que las dibujaba: `lathe`, `prism`,
+`gear`, `torus`, `merge` y el pintor por caras ordenadas. Eran unas 150 líneas
+que ya no pintaban nada. Lo que se dibuja en 3D hoy sale siempre de un archivo
+de verdad —el holograma del hero y la vista previa del presupuesto—, y para eso
+están `buildMesh` y `rasterize`.
 
-Eso resuelve tres cosas de golpe: no hace falta sesión de fotos para lanzar la
-web, el color del producto cambia en vivo al elegirlo, y el cliente puede girar
-la pieza para verla por detrás.
-
-Generadores de malla disponibles en el código: `lathe` (revolución, con torsión
-opcional), `prism`, `box`, `gear`, `torus` y `merge` para combinarlos.
+Las categorías pasan a ser **Cascos** y **Máscaras**, que es un filtro que
+significa algo, en vez de un único «Cosplay».
 
 ## Qué hace
 
