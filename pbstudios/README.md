@@ -158,24 +158,36 @@ Verificado con un cubo de 40 mm generado a propósito: lo lee como 64 cm³ exact
 ## Las fotos del Venom vienen del pack de Do3D
 
 El modelo del Venom se compra a **Do3D** y el pack incluye sus renders de
-producto, con licencia. `do3d.py` los prepara para la ficha:
+producto, con licencia. `do3d.py` los prepara para la ficha, y el objetivo no
+es solo limpiarlos: es que la ficha no sea la imagen del pack tal cual.
 
 1. **La esquina**: la marca del estudio va sobre negro plano, así que se
-   localiza por luminancia en el recuadro superior izquierdo y se rellena por
-   inpainting.
-2. **El fondo**: en vez de negro liso, un degradado de estudio muy contenido,
-   para que la pieza no flote sobre un vacío.
-3. **La luz**: curva en S suave —negros con detalle, medios más abiertos— con
-   freno en las altas luces para que la piel no se vaya a blanco; después
-   claridad (contraste local a radio grande), que es lo que saca el relieve del
-   simbionte, y un micro-realce para el diente y la costura.
-4. **El color**: un 10 % más de saturación, sombras un punto más frías y luces
-   un punto más cálidas.
-5. Contraluz en el filo derecho de la silueta y sombra bajo la pieza. Salida
-   900 × 900, JPEG 86, unos 125 KB cada una.
+   localiza por luminancia en un recuadro pequeño de la esquina —72 × 120 px,
+   ni uno más, para no rozar la pieza— y se rellena por inpainting.
+2. **El tamaño**: el origen son 560 px. No hay detalle que inventar sin un
+   modelo de superresolución, y aquí no hay ninguno, así que se sube en dos
+   pasos de Lanczos hasta 1200 y se enfoca en dos radios, uno ancho para el
+   volumen y otro fino para el filo del diente. Nada de suavizados: es un
+   render limpio, no una foto con ruido.
+3. **La luz**: curva en S suave con freno en altas luces, negros que respiran
+   y una nitidez contenida. Se quedó fuera el contraste local agresivo, que
+   dejaba halos y aplanaba el brillo húmedo del simbionte.
+4. **El ambiente**: fondo de estudio con **contraluz rojo** saliendo por detrás
+   de la silueta —el halo se calcula desenfocando la máscara del sujeto y
+   restándosela, así que nunca invade la pieza—, una bruma diagonal muy floja y
+   *bloom* en las altas luces. Es lo que da ganas de comprarla.
+5. **El maniquí**: se detecta la piel en YCrCb y se separa del rojo de la
+   máscara por el **techo de saturación** (la piel va floja, el simbionte va
+   disparado), se exige que el trozo llegue al borde de abajo para no teñir los
+   dientes, y se baja la luminancia empujando el tono a tierra. Queda bastante
+   más moreno que el original.
 
-En la ficha aparece el distintivo *«Modelo de Do3D, impreso bajo licencia
-comercial»*, que es tanto la atribución como el argumento de venta.
+Salida 1200 × 1200, JPEG 88, unos 190 KB cada una. En la ficha aparece el
+distintivo *«Modelo de Do3D, impreso bajo licencia comercial»*, que es tanto la
+atribución como el argumento de venta.
+
+El techo de calidad lo pone el origen: si el pack trae los renders a más
+resolución, pásalos y se rehace todo sin el reescalado.
 
 ## Tratamiento de las fotos
 
