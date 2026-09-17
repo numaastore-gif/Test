@@ -158,36 +158,19 @@ Verificado con un cubo de 40 mm generado a propósito: lo lee como 64 cm³ exact
 ## Las fotos del Venom vienen del pack de Do3D
 
 El modelo del Venom se compra a **Do3D** y el pack incluye sus renders de
-producto, con licencia. `do3d.py` los prepara para la ficha, y el objetivo no
-es solo limpiarlos: es que la ficha no sea la imagen del pack tal cual.
+producto, con licencia. `do3d.py` hace una sola cosa: la marca del estudio va
+sobre negro plano, así que se localiza por luminancia en un recuadro pequeño de
+la esquina —72 × 120 px, ni uno más, para no rozar la pieza— y se rellena por
+inpainting. El resto se queda como viene.
 
-1. **La esquina**: la marca del estudio va sobre negro plano, así que se
-   localiza por luminancia en un recuadro pequeño de la esquina —72 × 120 px,
-   ni uno más, para no rozar la pieza— y se rellena por inpainting.
-2. **El tamaño**: el origen son 560 px. No hay detalle que inventar sin un
-   modelo de superresolución, y aquí no hay ninguno, así que se sube en dos
-   pasos de Lanczos hasta 1200 y se enfoca en dos radios, uno ancho para el
-   volumen y otro fino para el filo del diente. Nada de suavizados: es un
-   render limpio, no una foto con ruido.
-3. **La luz**: curva en S suave con freno en altas luces, negros que respiran
-   y una nitidez contenida. Se quedó fuera el contraste local agresivo, que
-   dejaba halos y aplanaba el brillo húmedo del simbionte.
-4. **El ambiente**: fondo de estudio con **contraluz rojo** saliendo por detrás
-   de la silueta —el halo se calcula desenfocando la máscara del sujeto y
-   restándosela, así que nunca invade la pieza—, una bruma diagonal muy floja y
-   *bloom* en las altas luces. Es lo que da ganas de comprarla.
-5. **El maniquí**: se detecta la piel en YCrCb y se separa del rojo de la
-   máscara por el **techo de saturación** (la piel va floja, el simbionte va
-   disparado), se exige que el trozo llegue al borde de abajo para no teñir los
-   dientes, y se baja la luminancia empujando el tono a tierra. Queda bastante
-   más moreno que el original.
+Hubo una versión que les subía la resolución, les metía contraluz de color y
+oscurecía la piel del maniquí. Fuera: el render del pack ya está iluminado por
+quien diseñó la pieza, y retocarlo solo lo alejaba de lo que el cliente recibe.
+Si algún día hace falta, está en el historial.
 
-Salida 1200 × 1200, JPEG 88, unos 190 KB cada una. En la ficha aparece el
-distintivo *«Modelo de Do3D, impreso bajo licencia comercial»*, que es tanto la
-atribución como el argumento de venta.
-
-El techo de calidad lo pone el origen: si el pack trae los renders a más
-resolución, pásalos y se rehace todo sin el reescalado.
+Salida a 560 × 560, que es el tamaño de origen, JPEG 92, unos 60 KB cada una.
+En la ficha aparece el distintivo *«Modelo de Do3D, impreso bajo licencia
+comercial»*, que es tanto la atribución como el argumento de venta.
 
 ## Tratamiento de las fotos
 
