@@ -58,9 +58,9 @@ capturas, sin la interfaz del móvil, a 820 px y JPEG: unos 900 KB en total):
 
 | Producto | Raw | Pintado | Fotos |
 |---|---|---|---|
-| Casco de Batman | 65 € | 156 € | 3 |
-| Máscara Venom / Spider-Man | 40 € | 96 € | 4 |
-| Casco de Power Ranger amarillo | 55 € | 132 € | 3 |
+| Casco de Batman | 65 € | 156 € | 3, recortadas de tus capturas |
+| Máscara Venom / Spider-Man | 40 € | 96 € | 3, del pack de Do3D |
+| Casco de Power Ranger amarillo | 55 € | 132 € | 3, recortadas de tus capturas |
 
 Los tres comparten el mismo escalón de acabado, que es como se vende de verdad
 una pieza impresa: **raw** ×1 (sin postprocesar, con las capas a la vista),
@@ -155,6 +155,28 @@ medirlo pide un kernel CAD completo.
 Verificado con un cubo de 40 mm generado a propósito: lo lee como 64 cm³ exactos,
 40 × 40 × 40 mm y 12 triángulos.
 
+## Las fotos del Venom vienen del pack de Do3D
+
+El modelo del Venom se compra a **Do3D** y el pack incluye sus renders de
+producto, con licencia. `do3d.py` los prepara para la ficha:
+
+1. **La esquina**: la marca del estudio va sobre negro plano, así que se
+   localiza por luminancia en el recuadro superior izquierdo y se rellena por
+   inpainting.
+2. **El fondo**: en vez de negro liso, un degradado de estudio muy contenido,
+   para que la pieza no flote sobre un vacío.
+3. **La luz**: curva en S suave —negros con detalle, medios más abiertos— con
+   freno en las altas luces para que la piel no se vaya a blanco; después
+   claridad (contraste local a radio grande), que es lo que saca el relieve del
+   simbionte, y un micro-realce para el diente y la costura.
+4. **El color**: un 10 % más de saturación, sombras un punto más frías y luces
+   un punto más cálidas.
+5. Contraluz en el filo derecho de la silueta y sombra bajo la pieza. Salida
+   900 × 900, JPEG 86, unos 125 KB cada una.
+
+En la ficha aparece el distintivo *«Modelo de Do3D, impreso bajo licencia
+comercial»*, que es tanto la atribución como el argumento de venta.
+
 ## Tratamiento de las fotos
 
 `extract.py` **recorta la pieza del fondo** y la monta sobre fondo de estudio.
@@ -197,8 +219,8 @@ un distintivo: *«Modelo de X, impreso bajo licencia comercial»*. Es un argumen
 de venta frente a quien vende lo mismo con archivos pirateados, y hay una
 pregunta frecuente que lo explica.
 
-Ahora mismo solo el Batman lo tiene (**Yosh Studios**). Falta saber de quién son
-los modelos del Venom y del Ranger — el campo está puesto y vacío.
+El Batman es de **Yosh Studios** y el Venom de **Do3D**. Falta el del Ranger — el
+campo está puesto y vacío.
 
 ## Lo que tienes que cambiar
 
