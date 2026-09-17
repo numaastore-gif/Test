@@ -132,13 +132,13 @@ LOGO='''<g transform="translate({lx},{ly}) scale({ls})" opacity="1">
 '''
 
 COLLAR='''<!-- el ribete del escote va encima de la cabeza: tapa el corte del cuello -->
-<path d="M348 660 C 366 706, 404 728, 450 728 C 496 728, 534 706, 552 660
-         C 516 650, 384 650, 348 660 Z" fill="#0A7B75"/>
-<path d="M348 660 C 366 706, 404 728, 450 728 C 496 728, 534 706, 552 660"
-      fill="none" stroke="#2AD3C5" stroke-width="5" opacity="0.55"/>
-<path d="M342 664 C 362 718, 402 744, 450 744 C 498 744, 538 718, 558 664"
-      fill="none" stroke="#04413E" stroke-width="9" opacity="0.55"/>
-<ellipse cx="450" cy="700" rx="118" ry="30" fill="#000" opacity="0.30" filter="url(#soft)"/>'''
+<path d="M346 656 C 364 706, 404 730, 450 730 C 496 730, 536 706, 554 656
+         C 516 645, 384 645, 346 656 Z" fill="#0C8A83"/>
+<path d="M346 656 C 364 706, 404 730, 450 730 C 496 730, 536 706, 554 656"
+      fill="none" stroke="#49E7D8" stroke-width="4" opacity="0.6"/>
+<path d="M338 660 C 360 720, 402 748, 450 748 C 498 748, 540 720, 562 660"
+      fill="none" stroke="#04413E" stroke-width="10" opacity="0.6"/>
+<ellipse cx="450" cy="690" rx="104" ry="26" fill="#000" opacity="0.38" filter="url(#soft)"/>'''
 
 SVG='''<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}">
 <defs>
@@ -146,40 +146,75 @@ SVG='''<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox=
     <stop offset="0" stop-color="#0C0E0F"/><stop offset="0.6" stop-color="#040506"/>
     <stop offset="1" stop-color="#000000"/>
   </radialGradient>
-  <linearGradient id="tee" x1="0.08" y1="0" x2="0.94" y2="1">
-    <stop offset="0" stop-color="#0B6D68"/><stop offset="0.36" stop-color="#12A39A"/>
-    <stop offset="0.72" stop-color="#0E8C86"/><stop offset="1" stop-color="#064B48"/>
+  <!-- la tela: base, y encima el volumen del cuerpo -->
+  <linearGradient id="tee" x1="0.1" y1="0" x2="0.9" y2="1">
+    <stop offset="0" stop-color="#0D8079"/><stop offset="0.45" stop-color="#11A79D"/>
+    <stop offset="1" stop-color="#075E5A"/>
   </linearGradient>
-  <linearGradient id="teeShade" x1="0" y1="0" x2="0" y2="1">
-    <stop offset="0" stop-color="#000" stop-opacity="0.55"/>
-    <stop offset="0.34" stop-color="#000" stop-opacity="0.06"/>
-    <stop offset="1" stop-color="#000" stop-opacity="0.32"/>
+  <radialGradient id="chest" cx="0.5" cy="0.30" r="0.52">
+    <stop offset="0" stop-color="#3FE0D0" stop-opacity="0.34"/>
+    <stop offset="0.55" stop-color="#3FE0D0" stop-opacity="0.08"/>
+    <stop offset="1" stop-color="#3FE0D0" stop-opacity="0"/>
+  </radialGradient>
+  <linearGradient id="flanks" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#000" stop-opacity="0.66"/>
+    <stop offset="0.16" stop-color="#000" stop-opacity="0.24"/>
+    <stop offset="0.40" stop-color="#000" stop-opacity="0"/>
+    <stop offset="0.66" stop-color="#000" stop-opacity="0.06"/>
+    <stop offset="0.86" stop-color="#000" stop-opacity="0.34"/>
+    <stop offset="1" stop-color="#000" stop-opacity="0.70"/>
+  </linearGradient>
+  <linearGradient id="hem" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#000" stop-opacity="0"/>
+    <stop offset="0.72" stop-color="#000" stop-opacity="0"/>
+    <stop offset="1" stop-color="#000" stop-opacity="0.45"/>
   </linearGradient>
   <filter id="soft" x="-40%" y="-40%" width="180%" height="180%">
     <feGaussianBlur stdDeviation="22"/>
   </filter>
+  <filter id="soft2" x="-60%" y="-60%" width="220%" height="220%">
+    <feGaussianBlur stdDeviation="38"/>
+  </filter>
   <filter id="drop" x="-30%" y="-40%" width="160%" height="180%">
     <feDropShadow dx="0" dy="18" stdDeviation="18" flood-color="#000" flood-opacity="0.72"/>
   </filter>
+  <!-- el torso, que es lo que lleva la camiseta puesta -->
+  <clipPath id="body">
+    <path d="M52 {H} C 56 830, 92 782, 148 756 C 210 728, 272 694, 336 678
+             C 376 668, 524 668, 564 678 C 628 694, 690 728, 752 756
+             C 808 782, 844 830, 848 {H} Z"/>
+  </clipPath>
 </defs>
 <rect width="{W}" height="{H}" fill="url(#bg)"/>
 
-<!-- el torso: hombros, mangas y cuello de la camiseta -->
-<g>
-  <path id="tor" d="M6 {H} L 96 800 C 160 726, 240 690, 336 678
-        L 564 678 C 660 690, 740 726, 804 800 L 894 {H} Z"/>
-  <use href="#tor" fill="url(#tee)"/>
-  <use href="#tor" fill="url(#teeShade)"/>
-  <!-- costuras de manga -->
-  <path d="M206 724 C 244 772, 258 834, 254 {H}" fill="none" stroke="#05403D"
-        stroke-width="4" opacity="0.45"/>
-  <path d="M694 724 C 656 772, 642 834, 646 {H}" fill="none" stroke="#05403D"
-        stroke-width="4" opacity="0.45"/>
+<g clip-path="url(#body)">
+  <rect width="{W}" height="{H}" fill="url(#tee)"/>
+  <rect width="{W}" height="{H}" fill="url(#flanks)"/>
+  <rect y="600" width="{W}" height="300" fill="url(#hem)"/>
+  <!-- el pecho, que es lo que levanta la tela -->
+  <ellipse cx="450" cy="792" rx="230" ry="170" fill="url(#chest)"/>
+  <!-- los hombros, redondos -->
+  <ellipse cx="228" cy="806" rx="120" ry="150" fill="#3FE0D0" opacity="0.10" filter="url(#soft2)"/>
+  <ellipse cx="672" cy="806" rx="120" ry="150" fill="#3FE0D0" opacity="0.07" filter="url(#soft2)"/>
+  <!-- costuras de manga, siguiendo el hombro -->
+  <path d="M196 742 C 236 790, 252 846, 248 {H}" fill="none" stroke="#04413E"
+        stroke-width="5" opacity="0.42"/>
+  <path d="M704 742 C 664 790, 648 846, 652 {H}" fill="none" stroke="#04413E"
+        stroke-width="5" opacity="0.42"/>
+  <path d="M196 742 C 236 790, 252 846, 248 {H}" fill="none" stroke="#5CEEDF"
+        stroke-width="2" opacity="0.22" transform="translate(5,0)"/>
+  <path d="M704 742 C 664 790, 648 846, 652 {H}" fill="none" stroke="#5CEEDF"
+        stroke-width="2" opacity="0.18" transform="translate(-5,0)"/>
+  <!-- pliegues sueltos, para que no parezca plástico -->
+  <path d="M330 830 C 356 868, 372 890, 376 {H}" fill="none" stroke="#04413E"
+        stroke-width="7" opacity="0.16"/>
+  <path d="M570 830 C 544 868, 528 890, 524 {H}" fill="none" stroke="#04413E"
+        stroke-width="7" opacity="0.14"/>
+  <!-- la sombra que echa la cabeza sobre el pecho -->
+  <ellipse cx="450" cy="700" rx="196" ry="74" fill="#000" opacity="0.55" filter="url(#soft)"/>
 </g>
-<ellipse cx="450" cy="694" rx="140" ry="30" fill="#000" opacity="0.5" filter="url(#soft)"/>
 
 <image href="{SRC}" x="{MX}" y="{MY}" width="{MW}" height="{MH}" filter="url(#drop)"/>
-
 {COLLAR}
 {LOGO}
 </svg>'''

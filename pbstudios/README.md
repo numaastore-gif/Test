@@ -187,9 +187,13 @@ Cada ficha se construye así, sobre un lienzo de 900 × 900:
    una línea horizontal: antes se quita por color la camiseta blanca del
    render —lo blanco sin saturar del último 18 %— para que no asome nada.
    Las piezas que vienen de foto entran por su recorte con alfa, sin cuello.
-2. **El torso.** Dibujado en SVG: hombros, mangas con su costura y la camiseta
-   con un degradado diagonal, para que tenga volumen y no parezca un recorte
-   plano de color.
+2. **El torso.** La camiseta no es un fondo verde: la lleva puesta alguien. La
+   silueta del cuerpo se define como `clipPath` —hombros que caen, deltoides,
+   brazos entrando por abajo— y dentro se pintan por capas la tela, el
+   oscurecido de los flancos, el bajo en sombra, el brillo del pecho que
+   levanta la tela, el volumen redondo de los hombros, las costuras de manga
+   con su filo de luz y un par de pliegues sueltos para que no parezca
+   plástico. Encima, la sombra que echa la cabeza sobre el pecho.
 3. **El escote.** Se dibuja **encima** de la cabeza, no debajo. Es el truco que
    hace que el corte del cuello no se vea nunca: el ribete lo tapa, como haría
    una camiseta de verdad.
