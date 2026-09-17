@@ -174,56 +174,31 @@ Salida a 560 × 560, que es el tamaño de origen, JPEG 92, unos 60 KB cada una.
 En la ficha aparece el distintivo *«Modelo de Do3D, impreso bajo licencia
 comercial»*, que es tanto la atribución como el argumento de venta.
 
-## Un solo maniquí, con la camiseta de la marca
+## Las imágenes del catálogo
 
-Regla del catálogo: **toda máscara se enseña puesta en el mismo maniquí**, y el
-maniquí lleva camiseta en el verde de PB Studios con el logo estampado en el
-pecho. Lo monta `mount.py` y sale igual venga de donde venga la pieza.
+Los renders del pack van **como vienen**. Nada de maniquí dibujado ni camiseta
+de marca: el render ya trae su figura y su luz, y encima de eso solo se pierde.
+`flat.py` hace tres cosas y para:
 
-Cada ficha se construye así, sobre un lienzo de 900 × 900:
+1. **Quitar la marca** del estudio, reutilizando el inpainting de `do3d.py`.
+2. **Partir las láminas** que traen dos vistas, por la columna más vacía del
+   centro (`half`). El resultado se lleva a cuadrado recortando **solo de
+   lado**: el encuadre vertical del render ya está bien, y recortarlo dejaría
+   la camiseta del maniquí cortada en recto.
+3. **Completar los tres puntos de vista.** Cada ficha lleva tres imágenes; si
+   el pack solo trae dos, la tercera es una de ellas **espejada**. En una pieza
+   simétrica eso es el otro lado, no un invento. Lo que no se puede sacar de un
+   tres cuartos es un frontal de verdad: eso pide otro render o una foto.
 
-1. **La cabeza.** De los renders del pack se conserva cabeza y cuello, que
-   traen la luz buena, y se corta justo antes de la ropa. El corte no es solo
-   una línea horizontal: antes se quita por color la camiseta blanca del
-   render —lo blanco sin saturar del último 18 %— para que no asome nada.
-   Las piezas que vienen de foto entran por su recorte con alfa, sin cuello.
-2. **El torso.** La camiseta no es un fondo verde: la lleva puesta alguien. La
-   silueta del cuerpo se define como `clipPath` —hombros que caen, deltoides,
-   brazos entrando por abajo— y dentro se pintan por capas la tela, el
-   oscurecido de los flancos, el bajo en sombra, el brillo del pecho que
-   levanta la tela, el volumen redondo de los hombros, las costuras de manga
-   con su filo de luz y un par de pliegues sueltos para que no parezca
-   plástico. Encima, la sombra que echa la cabeza sobre el pecho.
-3. **El escote.** Se dibuja **encima** de la cabeza, no debajo. Es el truco que
-   hace que el corte del cuello no se vea nunca: el ribete lo tapa, como haría
-   una camiseta de verdad.
-4. **El logo.** El mismo `#pbMark` del sitio, reducido a un solo color claro
-   con las caras a distintas opacidades, que es como se estampa de verdad sobre
-   tela. Centrado en el pecho.
+Las dos piezas que solo tienen foto tuya —el casco de Yosh y el Ranger— no
+pueden salir como un render del pack, pero sí comparten fondo: su recorte se
+recompone sobre el mismo negro (`on_black`), y esa imagen abre la ficha. Tus
+fotos originales van detrás.
 
-Los parámetros por pieza están en `SRC`: fichero, mitad de la lámina cuando el
-render trae dos vistas, dónde cortar el cuello y qué alto ocupa la cabeza. La
-altura sale sola de `NECK`, que es donde tiene que caer el corte para quedar
-dentro del escote.
-
-### Siempre tres puntos de vista
-
-Cada ficha lleva tres imágenes. Si el pack solo trae dos, se genera la tercera
-**espejando** una de ellas (`flip=True`): en una pieza simétrica eso es el otro
-lado, no un invento. Lo que no se puede hacer sin el modelo es sacar un frontal
-de un tres cuartos — eso pide un render nuevo o una foto.
-
-### Capuchas que bajan al hombro
-
-Las que tapan el cuello enteras van con `collar=False`: ahí el ribete de la
-camiseta sobra, porque la propia pieza hace de cuello. Se corta por debajo del
-faldón y el borde que se ve es su propia silueta recortada en pico, no una
-línea recta. Y con `skin=<altura>` se quitan los hombros al aire del render,
-que es lo que deja sitio a la camiseta.
-
-Para una máscara nueva basta su línea en `SRC`, rasterizar con `rast.js` y
-`pack()`. Si el render trae dos vistas en la misma lámina, `sheet()` las parte
-sola buscando la columna más vacía del centro.
+`mount.py` y `worn.py` quedan en el repositorio sin usar. Montaban la pieza
+sobre un maniquí dibujado con camiseta de marca y logo al pecho; el resultado
+no llegaba al nivel de un render y se descartó. Están ahí por si algún día
+aparece una foto real de la pieza puesta que haya que encajar.
 
 ## Tratamiento de las fotos
 
