@@ -50,7 +50,7 @@ def cutout(key):
         hsv=cv2.cvtColor(img,cv2.COLOR_BGR2HSV)
         band=np.zeros(m.shape,bool); w=m.shape[1]; e=int(w*0.27)
         band[:,:e]=True; band[:,w-e:]=True
-        m[band & (hsv[:,:,1]<46)]=0      # ni fondo claro ni mano en sombra
+        m[band & (hsv[:,:,1]<62)]=0      # ni fondo claro ni mano en sombra
     n,lab,stats,_=cv2.connectedComponentsWithStats((m>0).astype(np.uint8),8)
     if n>1:
         big=1+np.argmax(stats[1:,cv2.CC_STAT_AREA])
@@ -63,82 +63,81 @@ def cutout(key):
     return np.dstack([img,a])              # BGRA
 
 
-# ── El montaje "puesta" ────────────────────────────────────────────────────
-# Fondo oscuro de estudio y, de la persona, solo el cuello y el arranque de
-# los hombros entrando por abajo: el resto lo tapa la propia máscara. Es como
-# fotografían los estudios de cosplay y perdona que la figura sea dibujada,
-# porque aquí no hay ningún modelo de imagen con el que generar una persona.
-W=H=1000
-FIT={'batman':(812,408),'venom':(742,418),'ranger':(796,412)}   # alto, centro Y
+# ── El maniquí común ───────────────────────────────────────────────────────
+# Toda máscara va sobre el MISMO maniquí, para que el catálogo se lea de una
+# pieza. La referencia es el render del pack de Do3D del Venom: fondo negro,
+# la máscara llenando el encuadre y, abajo, solo el cuello y el arranque de
+# los hombros. El tono de la piel está tomado del propio render.
+W=H=800
+FIT={'batman':(0.90,0.455),'ranger':(0.88,0.462)}   # alto relativo, centro Y
 
 SVG = """<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}">
 <defs>
-  <radialGradient id="bg" cx="0.5" cy="0.34" r="0.78">
-    <stop offset="0" stop-color="#20282C"/><stop offset="0.55" stop-color="#11171A"/>
-    <stop offset="1" stop-color="#07090B"/>
+  <radialGradient id="bg" cx="0.5" cy="0.42" r="0.78">
+    <stop offset="0" stop-color="#0B0C0D"/><stop offset="0.6" stop-color="#040405"/>
+    <stop offset="1" stop-color="#000000"/>
   </radialGradient>
   <linearGradient id="skin" x1="0" y1="0" x2="1" y2="0">
-    <stop offset="0" stop-color="#241F1B"/><stop offset="0.18" stop-color="#4F473F"/>
-    <stop offset="0.44" stop-color="#7E746A"/><stop offset="0.82" stop-color="#4A423B"/>
-    <stop offset="1" stop-color="#1F1B17"/>
+    <stop offset="0" stop-color="#3B302C"/><stop offset="0.22" stop-color="#6E5C54"/>
+    <stop offset="0.5" stop-color="#A18579"/><stop offset="0.78" stop-color="#6A584F"/>
+    <stop offset="1" stop-color="#342A26"/>
   </linearGradient>
-  <linearGradient id="shade" x1="0.5" y1="0" x2="0.5" y2="1">
-    <stop offset="0" stop-color="#000" stop-opacity="0.72"/>
-    <stop offset="0.45" stop-color="#000" stop-opacity="0.10"/>
-    <stop offset="1" stop-color="#000" stop-opacity="0.45"/>
+  <linearGradient id="fall" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#000" stop-opacity="0.62"/>
+    <stop offset="0.5" stop-color="#000" stop-opacity="0.06"/>
+    <stop offset="1" stop-color="#000" stop-opacity="0.00"/>
   </linearGradient>
-  <radialGradient id="shoulder" cx="0.5" cy="0.0" r="0.95">
-    <stop offset="0" stop-color="#4B443C"/><stop offset="0.45" stop-color="#2A2622"/>
-    <stop offset="1" stop-color="#121010"/>
-  </radialGradient>
-  <radialGradient id="vig" cx="0.5" cy="0.42" r="0.72">
-    <stop offset="0.55" stop-color="#000" stop-opacity="0"/>
-    <stop offset="1" stop-color="#000" stop-opacity="0.78"/>
-  </radialGradient>
   <filter id="soft" x="-40%" y="-40%" width="180%" height="180%">
-    <feGaussianBlur stdDeviation="30"/>
+    <feGaussianBlur stdDeviation="26"/>
   </filter>
   <filter id="drop" x="-30%" y="-30%" width="160%" height="170%">
-    <feDropShadow dx="0" dy="26" stdDeviation="26" flood-color="#000" flood-opacity="0.55"/>
+    <feDropShadow dx="0" dy="20" stdDeviation="20" flood-color="#000" flood-opacity="0.70"/>
   </filter>
 </defs>
 <rect width="{W}" height="{H}" fill="url(#bg)"/>
 
-<!-- de la persona solo asoma el cuello y el arranque de los hombros -->
+<!-- el maniquí: cuello y arranque de hombros, como en el render de referencia -->
 <g>
-  <path id="neck" d="M348 520 C 340 690, 352 800, 386 870 L 614 870 C 648 800, 660 690, 652 520 Z"/>
+  <path id="neck" d="M286 462 C 278 616, 288 706, 316 {H} L 484 {H} C 512 706, 522 616, 514 462 Z"/>
   <use href="#neck" fill="url(#skin)"/>
-  <use href="#neck" fill="url(#shade)"/>
+  <use href="#neck" fill="url(#fall)"/>
+  <path d="M-30 {H} C 40 790, 206 730, 400 724 C 594 730, 760 790, 830 {H} Z" fill="url(#skin)"/>
+  <path d="M-30 {H} C 40 790, 206 730, 400 724 C 594 730, 760 790, 830 {H} Z" fill="url(#fall)"/>
 </g>
-<path d="M-40 {H} C 40 920, 236 856, 500 850 C 764 856, 960 920, 1040 {H} Z" fill="url(#shoulder)"/>
-<ellipse cx="500" cy="860" rx="210" ry="44" fill="#000" opacity="0.55" filter="url(#soft)"/>
+<ellipse cx="400" cy="736" rx="186" ry="36" fill="#000" opacity="0.62" filter="url(#soft)"/>
 
 <image href="{SRC}" x="{MX}" y="{MY}" width="{MW}" height="{MH}" filter="url(#drop)"/>
-
-<!-- viñeta, para que la pieza sea lo único que brilla -->
-<rect width="{W}" height="{H}" fill="url(#vig)"/>
 </svg>"""
 
 def svg_for(key):
     import base64 as b64
     r=cv2.imread(SP+'cut-'+key+'.png',cv2.IMREAD_UNCHANGED)
-    # el borde se come 2 px: en fondo oscuro, el halo claro de la foto canta
     a=cv2.erode(r[:,:,3],np.ones((3,3),np.uint8),iterations=2)
     r[:,:,3]=cv2.GaussianBlur(a,(0,0),1.0)
-    # la pieza venía de fondo claro: se apaga y se le mete sombra por abajo
+    # la pieza venía de fondo claro: se apaga un punto y se le hunde la base
     h=r.shape[0]
-    ramp=np.clip(np.linspace(1.0,1.0,h),0,1)
-    ramp[int(h*0.62):]=np.linspace(1.0,0.46,h-int(h*0.62))
-    rgb=r[:,:,:3].astype(np.float32)*0.93*ramp[:,None,None]
-    r[:,:,:3]=np.clip(rgb,0,255).astype(np.uint8)
+    ramp=np.ones(h,np.float32); ramp[int(h*0.66):]=np.linspace(1.0,0.40,h-int(h*0.66))
+    r[:,:,:3]=np.clip(r[:,:,:3].astype(np.float32)*0.95*ramp[:,None,None],0,255).astype(np.uint8)
     ok,buf=cv2.imencode('.png',r)
     src='data:image/png;base64,'+b64.b64encode(buf.tobytes()).decode()
-    mh,cy=FIT[key]
-    mw=int(r.shape[1]*mh/r.shape[0])
-    return SVG.format(W=W,H=H,SRC=src,MW=mw,MH=mh,MX=W//2-mw//2,MY=cy-mh//2)
+    k,cy=FIT[key]
+    mh=int(H*k); mw=int(r.shape[1]*mh/r.shape[0])
+    return SVG.format(W=W,H=H,SRC=src,MW=mw,MH=mh,MX=W//2-mw//2,MY=int(H*cy)-mh//2)
 
 if __name__=='__main__':
+    import json
     for k in FIT:
         cv2.imwrite(SP+'cut-'+k+'.png',cutout(k))
         open(SP+'worn-'+k+'.svg','w').write(svg_for(k))
-    print('svg ok')
+    print('svg ok · rasterizar con el navegador y luego pack()')
+
+def pack():
+    """los PNG ya rasterizados, listos para incrustar en la página"""
+    import json, base64 as b64
+    out={}
+    for k in FIT:
+        img=cv2.imread(SP+'worn-'+k+'.png')
+        ok,buf=cv2.imencode('.jpg',img,[cv2.IMWRITE_JPEG_QUALITY,90])
+        out[k]='data:image/jpeg;base64,'+b64.b64encode(buf.tobytes()).decode()
+        print(k, f'{len(buf)/1024:.0f} KB')
+    open(SP+'worn.json','w').write(json.dumps(out))

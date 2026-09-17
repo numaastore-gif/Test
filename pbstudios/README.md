@@ -172,6 +172,35 @@ Salida a 560 × 560, que es el tamaño de origen, JPEG 92, unos 60 KB cada una.
 En la ficha aparece el distintivo *«Modelo de Do3D, impreso bajo licencia
 comercial»*, que es tanto la atribución como el argumento de venta.
 
+## Un solo maniquí para todas las máscaras
+
+Regla del catálogo: **toda máscara se enseña puesta en el mismo maniquí**, para
+que las fichas se lean de una pieza y el cliente compare manzanas con manzanas.
+
+La referencia es el render del pack de Do3D: fondo negro, la máscara llenando
+el encuadre y, abajo, solo el cuello y el arranque de los hombros. El Venom ya
+viene así de fábrica. Para las demás lo monta `worn.py`:
+
+1. Recorta la pieza de su foto con alfa, reutilizando el pipeline de
+   `extract.py` y añadiendo dos cosas: rellenar solo los agujeros pequeños,
+   para que no se cuele el fondo que queda entre las aletas del casco y la
+   barbilla, y limpiar los grises sin saturar de las bandas laterales, que son
+   fondo o mano en sombra.
+2. Le come 2 px al borde —en fondo oscuro, el halo claro de la foto original
+   canta— y le hunde la base con una rampa, para que la pieza entre en sombra
+   donde toca el cuello.
+3. La compone sobre el maniquí, dibujado en SVG: cuello y hombros con el tono
+   tomado del propio render de Do3D, sombra de contacto y caída de luz. Se
+   rasteriza con el navegador a 800 × 800.
+
+El encuadre está en `FIT`: alto de la máscara relativo al lienzo y altura de su
+centro. Es lo único que hay que tocar por pieza.
+
+Para una máscara nueva: se añade la foto al `SETS` de `extract.py`, su entrada
+en el `PICK` de `worn.py` —foto, radio de apertura, recorte por abajo y si hace
+falta limpiar bordes— y su línea en `FIT`. La imagen del maniquí va **la
+primera** de la ficha; las fotos reales de la pieza, detrás.
+
 ## Tratamiento de las fotos
 
 `extract.py` **recorta la pieza del fondo** y la monta sobre fondo de estudio.
