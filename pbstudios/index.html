@@ -138,34 +138,52 @@ header.nav.stuck{border-bottom-color:var(--line)}
 @media(max-width:560px){ .acts .btn{display:none} }
 
 /* hero */
-/* El hero no es una caja: la cama de impresión es el propio fondo de la
-   sección y la pieza se imprime encima, sin marco que la separe. */
-.hero{position:relative;padding:calc(var(--nav-h) + clamp(2rem,5vw,3.6rem)) 0 0;
-  background:var(--sunk);overflow:hidden}
-.hero .bed{position:absolute;inset:auto 0 0 0;height:74%;pointer-events:none;
-  background-image:linear-gradient(color-mix(in srgb,var(--brand) 22%,transparent) 1px,transparent 1px),
-    linear-gradient(90deg,color-mix(in srgb,var(--brand) 22%,transparent) 1px,transparent 1px);
-  background-size:46px 46px;
-  -webkit-mask-image:linear-gradient(transparent,#000 55%,transparent);
-  mask-image:linear-gradient(transparent,#000 55%,transparent);
-  transform:perspective(520px) rotateX(58deg);transform-origin:bottom;opacity:.5}
+/* Sala de proyección: el hero es una banda oscura y dentro flota la máscara
+   como un holograma rebanado capa a capa. El visitante la gira y elige qué
+   fase quiere ver: el archivo, las capas o la pieza acabada. */
+.hero{position:relative;background:#070D10;color:#D6ECE9;overflow:hidden;
+  padding:calc(var(--nav-h) + clamp(1.4rem,4vw,2.8rem)) 0 0}
+.hero .glow,.hero .rule{position:absolute;inset:0;pointer-events:none}
+.hero .glow{background:
+  radial-gradient(52% 54% at 70% 44%,rgba(53,220,203,.20),transparent 70%),
+  radial-gradient(90% 60% at 50% 118%,rgba(53,220,203,.12),transparent 72%)}
+.hero .rule{opacity:.55;background-image:
+  linear-gradient(90deg,rgba(53,220,203,.09) 1px,transparent 1px);background-size:68px 100%;
+  -webkit-mask-image:radial-gradient(70% 70% at 50% 45%,#000,transparent);
+  mask-image:radial-gradient(70% 70% at 50% 45%,#000,transparent)}
 .hero-in{position:relative;z-index:2;display:grid;
-  grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:clamp(1rem,3vw,2.4rem);align-items:center;
-  padding-bottom:clamp(1.4rem,3vw,2.2rem)}
-@media(max-width:860px){.hero-in{grid-template-columns:1fr}.hero-piece{order:-1}}
-.hero-logo{width:clamp(76px,9vw,104px);height:auto;display:block;margin-bottom:1rem}
-.hero h1{font-size:clamp(2.4rem,5.4vw,4rem)}
-.hero h1 em{font-style:normal;color:var(--brand)}
-.hero-piece{aspect-ratio:1/1;max-height:min(58vh,440px);margin-inline:auto;width:100%}
-.hero-piece canvas{width:100%;height:100%;display:block}
-.hero-live{display:flex;flex-wrap:wrap;align-items:center;gap:.35rem;margin:1.3rem 0 0;
-  font-size:.72rem;color:var(--faint);letter-spacing:.02em}
-.hero-live b{color:var(--txt);font-weight:700}
-.dot-live{width:7px;height:7px;border-radius:50%;background:var(--brand);margin-right:.35rem;
-  box-shadow:0 0 0 0 color-mix(in srgb,var(--brand) 60%,transparent);animation:ping 2s infinite}
-@keyframes ping{70%{box-shadow:0 0 0 7px transparent}100%{box-shadow:0 0 0 0 transparent}}
+  grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr);gap:clamp(1rem,3vw,2.6rem);
+  align-items:center;padding-bottom:clamp(1.5rem,3.5vw,2.4rem)}
+@media(max-width:880px){.hero-in{grid-template-columns:1fr}.holo{order:-1}}
+.hero-logo{width:clamp(66px,7.5vw,88px);height:auto;display:block;margin-bottom:1rem}
+.hero h1{font-size:clamp(2.2rem,5vw,3.6rem);color:#F4FCFA;letter-spacing:-.02em}
+.hero h1 em{font-style:normal;color:#35DCCB}
+.hero-sub{margin:.85rem 0 0;max-width:34ch;color:#9FBDB9;font-size:.98rem}
+.hero .btn--p{background:#35DCCB;color:#04211F}
+.hero .btn--p:hover{filter:brightness(1.06)}
+.hero .btn--o{color:#DCEFEC;box-shadow:inset 0 0 0 1.5px rgba(214,236,233,.30)}
+.hero .btn--o:hover{box-shadow:inset 0 0 0 1.5px #35DCCB;color:#35DCCB}
+
+/* el escenario del holograma */
+.holo{position:relative;display:grid;grid-template-rows:1fr auto;width:100%;margin-inline:auto}
+.holo canvas{width:100%;height:auto;aspect-ratio:1/1;max-height:min(58vh,470px);
+  display:block;margin-inline:auto;cursor:grab;touch-action:none}
+.holo canvas:active{cursor:grabbing}
+.holo-hud{margin:0;display:flex;flex-wrap:wrap;gap:.2rem .8rem;
+  font-size:.64rem;letter-spacing:.09em;text-transform:uppercase;color:rgba(155,199,193,.72);
+  padding:.55rem .1rem;border-top:1px solid rgba(53,220,203,.16)}
+.holo-hud b{color:#35DCCB;font-weight:600}
+.holo-tabs{position:absolute;top:0;left:0;display:flex;gap:.3rem;flex-wrap:wrap}
+.holo-tabs button{font-family:var(--mono);font-size:.66rem;letter-spacing:.09em;text-transform:uppercase;
+  padding:.36rem .66rem;border:1px solid rgba(53,220,203,.22);background:rgba(8,20,22,.5);
+  color:rgba(196,226,222,.78);border-radius:999px;cursor:pointer;transition:.15s}
+.holo-tabs button:hover{border-color:rgba(53,220,203,.5);color:#BFEDE7}
+.holo-tabs button[aria-selected="true"]{background:#35DCCB;border-color:#35DCCB;color:#04211F}
+.holo-note{position:absolute;right:0;top:0;font-family:var(--mono);font-size:.62rem;letter-spacing:.08em;
+  text-transform:uppercase;color:rgba(155,199,193,.5)}
+@media(max-width:560px){.holo-note{display:none}}
 /* franja de garantías, pegada al hero para que se lea antes del catálogo */
-.trust{position:relative;z-index:2;border-top:1px solid var(--line);background:var(--surface)}
+.trust{position:relative;z-index:2;border-top:1px solid var(--line);background:var(--surface);color:var(--txt)}
 .trust-in{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--line)}
 @media(max-width:840px){.trust-in{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:460px){.trust-in{grid-template-columns:1fr}}
@@ -451,23 +469,32 @@ footer.site a:hover{color:var(--brand-2)}
 <main id="top">
 <!-- HERO -->
 <section class="hero">
-  <div class="bed" aria-hidden="true"></div>
+  <div class="glow" aria-hidden="true"></div>
+  <div class="rule" aria-hidden="true"></div>
   <div class="wrap hero-in">
     <div class="hero-txt">
       <svg class="hero-logo" viewBox="0 0 300 300" role="img" aria-label="PB Studios"><use href="#pbMark"/></svg>
-      <h1>De la idea<br><em>a la pieza.</em></h1>
+      <h1>Tu pieza,<br><em>antes de existir.</em></h1>
+      <p class="hero-sub">Gírala. Es el mismo archivo que entra en la impresora, rebanado capa a capa.</p>
       <div class="hero-cta">
-        <a class="btn btn--p" href="#catalogo">Ver el catálogo</a>
-        <a class="btn btn--o" href="#medida">Calcular mi pieza</a>
+        <a class="btn btn--p" href="#medida">Presupuestar mi archivo</a>
+        <a class="btn btn--o" href="#catalogo">Ver el catálogo</a>
       </div>
-      <p class="hero-live mono" aria-live="polite">
-        <span class="dot-live"></span>Imprimiendo ahora ·
-        <b id="slName">—</b> · capa <b id="slLayer">0</b> ·
-        <b id="slZ">0,0</b> mm · <b id="slMat">PLA</b> · <b id="slPct">0 %</b>
-      </p>
     </div>
-    <div class="hero-piece">
-      <canvas id="heroCv" aria-label="Pieza imprimiéndose capa a capa"></canvas>
+    <div class="holo" id="holo">
+      <canvas id="heroCv" aria-label="Holograma de una máscara: gírala con el ratón"></canvas>
+      <div class="holo-tabs" role="tablist" aria-label="Fase">
+        <button role="tab" data-phase="0" aria-selected="true">Archivo</button>
+        <button role="tab" data-phase="1" aria-selected="false">Capas</button>
+        <button role="tab" data-phase="2" aria-selected="false">Pieza</button>
+      </div>
+      <span class="holo-note">Arrastra para girar</span>
+      <p class="holo-hud mono" aria-live="polite">
+        <span id="hPhase">Malla recibida</span>
+        <span><b id="hA">0</b> triángulos</span>
+        <span><b id="hB">0</b> capas a 0,20 mm</span>
+        <span><b id="hC">0</b> mm de alto</span>
+      </p>
     </div>
   </div>
   <div class="trust">
@@ -1424,7 +1451,7 @@ function rasterize(cv,mesh,o){
   const zb=new Float32Array(w*h).fill(1e9);
 
   const ca=Math.cos(o.rx), sa=Math.sin(o.rx), cb=Math.cos(o.ry), sb=Math.sin(o.ry);
-  const dist=4.2, S=Math.min(w,h)*0.40*(o.scale||1);
+  const dist=4.2, S=Math.min(w,h)*0.40*(o.scale||1), CY=h*(o.cy||0.5);
   const pos=mesh.pos, nrm=mesh.nrm, idx=mesh.idx, N=pos.length/3;
   const sx=new Float32Array(N), sy=new Float32Array(N), sz=new Float32Array(N);
   const li=new Float32Array(N), sp=new Float32Array(N);
@@ -1433,10 +1460,12 @@ function rasterize(cv,mesh,o){
     let x=pos[i*3]*cb - pos[i*3+2]*sb, z=pos[i*3]*sb + pos[i*3+2]*cb;
     let y=pos[i*3+1]*ca - z*sa;        z=pos[i*3+1]*sa + z*ca;
     const k=S*dist/(z+dist);
-    sx[i]=w/2+x*k; sy[i]=h/2-y*k; sz[i]=z;
+    sx[i]=w/2+x*k; sy[i]=CY-y*k; sz[i]=z;
     let nx=nrm[i*3]*cb - nrm[i*3+2]*sb, nz=nrm[i*3]*sb + nrm[i*3+2]*cb;
     let ny=nrm[i*3+1]*ca - nz*sa;      nz=nrm[i*3+1]*sa + nz*ca;
-    const key =Math.max(0, nx*-0.40 + ny*0.66 + nz*0.64);
+    const kd=nx*-0.40 + ny*0.66 + nz*0.64;
+    /* una cáscara abierta (una máscara) se mira por los dos lados */
+    const key =o.twoSided?Math.abs(kd):Math.max(0,kd);
     const fill=Math.max(0, nx* 0.64 + ny*0.14 - nz*0.40)*0.32;
     const rim =Math.pow(1-Math.min(1,Math.abs(nz)),3)*0.20;      /* despega el borde del fondo */
     li[i]=0.36+key*0.76+fill+rim;
@@ -1452,7 +1481,7 @@ function rasterize(cv,mesh,o){
     const a=idx[f], b=idx[f+1], c=idx[f+2];
     const ax=sx[a],ay=sy[a],bx=sx[b],by=sy[b],cx2=sx[c],cy2=sy[c];
     const ar=(bx-ax)*(cy2-ay)-(cx2-ax)*(by-ay);
-    if(ar>=0) continue;                                          /* cara de espaldas */
+    if(o.twoSided? ar===0 : ar>=0) continue;                     /* cara de espaldas */
     let x0=Math.max(0,Math.floor(Math.min(ax,bx,cx2))), x1=Math.min(w-1,Math.ceil(Math.max(ax,bx,cx2)));
     let y0=Math.max(0,Math.floor(Math.min(ay,by,cy2))), y1=Math.min(h-1,Math.ceil(Math.max(ay,by,cy2)));
     if(x1<x0||y1<y0) continue;
@@ -1695,52 +1724,259 @@ const io='IntersectionObserver' in window?new IntersectionObserver(e=>{
   {threshold:.08,rootMargin:'0px 0px -40px'}):null;
 const watch=()=>$$('.rv:not(.in)').forEach(n=>io?io.observe(n):n.classList.add('in'));
 
-/* El hero imprime piezas del catálogo en bucle, y la impresora del logo
-   imprime al mismo tiempo: la pieza de dentro crece con el mismo progreso. */
-(function printer(){
-  const cv=$('#heroCv'); if(!cv) return;
-  const QUEUE=[
-    {n:'Jarrón espiral',   mesh:lathe(P.vase,48,1.15), col:COLORS.teal,    mm:190, mat:'PLA Silk'},
-    {n:'Maceta hexagonal', mesh:prism(6,.62,1.3,.78),  col:COLORS.verde,   mm:110, mat:'PETG'},
-    {n:'Lámpara de mesa',  mesh:lathe(P.lamp,44,0),    col:COLORS.mostaza, mm:220, mat:'PLA'},
-    {n:'Portalápices',     mesh:prism(12,.55,1.35,.62),col:COLORS.morado,  mm:110, mat:'PLA'},
-    {n:'Trofeo',           mesh:lathe(P.cup,40,0),     col:COLORS.gris,    mm:210, mat:'PLA Silk'}
-  ];
-  const LAYER=0.2, SPAN=9000, HOLD=1400;
-  const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
-  let i=0, t0=performance.now(), ry=.5, raf=null;
-  const part=$('#pbPart');
-
-  function logoGrow(prog){
-    if(!part) return;
-    const h=62*prog;                       /* la pieza dentro del logo */
-    part.setAttribute('d','M110 236 L150 226 L150 '+(226-h).toFixed(1)+
-      ' L110 '+(236-h).toFixed(1)+' Z');
+/* ── El hero: un holograma de la máscara ────────────────────────────────
+   La pieza flota rebanada en capas, que es exactamente lo que hace el
+   laminador antes de imprimir. Se gira con el ratón y el visitante elige
+   qué fase quiere ver: el archivo que nos manda, las capas mientras se
+   imprime, o la pieza acabada. La malla de aquí es provisional: en cuanto
+   haya un STL de máscara, se sustituye por HERO_TRIS y todo lo demás sigue
+   igual, porque pasa por el mismo `measure` + `buildMesh` que el archivo
+   del cliente. */
+function maskMesh(){
+  const NU=112, NV=140, U0=-1.32, U1=1.32, V0=0.30, V1=2.78;
+  const A=78, B=112, C=88;                      /* mm: ancho, alto, fondo */
+  /* los huecos, en el espacio (ángulo, altura) de la propia rejilla */
+  const HOLES=[{u:0.55,mirror:true,a:0.25,y:0.30,b:0.115},   /* ojos */
+               {u:0,   mirror:false,a:0.40,y:-0.47,b:0.05}]; /* boca */
+  const field=(u,yn)=>{                        /* <1 = dentro de un hueco */
+    let best=9, sn=null;
+    for(const h of HOLES){
+      const uc=h.mirror?(u<0?-h.u:h.u):h.u;
+      const r=Math.hypot((u-uc)/h.a,(yn-h.y)/h.b);
+      if(r<best){ best=r; sn=[uc,h.y]; }
+    }
+    return [best,sn];
+  };
+  const at=(u,v)=>{
+    let yn=Math.cos(v);
+    /* los vértices que caen dentro del hueco se empujan justo a su borde:
+       así el contorno del ojo es una elipse limpia y no una escalera */
+    const [r,c]=field(u,yn);
+    if(r<1 && r>1e-4){ u=c[0]+(u-c[0])/r; yn=c[1]+(yn-c[1])/r; v=Math.acos(clamp(yn,-1,1)); }
+    const sv=Math.sin(v);
+    const jaw =1-0.46*Math.pow(Math.max(0,-yn),1.5);                        /* la mandíbula se estrecha */
+    const nose=1+0.22*Math.exp(-Math.pow((yn-0.02)/0.23,2))*Math.pow(Math.cos(u),8);
+    const brow=1+0.09*Math.exp(-Math.pow((yn-0.46)/0.15,2));
+    return [A*jaw*sv*Math.sin(u), -C*nose*brow*sv*Math.cos(u), B*yn];      /* Z es la vertical */
+  };
+  const G=[];
+  for(let i=0;i<=NU;i++){
+    const u=U0+(U1-U0)*i/NU, row=[];
+    for(let j=0;j<=NV;j++) row.push(at(u,V0+(V1-V0)*j/NV));
+    G.push(row);
   }
+  const tris=[];
+  for(let i=0;i<NU;i++) for(let j=0;j<NV;j++){
+    const u=U0+(U1-U0)*(i+.5)/NU, v=V0+(V1-V0)*(j+.5)/NV;
+    if(field(u,Math.cos(v))[0]<1) continue;                                /* el hueco */
+    const a=G[i][j], b=G[i+1][j], c=G[i+1][j+1], d=G[i][j+1];
+    tris.push([a,b,c],[a,c,d]);
+  }
+  return tris;
+}
+
+/* Rebanado: cada triángulo que cruza un plano horizontal deja un segmento.
+   Es lo mismo que hace un laminador, y se calcula una sola vez. */
+function sliceMesh(mesh,rings){
+  const pos=mesh.pos, idx=mesh.idx;
+  let lo=Infinity, hi=-Infinity;
+  for(let i=1;i<pos.length;i+=3){ if(pos[i]<lo)lo=pos[i]; if(pos[i]>hi)hi=pos[i]; }
+  const gap=(hi-lo)/rings, out=[];
+  const p=[0,0,0,0];
+  for(let f=0;f<idx.length;f+=3){
+    const a=idx[f]*3, b=idx[f+1]*3, c=idx[f+2]*3;
+    const ya=pos[a+1], yb=pos[b+1], yc=pos[c+1];
+    let k0=Math.ceil((Math.min(ya,yb,yc)-lo)/gap), k1=Math.floor((Math.max(ya,yb,yc)-lo)/gap);
+    if(k0<0)k0=0; if(k1>rings)k1=rings;
+    for(let k=k0;k<=k1;k++){
+      const h=lo+k*gap; let n=0;
+      const cut=(i,j,yi,yj)=>{
+        if((yi<h)===(yj<h)||n>1) return;
+        const t=(h-yi)/(yj-yi);
+        p[n*2]=pos[i]+(pos[j]-pos[i])*t; p[n*2+1]=pos[i+2]+(pos[j+2]-pos[i+2])*t; n++;
+      };
+      cut(a,b,ya,yb); cut(b,c,yb,yc); cut(c,a,yc,ya);
+      if(n===2) out.push(p[0],h,p[1],p[2],h,p[3]);
+    }
+  }
+  return {seg:Float32Array.from(out), lo, hi, gap, rings};
+}
+
+/* la pieza que hay dentro del logo crece con lo que se está imprimiendo */
+function logoGrow(prog){
+  const part=$('#pbPart'); if(!part) return;
+  const h=62*prog;
+  part.setAttribute('d','M110 236 L150 226 L150 '+(226-h).toFixed(1)+
+    ' L110 '+(236-h).toFixed(1)+' Z');
+}
+
+(function holograma(){
+  const cv=$('#heroCv'), stage=$('#holo'); if(!cv||!stage) return;
+  const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const CYAN=[53,220,203];
+
+  const tris=maskMesh(), m=measure(tris), mesh=buildMesh(tris,m);
+  const SL=[sliceMesh(mesh,58), sliceMesh(mesh,168)];      /* archivo / capas */
+  const HMM=m.bbox[2];                                     /* alto real en mm */
+  const bb=(()=>{                                          /* la caja, en coordenadas ya normalizadas */
+    const pos=mesh.pos, lo=[1e9,1e9,1e9], hi=[-1e9,-1e9,-1e9];
+    for(let i=0;i<pos.length;i+=3) for(let k=0;k<3;k++){
+      if(pos[i+k]<lo[k])lo[k]=pos[i+k]; if(pos[i+k]>hi[k])hi[k]=pos[i+k]; }
+    const C=[];
+    for(const x of [lo[0],hi[0]]) for(const y of [lo[1],hi[1]]) for(const z of [lo[2],hi[2]]) C.push([x,y,z]);
+    /* 0..7 en orden x,y,z: las 12 aristas del prisma */
+    return {C,E:[[0,1],[2,3],[4,5],[6,7],[0,2],[1,3],[4,6],[5,7],[0,4],[1,5],[2,6],[3,7]]};
+  })();
+
+  const st={phase:0, ry:0.35, rx:-0.12, vy:0, tx:0, ty:0, drag:null, auto:true, scan:0};
+  const part=$('#pbPart');
+  const PH=[
+    {t:'Archivo recibido', n:'la malla tal cual nos llega'},
+    {t:'Laminando',        n:'capa a capa, 0,20 mm'},
+    {t:'Pieza acabada',    n:'lo que te llevas'}
+  ];
+
+  function setPhase(i,manual){
+    st.phase=i; if(manual){ st.auto=false; }
+    $$('.holo-tabs button').forEach(b=>b.setAttribute('aria-selected',String(+b.dataset.phase===i)));
+    $('#hPhase').textContent=PH[i].t;
+  }
+  $$('.holo-tabs button').forEach(b=>b.addEventListener('click',()=>setPhase(+b.dataset.phase,true)));
+  setPhase(0,false);
+
+  $('#hA').textContent=mesh.tris.toLocaleString('es-ES');
+  $('#hB').textContent=Math.round(HMM/0.2).toLocaleString('es-ES');
+  $('#hC').textContent=Math.round(HMM).toLocaleString('es-ES');
+
+  /* el visitante manda: arrastrar gira, y si solo pasa el ratón la máscara
+     se gira un poco hacia él */
+  stage.addEventListener('pointermove',e=>{
+    const r=stage.getBoundingClientRect();
+    st.tx=((e.clientX-r.left)/r.width-.5)*1.15;
+    st.ty=((e.clientY-r.top)/r.height-.5)*0.55;
+  });
+  stage.addEventListener('pointerleave',()=>{ st.tx=0; st.ty=0; });
+  cv.addEventListener('pointerdown',e=>{
+    st.drag=[e.clientX,e.clientY,st.ry,st.rx]; st.auto=false; st.vy=0;
+    cv.setPointerCapture(e.pointerId);
+  });
+  cv.addEventListener('pointermove',e=>{
+    if(!st.drag) return;
+    const ry=st.drag[2]+(e.clientX-st.drag[0])*.0095;
+    st.vy=(ry-st.ry)*.5; st.ry=ry;
+    st.rx=clamp(st.drag[3]+(e.clientY-st.drag[1])*.006,-.55,.55);
+  });
+  const stop=()=>{ st.drag=null; };
+  cv.addEventListener('pointerup',stop); cv.addEventListener('pointercancel',stop);
+
+  function paint(now){
+    const W=cv.clientWidth, H=cv.clientHeight;
+    if(!W||!H){ return; }
+
+    if(!st.drag){ st.ry+=st.vy; st.vy*=0.94; if(!reduce) st.ry+=0.0022; }
+    const rx=st.rx+st.ty*(st.drag?0:1), ry=st.ry+st.tx*(st.drag?0:1);
+
+    if(st.phase===2){
+      rasterize(cv,mesh,{color:'#2FBFB3',rx,ry,scale:.70,cy:0.47,twoSided:true});
+      if(part) logoGrow(1);
+      return;
+    }
+
+    const dpr=Math.min(devicePixelRatio||1,2);
+    cv.width=W*dpr; cv.height=H*dpr;
+    const ctx=cv.getContext('2d'); ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.clearRect(0,0,W,H);
+    ctx.lineCap='round'; ctx.lineJoin='round';
+
+    const ca=Math.cos(rx),sa=Math.sin(rx),cb=Math.cos(ry),sb=Math.sin(ry);
+    const dist=4.2, S=Math.min(W,H)*0.40*0.72;
+    const T=(x,y,z,o)=>{
+      let X=x*cb - z*sb, Z=x*sb + z*cb;
+      let Y=y*ca - Z*sa; Z=y*sa + Z*ca;
+      const k=S*dist/(Z+dist);
+      o[0]=W/2+X*k; o[1]=H*0.47-Y*k; o[2]=Z;
+    };
+
+    const S0=SL[st.phase], seg=S0.seg;
+    /* la cabeza de impresión sube y va dejando capas detrás */
+    const printing = st.phase===1;
+    if(printing) st.scan = reduce?1:((now%7000)/7000);
+    const head = S0.lo + (S0.hi-S0.lo)*(printing?st.scan:1);
+
+    const BK=6, paths=[]; for(let i=0;i<BK;i++) paths.push(new Path2D());
+    const ghost=new Path2D(), hot=new Path2D();
+    const a=[0,0,0], b=[0,0,0];
+    for(let i=0;i<seg.length;i+=6){
+      const y=seg[i+1];
+      T(seg[i],y,seg[i+2],a); T(seg[i+3],seg[i+4],seg[i+5],b);
+      let p;
+      if(printing && y>head+S0.gap*0.6) p=ghost;
+      else if(printing && y>head-S0.gap*1.6) p=hot;
+      else {
+        let t=(a[2]+b[2])*0.5;                      /* menos z, más cerca */
+        let k=Math.floor((t+1.15)/2.30*BK); k=k<0?0:k>=BK?BK-1:k;
+        p=paths[k];
+      }
+      p.moveTo(a[0],a[1]); p.lineTo(b[0],b[1]);
+    }
+
+    /* la caja del archivo, solo en la primera fase */
+    if(st.phase===0){
+      const box=new Path2D();
+      for(const [i,j] of bb.E){
+        T(bb.C[i][0],bb.C[i][1],bb.C[i][2],a); T(bb.C[j][0],bb.C[j][1],bb.C[j][2],b);
+        box.moveTo(a[0],a[1]); box.lineTo(b[0],b[1]);
+      }
+      ctx.strokeStyle='rgba(53,220,203,.16)'; ctx.lineWidth=1; ctx.setLineDash([3,5]);
+      ctx.stroke(box); ctx.setLineDash([]);
+    }
+
+    if(printing){ ctx.strokeStyle='rgba(53,220,203,.07)'; ctx.lineWidth=.7; ctx.stroke(ghost); }
+
+    for(let k=BK-1;k>=0;k--){
+      const f=1-k/(BK-1);                            /* 1 delante, 0 detrás */
+      ctx.strokeStyle='rgba('+CYAN[0]+','+CYAN[1]+','+CYAN[2]+','+(0.07+f*0.16).toFixed(3)+')';
+      ctx.lineWidth=2.6-f*0.9;                       /* el halo */
+      ctx.stroke(paths[k]);
+      ctx.strokeStyle='rgba('+CYAN[0]+','+CYAN[1]+','+CYAN[2]+','+(0.13+f*0.72).toFixed(3)+')';
+      ctx.lineWidth=0.55+f*0.65;
+      ctx.stroke(paths[k]);
+    }
+
+    if(printing){
+      ctx.strokeStyle='rgba(255,255,255,.30)'; ctx.lineWidth=3.4; ctx.stroke(hot);
+      ctx.strokeStyle='rgba(240,255,252,.96)'; ctx.lineWidth=1.3; ctx.stroke(hot);
+      /* el plano de la cabeza, de lado a lado */
+      T(0,head,0,a);
+      const g=ctx.createLinearGradient(0,0,W,0);
+      g.addColorStop(0,'rgba(53,220,203,0)'); g.addColorStop(.5,'rgba(53,220,203,.5)');
+      g.addColorStop(1,'rgba(53,220,203,0)');
+      ctx.strokeStyle=g; ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(0,a[1]+.5); ctx.lineTo(W,a[1]+.5); ctx.stroke();
+      if(part) logoGrow(st.scan);
+    }
+
+    /* barrido de scanlines, muy flojo: es un holograma, no una pantalla rota */
+    ctx.save(); ctx.globalCompositeOperation='source-atop';
+    ctx.fillStyle='rgba(2,10,12,.30)';
+    for(let y=(now*0.02)%4;y<H;y+=4) ctx.fillRect(0,y,W,1);
+    ctx.restore();
+  }
+
+  let raf=null, last=0;
   function frame(now){
-    const job=QUEUE[i];
-    let e=(now-t0)/SPAN, done=false;
-    if(e>=1){ e=1; done=(now-t0)>SPAN+HOLD; }
-    const prog=reduce?1:e;
-    ry+=reduce?0:0.0026;
-    render(cv,job.mesh,{color:job.col,rx:-.30,ry,scale:.80,bed:true,cy:0.47,
-      clip:-1+prog*2.06, layers:true, metal:.25});
-    logoGrow(prog);
-    const layers=Math.round(job.mm/LAYER);
-    $('#slName').textContent=job.n;
-    $('#slPct').textContent=Math.round(prog*100)+' %';
-    $('#slLayer').textContent=Math.round(prog*layers).toLocaleString('es-ES');
-    $('#slZ').textContent=(prog*job.mm).toFixed(1).replace('.',',');
-    $('#slMat').textContent=job.mat;
-    if(done){ i=(i+1)%QUEUE.length; t0=now; }
+    if(st.auto && now-last>5600){ last=now; setPhase((st.phase+1)%3,false); }
+    if(!st.auto && !last) last=now;
+    paint(now);
     raf=requestAnimationFrame(frame);
   }
-  addEventListener('resize',()=>render(cv,QUEUE[i].mesh,
-    {color:QUEUE[i].col,rx:-.30,ry,scale:.80,cy:0.47,bed:true,clip:1.1}));
   document.addEventListener('visibilitychange',()=>{
     if(document.hidden) cancelAnimationFrame(raf);
-    else { t0=performance.now(); raf=requestAnimationFrame(frame); }
+    else raf=requestAnimationFrame(frame);
   });
+  addEventListener('resize',()=>{ clearTimeout(window.__hz);
+    window.__hz=setTimeout(()=>paint(performance.now()),200); });
+  last=performance.now();
   raf=requestAnimationFrame(frame);
 })();
 

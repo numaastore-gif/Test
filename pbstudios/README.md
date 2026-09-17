@@ -27,8 +27,8 @@ opcional), `prism`, `box`, `gear`, `torus` y `merge` para combinarlos.
 
 | Módulo | Detalle |
 |---|---|
-| **Hero** | Sin caja ni marco: la **cama de impresión es el fondo de la sección**, en perspectiva y desvaneciéndose hacia arriba. Sobre ella una pieza se imprime capa a capa, con la capa activa en caliente, mientras el logo imprime su propia pieza en sincronía y una línea de estado en monoespaciada canta capa, altura y material. Va encadenando piezas en bucle. El motor corta la malla por altura (`opt.clip`), no es un vídeo. |
-| **Logo** | Redibujado como vector (`#pbMark` / `#pbLockup`), sin fondo, así que sirve igual en claro y en oscuro y escala sin pixelarse. Su pieza interior (`#pbPart`) crece con el mismo progreso que la impresión del hero: el logo no es un adorno, está contando lo que hace el taller. |
+| **Hero** | Banda oscura, y dentro flota un **holograma de una máscara** rebanado en capas de verdad. Tres fases —Archivo, Capas, Pieza— que el visitante elige, o que van solas hasta que las toca. Se gira arrastrando y se inclina sola hacia el ratón. |
+| **Logo** | Redibujado como vector (`#pbMark` / `#pbLockup`), sin fondo, así que sirve igual en claro y en oscuro y escala sin pixelarse. Su pieza interior (`#pbPart`) crece con el mismo barrido que el holograma en la fase *Capas*: el logo no es un adorno, está contando lo que hace el taller. |
 | **Confianza** | Tira de cuatro compromisos bajo el hero: licencia comercial, foto antes de enviar, si sale mal se repite, entrega 24–48 h. |
 | **Presupuesto por archivo** | El cliente **suelta su STL** y la web lo lee en el navegador: triángulos, volumen real, caja envolvente y previsualización 3D arrastrable. Con eso, más material, relleno, altura de capa, soportes y unidades, sale el precio con el desglose. Avisa si la pieza no cabe en 250 mm. |
 | **Escala** | En las fichas con foto, un esquema compara la altura de la pieza con una cabeza adulta (22 cm). Responde a la pregunta que de verdad frena la compra. |
@@ -82,6 +82,39 @@ se lee como ASCII con una expresión regular sobre los `vertex`. Después:
 - para la vista previa la malla se pasa de Z-arriba (convenio CAD) a Y-arriba y
   se normaliza por la **diagonal** de la caja, para que no se salga del marco al
   girarla.
+
+## El holograma del hero
+
+El hero es una sala de proyección: fondo casi negro y una máscara flotando
+dentro, dibujada **en capas**, que es exactamente lo que hace un laminador
+antes de mandar nada a la impresora.
+
+Las capas no son un efecto. Cada triángulo que cruza un plano horizontal deja
+un segmento; el conjunto de segmentos de un plano es el contorno de esa capa.
+Se calcula una sola vez al cargar (`sliceMesh`) y luego cada fotograma solo
+proyecta y dibuja. Los segmentos se reparten en seis franjas de profundidad y
+cada franja se pinta de una vez con su propio grosor y transparencia, así que
+los contornos de atrás se ven detrás sin ordenar nada ni ralentizar nada.
+
+Tres fases, en pestañas, que van solas hasta que el visitante toca una:
+
+| Fase | Qué enseña |
+|---|---|
+| **Archivo** | contornos separados y la caja de la pieza a rayas: la malla tal cual llega |
+| **Capas** | contornos finos, y una cabeza de impresión que sube dejando capas detrás y el resto en fantasma |
+| **Pieza** | el render sólido, el mismo rasterizador que usa el visor del presupuesto |
+
+Interactivo de verdad: se gira arrastrando, con inercia, y si solo pasas el
+ratón por encima la máscara se inclina un poco hacia ti. El HUD canta los
+triángulos, las capas a 0,20 mm y la altura real en milímetros.
+
+**La máscara es provisional.** Está generada por código (`maskMesh`): una
+cáscara de cara con nariz, ceja y mandíbula, y los huecos de ojos y boca
+recortados limpiamente — los vértices que caen dentro del hueco se empujan
+justo a su borde, por eso el contorno del ojo es una elipse y no una escalera.
+En cuanto haya un STL de máscara de verdad, se sustituye y ya está: pasa por el
+mismo `measure` + `buildMesh` que el archivo que sube un cliente, así que el
+rebanado, el holograma y el render sólido funcionan igual sin tocar nada más.
 
 ## Por qué la pieza se ve sólida y no como una maraña de triángulos
 
