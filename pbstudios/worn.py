@@ -48,9 +48,9 @@ def cutout(key):
     if edges:
         # en los bordes laterales, lo gris oscuro es fondo o mano en sombra
         hsv=cv2.cvtColor(img,cv2.COLOR_BGR2HSV)
-        band=np.zeros(m.shape,bool); w=m.shape[1]; e=int(w*0.20)
+        band=np.zeros(m.shape,bool); w=m.shape[1]; e=int(w*0.27)
         band[:,:e]=True; band[:,w-e:]=True
-        m[band & (hsv[:,:,1]<52) & (hsv[:,:,2]<120)]=0
+        m[band & (hsv[:,:,1]<46)]=0      # ni fondo claro ni mano en sombra
     n,lab,stats,_=cv2.connectedComponentsWithStats((m>0).astype(np.uint8),8)
     if n>1:
         big=1+np.argmax(stats[1:,cv2.CC_STAT_AREA])
@@ -64,71 +64,80 @@ def cutout(key):
 
 
 # ── El montaje "puesta" ────────────────────────────────────────────────────
-# Aquí no hay ningún modelo de imagen (sin acceso de red a los pesos), así que
-# la persona no puede ser una foto. Se resuelve como lo hacen las guías de
-# talla: una silueta de maniquí, plana y monocroma, con el recorte de la pieza
-# real encima. Se dibuja en SVG y lo rasteriza el navegador.
-W,H=1000,1200
-FIT={'batman':(462,356),'venom':(404,374),'ranger':(454,360)}   # alto, centro Y
+# Fondo oscuro de estudio y, de la persona, solo el cuello y el arranque de
+# los hombros entrando por abajo: el resto lo tapa la propia máscara. Es como
+# fotografían los estudios de cosplay y perdona que la figura sea dibujada,
+# porque aquí no hay ningún modelo de imagen con el que generar una persona.
+W=H=1000
+FIT={'batman':(812,408),'venom':(742,418),'ranger':(796,412)}   # alto, centro Y
 
 SVG = """<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}">
 <defs>
-  <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
-    <stop offset="0" stop-color="#F7F5F1"/><stop offset="1" stop-color="#E7E3DC"/>
-  </linearGradient>
-  <linearGradient id="skin" x1="0.15" y1="0" x2="0.9" y2="1">
-    <stop offset="0" stop-color="#DAD3C9"/><stop offset="0.55" stop-color="#C8BFB3"/>
-    <stop offset="1" stop-color="#A89E92"/>
-  </linearGradient>
-  <linearGradient id="shirt" x1="0.15" y1="0" x2="0.9" y2="1">
-    <stop offset="0" stop-color="#3B424C"/><stop offset="0.55" stop-color="#2C323A"/>
-    <stop offset="1" stop-color="#1D2228"/>
-  </linearGradient>
-  <radialGradient id="halo" cx="0.5" cy="0.30" r="0.55">
-    <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.85"/>
-    <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
+  <radialGradient id="bg" cx="0.5" cy="0.34" r="0.78">
+    <stop offset="0" stop-color="#20282C"/><stop offset="0.55" stop-color="#11171A"/>
+    <stop offset="1" stop-color="#07090B"/>
   </radialGradient>
-  <filter id="soft" x="-30%" y="-30%" width="160%" height="160%">
-    <feGaussianBlur stdDeviation="26"/>
+  <linearGradient id="skin" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#241F1B"/><stop offset="0.18" stop-color="#4F473F"/>
+    <stop offset="0.44" stop-color="#7E746A"/><stop offset="0.82" stop-color="#4A423B"/>
+    <stop offset="1" stop-color="#1F1B17"/>
+  </linearGradient>
+  <linearGradient id="shade" x1="0.5" y1="0" x2="0.5" y2="1">
+    <stop offset="0" stop-color="#000" stop-opacity="0.72"/>
+    <stop offset="0.45" stop-color="#000" stop-opacity="0.10"/>
+    <stop offset="1" stop-color="#000" stop-opacity="0.45"/>
+  </linearGradient>
+  <radialGradient id="shoulder" cx="0.5" cy="0.0" r="0.95">
+    <stop offset="0" stop-color="#4B443C"/><stop offset="0.45" stop-color="#2A2622"/>
+    <stop offset="1" stop-color="#121010"/>
+  </radialGradient>
+  <radialGradient id="vig" cx="0.5" cy="0.42" r="0.72">
+    <stop offset="0.55" stop-color="#000" stop-opacity="0"/>
+    <stop offset="1" stop-color="#000" stop-opacity="0.78"/>
+  </radialGradient>
+  <filter id="soft" x="-40%" y="-40%" width="180%" height="180%">
+    <feGaussianBlur stdDeviation="30"/>
   </filter>
-  <filter id="drop" x="-30%" y="-30%" width="160%" height="160%">
-    <feDropShadow dx="0" dy="16" stdDeviation="22" flood-color="#2A2620" flood-opacity="0.26"/>
+  <filter id="drop" x="-30%" y="-30%" width="160%" height="170%">
+    <feDropShadow dx="0" dy="26" stdDeviation="26" flood-color="#000" flood-opacity="0.55"/>
   </filter>
 </defs>
 <rect width="{W}" height="{H}" fill="url(#bg)"/>
-<rect width="{W}" height="{H}" fill="url(#halo)"/>
 
-<!-- el maniquí: hombros, cuello, cabeza y orejas, todo del mismo tono -->
-<g fill="url(#skin)">
-  <path d="M424 470 L424 660 Q 500 706 576 660 L576 470 Z"/>
-  <ellipse cx="500" cy="360" rx="148" ry="190"/>
-  <ellipse cx="356" cy="378" rx="21" ry="33"/>
-  <ellipse cx="644" cy="378" rx="21" ry="33"/>
+<!-- de la persona solo asoma el cuello y el arranque de los hombros -->
+<g>
+  <path id="neck" d="M348 520 C 340 690, 352 800, 386 870 L 614 870 C 648 800, 660 690, 652 520 Z"/>
+  <use href="#neck" fill="url(#skin)"/>
+  <use href="#neck" fill="url(#shade)"/>
 </g>
-<path d="M40 {H} C 44 1004, 106 848, 232 766 C 312 714, 384 692, 500 688
-         C 616 692, 688 714, 768 766 C 894 848, 956 1004, 960 {H} Z" fill="url(#shirt)"/>
-<!-- la sombra del cuello sobre los hombros -->
-<ellipse cx="500" cy="700" rx="104" ry="30" fill="#11151A" opacity="0.45" filter="url(#soft)"/>
+<path d="M-40 {H} C 40 920, 236 856, 500 850 C 764 856, 960 920, 1040 {H} Z" fill="url(#shoulder)"/>
+<ellipse cx="500" cy="860" rx="210" ry="44" fill="#000" opacity="0.55" filter="url(#soft)"/>
 
 <image href="{SRC}" x="{MX}" y="{MY}" width="{MW}" height="{MH}" filter="url(#drop)"/>
 
-<line x1="60" y1="{LY}" x2="{LX}" y2="{LY}" stroke="#0E8C86" stroke-width="2" opacity="0.5"/>
-<text x="60" y="{TY}" font-family="ui-monospace,Menlo,Consolas,monospace" font-size="19"
-      letter-spacing="2" fill="#6E6559">MONTAJE A ESCALA · CABEZA ADULTA DE 22 CM</text>
+<!-- viñeta, para que la pieza sea lo único que brilla -->
+<rect width="{W}" height="{H}" fill="url(#vig)"/>
 </svg>"""
 
 def svg_for(key):
     import base64 as b64
     r=cv2.imread(SP+'cut-'+key+'.png',cv2.IMREAD_UNCHANGED)
+    # el borde se come 2 px: en fondo oscuro, el halo claro de la foto canta
+    a=cv2.erode(r[:,:,3],np.ones((3,3),np.uint8),iterations=2)
+    r[:,:,3]=cv2.GaussianBlur(a,(0,0),1.0)
+    # la pieza venía de fondo claro: se apaga y se le mete sombra por abajo
+    h=r.shape[0]
+    ramp=np.clip(np.linspace(1.0,1.0,h),0,1)
+    ramp[int(h*0.62):]=np.linspace(1.0,0.46,h-int(h*0.62))
+    rgb=r[:,:,:3].astype(np.float32)*0.93*ramp[:,None,None]
+    r[:,:,:3]=np.clip(rgb,0,255).astype(np.uint8)
     ok,buf=cv2.imencode('.png',r)
     src='data:image/png;base64,'+b64.b64encode(buf.tobytes()).decode()
     mh,cy=FIT[key]
     mw=int(r.shape[1]*mh/r.shape[0])
-    return SVG.format(W=W,H=H,SRC=src,MW=mw,MH=mh,MX=W//2-mw//2,MY=cy-mh//2,
-                      LY=H-96,LX=W-60,TY=H-62)
+    return SVG.format(W=W,H=H,SRC=src,MW=mw,MH=mh,MX=W//2-mw//2,MY=cy-mh//2)
 
 if __name__=='__main__':
-    import os
     for k in FIT:
         cv2.imwrite(SP+'cut-'+k+'.png',cutout(k))
         open(SP+'worn-'+k+'.svg','w').write(svg_for(k))
