@@ -62,6 +62,7 @@ capturas, sin la interfaz del móvil, a 820 px y JPEG: unos 900 KB en total):
 | Máscara Venom / Spider-Man | 40 € | 96 € | Do3D | 3 del pack, montadas |
 | Casco de Power Ranger amarillo | 55 € | 132 € | — | maniquí + 3 tuyas |
 | Casco de Batman táctico | 78 € | 187 € | Do3D | 3 del pack, montadas |
+| Casco de Batman rojo | 72 € | 173 € | Do3D | 2 del pack + 1 espejada |
 
 Los tres comparten el mismo escalón de acabado, que es como se vende de verdad
 una pieza impresa: **raw** ×1 (sin postprocesar, con las capas a la vista),
@@ -200,6 +201,21 @@ Los parámetros por pieza están en `SRC`: fichero, mitad de la lámina cuando e
 render trae dos vistas, dónde cortar el cuello y qué alto ocupa la cabeza. La
 altura sale sola de `NECK`, que es donde tiene que caer el corte para quedar
 dentro del escote.
+
+### Siempre tres puntos de vista
+
+Cada ficha lleva tres imágenes. Si el pack solo trae dos, se genera la tercera
+**espejando** una de ellas (`flip=True`): en una pieza simétrica eso es el otro
+lado, no un invento. Lo que no se puede hacer sin el modelo es sacar un frontal
+de un tres cuartos — eso pide un render nuevo o una foto.
+
+### Capuchas que bajan al hombro
+
+Las que tapan el cuello enteras van con `collar=False`: ahí el ribete de la
+camiseta sobra, porque la propia pieza hace de cuello. Se corta por debajo del
+faldón y el borde que se ve es su propia silueta recortada en pico, no una
+línea recta. Y con `skin=<altura>` se quitan los hombros al aire del render,
+que es lo que deja sitio a la camiseta.
 
 Para una máscara nueva basta su línea en `SRC`, rasterizar con `rast.js` y
 `pack()`. Si el render trae dos vistas en la misma lámina, `sheet()` las parte

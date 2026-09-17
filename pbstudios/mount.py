@@ -15,20 +15,31 @@ U=do3d.U; SP=do3d.SP
 W=H=900
 TEAL='#0E8C86'
 
-# clave -> (fichero, mitad de la lámina, corte por el cuello, alto de la
-#           cabeza en el lienzo). La altura sale sola: el corte del cuello
-#           tiene que caer dentro del escote.
+# Cada vista: de qué fichero sale, qué mitad de la lámina, dónde cortar el
+# cuello, qué alto ocupa la cabeza, si se espeja y desde dónde quitar la piel
+# desnuda del render (los hombros al aire, que aquí van tapados por la
+# camiseta). La altura sale sola de NECK.
 NECK=670
+def V(f,half='',cut=0.90,k=0.62,flip=False,skin=None,collar=True):
+    # collar=False para las capuchas que bajan hasta el hombro: ahí el ribete
+    # de la camiseta sobra, porque la propia pieza tapa el cuello
+    return dict(f=f,half=half,cut=cut,k=k,flip=flip,skin=skin,collar=collar)
+
 SRC={
- 'batman2-front':('850e419e','L',0.900,0.62),
- 'batman2-close':('850e419e','L',0.900,0.72),
- 'batman2-back' :('850e419e','R',0.880,0.62),
- 'venom-front'  :('10835edc','' ,0.925,0.64),
- 'venom-3q'     :('d33d640f','' ,0.925,0.64),
- 'venom-side'   :('79a76934','' ,0.925,0.64),
+ 'batman2-front':V('850e419e','L',0.900,0.62),
+ 'batman2-close':V('850e419e','L',0.900,0.72),
+ 'batman2-back' :V('850e419e','R',0.880,0.62),
+ 'venom-front'  :V('10835edc','' ,0.925,0.64),
+ 'venom-3q'     :V('d33d640f','' ,0.925,0.64),
+ 'venom-side'   :V('79a76934','' ,0.925,0.64),
+ # el casco rojo solo vino en dos vistas: la tercera es la primera espejada,
+ # que en una pieza simétrica es el otro lado, no un invento
+ 'redbat-3q'    :V('f2545ca9','' ,0.920,0.66,skin=0.70,collar=False),
+ 'redbat-alt'   :V('f2545ca9','' ,0.920,0.66,flip=True,skin=0.70,collar=False),
+ 'redbat-back'  :V('4aeaa1d6','' ,0.940,0.66,skin=0.72,collar=False),
  # estas vienen de foto recortada, no de render: no traen cuello
- 'batman-worn'  :('cut:batman','',1.0,0.66),
- 'ranger-worn'  :('cut:ranger','',1.0,0.66),
+ 'batman-worn'  :V('cut:batman','',1.0,0.66),
+ 'ranger-worn'  :V('cut:ranger','',1.0,0.66),
 }
 
 def sheet(f,half):
@@ -57,7 +68,7 @@ def subject(img):
 
 def head(key):
     """cabeza y cuello, con alfa, cortados justo antes de la ropa"""
-    f,half,cut,_=SRC[key]
+    v=SRC[key]; f,half,cut=v['f'],v['half'],v['cut']
     if f.startswith('cut:'):
         r=cv2.imread(SP+'cut-'+f[4:]+'.png',cv2.IMREAD_UNCHANGED)
         a=cv2.erode(r[:,:,3],np.ones((3,3),np.uint8),iterations=2)
@@ -65,7 +76,7 @@ def head(key):
         h=r.shape[0]                       # la base entra en sombra
         ramp=np.ones(h,np.float32); ramp[int(h*0.70):]=np.linspace(1,0.45,h-int(h*0.70))
         r[:,:,:3]=np.clip(r[:,:,:3].astype(np.float32)*0.95*ramp[:,None,None],0,255).astype(np.uint8)
-        return r
+        return r[:,::-1] if v['flip'] else r
     img=sheet(f,half)
     m=(subject(img)*255).astype(np.uint8)
     # fuera la ropa del render: la camiseta la pone el montaje. Es lo blanco
@@ -73,6 +84,14 @@ def head(key):
     hsv=cv2.cvtColor(img,cv2.COLOR_BGR2HSV)
     low=np.zeros(m.shape,bool); low[int(m.shape[0]*0.82):]=True
     m[low & (hsv[:,:,1]<28) & (hsv[:,:,2]>205)]=0
+    if v['skin'] is not None:
+        # y fuera los hombros al aire: debajo de esa altura ya no hay cara,
+        # así que todo lo que sea piel es lo que va a tapar la camiseta
+        y2=cv2.cvtColor(img,cv2.COLOR_BGR2YCrCb)
+        cr,cb=y2[:,:,1].astype(int), y2[:,:,2].astype(int)
+        sat=hsv[:,:,1].astype(int)
+        bare=np.zeros(m.shape,bool); bare[int(m.shape[0]*v['skin']):]=True
+        m[bare & (cr>131)&(cr<176)&(cb>74)&(cb<132)&(sat<126)]=0
     n,lab,stats,_=cv2.connectedComponentsWithStats((m>0).astype(np.uint8),8)
     if n>1:
         big=1+np.argmax(stats[1:,cv2.CC_STAT_AREA])
@@ -85,7 +104,8 @@ def head(key):
         if 0<=yy<m.shape[0]: m[yy]=(m[yy]*k).astype(np.uint8)
     ys,xs=np.where(m>4)
     y0,y1,x0,x1=ys.min(),ys.max(),xs.min(),xs.max()
-    return np.dstack([img,m])[y0:y1+1,x0:x1+1]
+    out=np.dstack([img,m])[y0:y1+1,x0:x1+1]
+    return out[:,::-1] if v['flip'] else out
 
 LOGO='''<g transform="translate({lx},{ly}) scale({ls})" opacity="1">
   <g fill="none" stroke="#EAF6F3" stroke-width="7" stroke-linecap="round" opacity=".72">
@@ -110,6 +130,15 @@ LOGO='''<g transform="translate({lx},{ly}) scale({ls})" opacity="1">
   </g>
 </g>
 '''
+
+COLLAR='''<!-- el ribete del escote va encima de la cabeza: tapa el corte del cuello -->
+<path d="M348 660 C 366 706, 404 728, 450 728 C 496 728, 534 706, 552 660
+         C 516 650, 384 650, 348 660 Z" fill="#0A7B75"/>
+<path d="M348 660 C 366 706, 404 728, 450 728 C 496 728, 534 706, 552 660"
+      fill="none" stroke="#2AD3C5" stroke-width="5" opacity="0.55"/>
+<path d="M342 664 C 362 718, 402 744, 450 744 C 498 744, 538 718, 558 664"
+      fill="none" stroke="#04413E" stroke-width="9" opacity="0.55"/>
+<ellipse cx="450" cy="700" rx="118" ry="30" fill="#000" opacity="0.30" filter="url(#soft)"/>'''
 
 SVG='''<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}">
 <defs>
@@ -151,14 +180,7 @@ SVG='''<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox=
 
 <image href="{SRC}" x="{MX}" y="{MY}" width="{MW}" height="{MH}" filter="url(#drop)"/>
 
-<!-- el ribete del escote va encima de la cabeza: tapa el corte del cuello -->
-<path d="M348 660 C 366 706, 404 728, 450 728 C 496 728, 534 706, 552 660
-         C 516 650, 384 650, 348 660 Z" fill="#0A7B75"/>
-<path d="M348 660 C 366 706, 404 728, 450 728 C 496 728, 534 706, 552 660"
-      fill="none" stroke="#2AD3C5" stroke-width="5" opacity="0.55"/>
-<path d="M342 664 C 362 718, 402 744, 450 744 C 498 744, 538 718, 558 664"
-      fill="none" stroke="#04413E" stroke-width="9" opacity="0.55"/>
-<ellipse cx="450" cy="700" rx="118" ry="30" fill="#000" opacity="0.30" filter="url(#soft)"/>
+{COLLAR}
 {LOGO}
 </svg>'''
 
@@ -166,11 +188,12 @@ def svg_for(key):
     r=head(key)
     ok,buf=cv2.imencode('.png',r)
     src='data:image/png;base64,'+base64.b64encode(buf.tobytes()).decode()
-    k=SRC[key][3]
+    k=SRC[key]['k']
     mh=int(H*k); mw=int(r.shape[1]*mh/r.shape[0])
     logo=LOGO.format(lx=450-0.5*300*0.44, ly=742, ls=0.44)
     return SVG.format(W=W,H=H,SRC=src,MW=mw,MH=mh,
-                      MX=W//2-mw//2,MY=NECK-mh,LOGO=logo)
+                      MX=W//2-mw//2,MY=NECK-mh,LOGO=logo,
+                      COLLAR=COLLAR if SRC[key]['collar'] else '')
 
 def pack(keys=None):
     out={}
