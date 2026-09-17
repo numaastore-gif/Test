@@ -56,11 +56,12 @@ Las constantes están al principio del `<script>`: `SETUP` (preparación) y `HOU
 Tres, con sus fotos incrustadas en el archivo como data URI (recortadas de las
 capturas, sin la interfaz del móvil, a 820 px y JPEG: unos 900 KB en total):
 
-| Producto | Raw | Pintado | Fotos |
-|---|---|---|---|
-| Casco de Batman | 65 € | 156 € | 3, recortadas de tus capturas |
-| Máscara Venom / Spider-Man | 40 € | 96 € | 3, del pack de Do3D |
-| Casco de Power Ranger amarillo | 55 € | 132 € | 3, recortadas de tus capturas |
+| Producto | Raw | Pintado | Diseñador | Fotos |
+|---|---|---|---|---|
+| Casco de Batman | 65 € | 156 € | Yosh Studios | maniquí + 3 tuyas |
+| Máscara Venom / Spider-Man | 40 € | 96 € | Do3D | 3 del pack, montadas |
+| Casco de Power Ranger amarillo | 55 € | 132 € | — | maniquí + 3 tuyas |
+| Casco de Batman táctico | 78 € | 187 € | Do3D | 3 del pack, montadas |
 
 Los tres comparten el mismo escalón de acabado, que es como se vende de verdad
 una pieza impresa: **raw** ×1 (sin postprocesar, con las capas a la vista),
@@ -172,34 +173,37 @@ Salida a 560 × 560, que es el tamaño de origen, JPEG 92, unos 60 KB cada una.
 En la ficha aparece el distintivo *«Modelo de Do3D, impreso bajo licencia
 comercial»*, que es tanto la atribución como el argumento de venta.
 
-## Un solo maniquí para todas las máscaras
+## Un solo maniquí, con la camiseta de la marca
 
-Regla del catálogo: **toda máscara se enseña puesta en el mismo maniquí**, para
-que las fichas se lean de una pieza y el cliente compare manzanas con manzanas.
+Regla del catálogo: **toda máscara se enseña puesta en el mismo maniquí**, y el
+maniquí lleva camiseta en el verde de PB Studios con el logo estampado en el
+pecho. Lo monta `mount.py` y sale igual venga de donde venga la pieza.
 
-La referencia es el render del pack de Do3D: fondo negro, la máscara llenando
-el encuadre y, abajo, solo el cuello y el arranque de los hombros. El Venom ya
-viene así de fábrica. Para las demás lo monta `worn.py`:
+Cada ficha se construye así, sobre un lienzo de 900 × 900:
 
-1. Recorta la pieza de su foto con alfa, reutilizando el pipeline de
-   `extract.py` y añadiendo dos cosas: rellenar solo los agujeros pequeños,
-   para que no se cuele el fondo que queda entre las aletas del casco y la
-   barbilla, y limpiar los grises sin saturar de las bandas laterales, que son
-   fondo o mano en sombra.
-2. Le come 2 px al borde —en fondo oscuro, el halo claro de la foto original
-   canta— y le hunde la base con una rampa, para que la pieza entre en sombra
-   donde toca el cuello.
-3. La compone sobre el maniquí, dibujado en SVG: cuello y hombros con el tono
-   tomado del propio render de Do3D, sombra de contacto y caída de luz. Se
-   rasteriza con el navegador a 800 × 800.
+1. **La cabeza.** De los renders del pack se conserva cabeza y cuello, que
+   traen la luz buena, y se corta justo antes de la ropa. El corte no es solo
+   una línea horizontal: antes se quita por color la camiseta blanca del
+   render —lo blanco sin saturar del último 18 %— para que no asome nada.
+   Las piezas que vienen de foto entran por su recorte con alfa, sin cuello.
+2. **El torso.** Dibujado en SVG: hombros, mangas con su costura y la camiseta
+   con un degradado diagonal, para que tenga volumen y no parezca un recorte
+   plano de color.
+3. **El escote.** Se dibuja **encima** de la cabeza, no debajo. Es el truco que
+   hace que el corte del cuello no se vea nunca: el ribete lo tapa, como haría
+   una camiseta de verdad.
+4. **El logo.** El mismo `#pbMark` del sitio, reducido a un solo color claro
+   con las caras a distintas opacidades, que es como se estampa de verdad sobre
+   tela. Centrado en el pecho.
 
-El encuadre está en `FIT`: alto de la máscara relativo al lienzo y altura de su
-centro. Es lo único que hay que tocar por pieza.
+Los parámetros por pieza están en `SRC`: fichero, mitad de la lámina cuando el
+render trae dos vistas, dónde cortar el cuello y qué alto ocupa la cabeza. La
+altura sale sola de `NECK`, que es donde tiene que caer el corte para quedar
+dentro del escote.
 
-Para una máscara nueva: se añade la foto al `SETS` de `extract.py`, su entrada
-en el `PICK` de `worn.py` —foto, radio de apertura, recorte por abajo y si hace
-falta limpiar bordes— y su línea en `FIT`. La imagen del maniquí va **la
-primera** de la ficha; las fotos reales de la pieza, detrás.
+Para una máscara nueva basta su línea en `SRC`, rasterizar con `rast.js` y
+`pack()`. Si el render trae dos vistas en la misma lámina, `sheet()` las parte
+sola buscando la columna más vacía del centro.
 
 ## Tratamiento de las fotos
 
