@@ -95,9 +95,12 @@ img,canvas,svg{max-width:100%}
 .btn[disabled]{opacity:.45;cursor:not-allowed;transform:none}
 
 /* ── hero ────────────────────────────────────────────────────────────── */
-.hero{position:relative;background:var(--cacao);color:var(--sobre);overflow:hidden;
-  padding:calc(var(--nav-h) + 2.4rem) 0 0}
-.hero canvas.pour{position:absolute;inset:0;width:100%;height:100%;display:block}
+.hero{position:relative;overflow:hidden;color:var(--sobre);
+  padding:calc(var(--nav-h) + 2.4rem) 0 0;
+  background:
+    radial-gradient(90% 70% at 72% 18%,rgba(217,154,43,.20),transparent 62%),
+    radial-gradient(70% 60% at 10% 90%,rgba(200,118,31,.16),transparent 64%),
+    linear-gradient(170deg,#241611 0%,var(--cacao) 58%)}
 .hero-in{position:relative;z-index:2;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.92fr);
   gap:clamp(1rem,3vw,2.6rem);align-items:center;padding-bottom:clamp(2rem,5vw,4rem)}
 @media(max-width:900px){.hero-in{grid-template-columns:1fr}.hero-art{order:-1}}
@@ -341,7 +344,6 @@ img,canvas,svg{max-width:100%}
 
 <!-- HERO -->
 <section class="hero">
-  <canvas class="pour" id="pour" aria-hidden="true"></canvas>
   <div class="wrap hero-in">
     <div>
       <span class="kicker">Obrador en Coria del Río · desde 1992</span>
@@ -359,7 +361,7 @@ img,canvas,svg{max-width:100%}
     </div>
   </div>
   <div class="wrap cifras">
-    <div><b>10</b><span>sabores en la tienda</span></div>
+    <div><b>12</b><span>productos en la tienda</span></div>
     <div><b>1992</b><span>amasando en Sevilla</span></div>
     <div><b>A diario</b><span>recién hechas, no congeladas</span></div>
     <div><b>51 K</b><span>os asomáis en Instagram</span></div>
@@ -378,8 +380,9 @@ img,canvas,svg{max-width:100%}
     <div class="cab rv">
       <span class="kicker">La tienda</span>
       <h2>Todas las bolas, una por una</h2>
-      <p>Los diez productos de la tienda, con su precio real. Se hacen por encargo cada
-        mañana, así que lo que pidas hoy se amasa mañana.</p>
+      <p>Lo que hay en la tienda, con su precio. Se hacen por encargo cada mañana,
+        así que lo que pidas hoy se amasa mañana. Los precios van sin IVA, como en
+        la tienda; el 10 % se suma en el resumen del pedido.</p>
     </div>
     <div class="filtros rv">
       <div class="chips" id="chips"></div>
@@ -433,8 +436,9 @@ img,canvas,svg{max-width:100%}
     <div class="cab rv">
       <span class="kicker">Tu pedido</span>
       <h2>Monta tu caja</h2>
-      <p>Elige cuántas quieres de cada sabor. El precio se calcula solo, con el IVA ya
-        dentro, y el pedido te sale escrito para mandarlo por correo o por Instagram.</p>
+      <p>Elige cuántas quieres de cada sabor. El precio se calcula solo y el IVA se
+        suma aparte, y el pedido te sale escrito para mandarlo por correo o por
+        Instagram.</p>
     </div>
     <div class="caja">
       <div class="cesta rv" id="cesta"></div>
@@ -442,7 +446,7 @@ img,canvas,svg{max-width:100%}
         <h3>Resumen</h3>
         <div class="fila"><span>Unidades</span><b id="rUds">0</b></div>
         <div class="fila"><span>Sabores distintos</span><b id="rSab">0</b></div>
-        <div class="fila"><span>Base imponible</span><b id="rBase">0,00 €</b></div>
+        <div class="fila"><span>Subtotal sin IVA</span><b id="rBase">0,00 €</b></div>
         <div class="fila"><span>IVA 10 %</span><b id="rIva">0,00 €</b></div>
         <div class="fila total"><span>Total</span><b id="rTotal">0,00 €</b></div>
         <div class="barra-env"><i id="barraEnv"></i></div>
@@ -465,6 +469,19 @@ img,canvas,svg{max-width:100%}
         a otro es el relleno, no la forma de hacerlas.</p>
     </div>
     <div class="pasos rv" id="pasos"></div>
+  </div>
+</section>
+
+<!-- INGREDIENTES -->
+<section class="bloque bloque--crema" id="ingredientes">
+  <div class="wrap">
+    <div class="cab rv">
+      <span class="kicker">Ingredientes y alérgenos</span>
+      <h2>Lo que lleva dentro</h2>
+      <p>Lo que está publicado, tal cual. Del resto de sabores hace falta la lista
+        del obrador: en comida no se pone nada que no esté confirmado.</p>
+    </div>
+    <div class="faq rv" id="ingr"></div>
   </div>
 </section>
 
@@ -548,7 +565,9 @@ const $$=(s,r)=>[...(r||document).querySelectorAll(s)];
 const el=(t,a,h)=>{const n=document.createElement(t);
   for(const k in (a||{})) n.setAttribute(k,a[k]); if(h!=null)n.innerHTML=h; return n;};
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
-const eur=n=>n.toLocaleString('es-ES',{style:'currency',currency:'EUR'});
+/* un producto sin precio confirmado no se formatea: se dice que falta */
+const eur=n=>(n==null||isNaN(n))?'—'
+  :n.toLocaleString('es-ES',{style:'currency',currency:'EUR'});
 const store={get(k,f){try{const v=localStorage.getItem('gz.'+k);return v===null?f:JSON.parse(v);}catch(e){return f;}},
              set(k,v){try{localStorage.setItem('gz.'+k,JSON.stringify(v));}catch(e){}}};
 function toast(m){const t=el('div',{class:'aviso-t'},m);$('#avisos').appendChild(t);
@@ -560,37 +579,44 @@ const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
    10 % ya va dentro, como allí. */
 const PROD=[
  {id:'kinder', n:'Bolas sabor Kinder', c:'Bolas', p:1.70, pop:100, top:true,
-  d:'La más pedida. Crema de avellana con leche dentro de la masa esponjosa.',
+  d:'Crema de avellana con leche dentro de la masa esponjosa. La que más sale.',
   masa:'#C98E55', bano:'#4A2C17', relleno:'#F0DFC2', veta:'#6B4226'},
  {id:'doble', n:'Bolas doble chocolate', c:'Bolas', p:1.70, pop:96, top:true,
-  d:'Chocolate por fuera y chocolate por dentro. Para los que no se andan con medias tintas.',
+  d:'Chocolate por fuera y chocolate por dentro.',
   masa:'#C98E55', bano:'#2E1A10', relleno:'#5A3620', veta:'#3A2015'},
  {id:'blanco', n:'Bolas chocolate blanco', c:'Bolas', p:1.60, pop:92,
-  d:'Baño de chocolate blanco y relleno de lo mismo. Dulce de verdad.',
+  d:'Baño de chocolate blanco y relleno de lo mismo.',
   masa:'#C98E55', bano:'#EFE0C4', relleno:'#F9F2E4', veta:'#E2CDA6'},
- {id:'vainilla', n:'Bolas de crema de vainilla', c:'Bolas', p:1.70, pop:84,
-  d:'Crema de vainilla dentro y recubrimiento de chocolate por fuera.',
+ {id:'vainilla', n:'Bolas con crema de vainilla y recubrimiento de chocolate', c:'Bolas', p:1.70, pop:84,
+  d:'Crema de vainilla dentro, recubrimiento de chocolate por fuera.',
   masa:'#C98E55', bano:'#4A2C17', relleno:'#F6E7BE', veta:'#D9BE85'},
  {id:'cacao', n:'Bolas de cacao y azúcar', c:'Bolas', p:1.50, pop:88,
-  d:'La clásica: rebozada en cacao y azúcar, sin baño. La que menos mancha.',
+  d:'Crujiente por fuera y suave por dentro, con notas intensas de cacao. Rellena de crema de cacao.',
+  ing:'Harina de TRIGO, agua, azúcar, aceite de girasol, levadura seca, azúcar invertido, glucosa, sal y conservantes. Relleno de crema de cacao: azúcar, aceites vegetales (girasol, colza, palma), cacao desgrasado en polvo (7,3 %), emulgente (lecitina de girasol), grasa vegetal de palma y aroma natural de vainilla. Cobertura: agua, azúcar, sirope de glucosa, dextrosa, gelificante (E-440), acidulantes (E-330 y E-331), conservante E-202 y aroma.',
   masa:'#C98E55', bano:'#6B4A33', relleno:'#F0DFC2', veta:'#8A5A3A', azucar:true},
  {id:'pistacho', n:'Bolas de pistacho', c:'Bolas', p:2.23, pop:90, nuevo:true,
-  d:'Crema de pistacho de verdad. La más cara y la que vuela antes.',
+  d:'Crema de pistacho. La más cara de la tienda.',
   masa:'#C98E55', bano:'#4A2C17', relleno:'#A8C66C', veta:'#7E9C48'},
  {id:'alb-choco', n:'Albacao Bombón Choco-Choco', c:'Albacaos', p:1.70, pop:80,
-  d:'El albacao bañado en chocolate y relleno de chocolate. Formato alargado.',
+  d:'Albacao bañado en chocolate y relleno de chocolate.',
   masa:'#C98E55', bano:'#3A2214', relleno:'#6B4226', veta:'#4A2C17', albacao:true},
  {id:'alb-cacao', n:'Albacao con crema de cacao', c:'Albacaos', p:1.50, pop:76,
-  d:'Relleno de crema de cacao, el de toda la vida. El más suave de los albacaos.',
+  d:'Relleno de crema de cacao, el de toda la vida.',
   masa:'#C98E55', bano:'#5A3620', relleno:'#7B4A2A', veta:'#5A3620', albacao:true},
  {id:'alb-blanco', n:'Albacao relleno de chocolate blanco', c:'Albacaos', p:1.60, pop:72,
-  d:'Chocolate blanco dentro, con el contraste del baño oscuro por fuera.',
+  d:'Chocolate blanco dentro, con el baño oscuro por fuera.',
   masa:'#C98E55', bano:'#5A3620', relleno:'#F3E6CF', veta:'#E2CDA6', albacao:true},
  {id:'alb-pistacho', n:'Albacao de pistacho', c:'Albacaos', p:2.10, pop:78, nuevo:true,
-  d:'La versión alargada del pistacho, con más relleno por bocado.',
-  masa:'#C98E55', bano:'#5A3620', relleno:'#A8C66C', veta:'#7E9C48', albacao:true}
+  d:'La versión alargada del pistacho.',
+  masa:'#C98E55', bano:'#5A3620', relleno:'#A8C66C', veta:'#7E9C48', albacao:true},
+ {id:'alb-kinder', n:'Albacao sabor Kinder', c:'Albacaos', p:null, pop:74,
+  d:'El albacao con el relleno de crema de avellana. Está en su tienda; no he podido leer el precio.',
+  masa:'#C98E55', bano:'#4A2C17', relleno:'#F0DFC2', veta:'#6B4226', albacao:true},
+ {id:'canon', n:'Cañón de chocolate relleno de crema de cacao', c:'Cañones', p:null, pop:70,
+  d:'Masa en forma de cañón, bañada en chocolate y rellena de crema de cacao. Está en su tienda; no he podido leer el precio.',
+  masa:'#C98E55', bano:'#4A2C17', relleno:'#7B4A2A', veta:'#5A3620', canon:true}
 ];
-const CATS=['Todas','Bolas','Albacaos'];
+const CATS=['Todas','Bolas','Albacaos','Cañones'];
 const IVA=0.10, CAJA_MIN=12;
 
 const FAQS=[
@@ -623,7 +649,7 @@ function bola(cv,p,o){
   const cx=W/2, cy=H*(o.cy||0.5);
   const R=Math.min(W,H)*(o.r||0.33);
   const gir=o.gir||0;                     /* giro, para el hero */
-  const rx=p.albacao?R*1.22:R, ry=p.albacao?R*0.80:R;
+  const rx=p.albacao?R*1.22:(p.canon?R*0.74:R), ry=p.albacao?R*0.80:(p.canon?R*1.18:R);
 
   /* sombra en el plato */
   c.save();
@@ -716,85 +742,6 @@ function hex(h){
 }
 function mezcla(a,b,t){const x=hex(a),y=hex(b);
   return 'rgb('+x.map((v,i)=>Math.round(v+(y[i]-v)*t)).join(',')+')';}
-
-/* ── 3. El chorro de chocolate del hero ────────────────────────────────
-   Gotas con gravedad que caen, se juntan en el charco de abajo y hacen
-   olas. Para que parezca líquido y no una lluvia de bolitas se dibuja
-   todo en un lienzo aparte con desenfoque y mucho contraste: las manchas
-   que se tocan se funden en una sola. */
-(function chorro(){
-  const cv=$('#pour'); if(!cv) return;
-  const ctx=cv.getContext('2d');
-  const off=document.createElement('canvas'), oc=off.getContext('2d');
-  let W=0,H=0,dpr=1,gotas=[],nivel=0,raf=null,t=0;
-
-  function medir(){
-    const r=cv.getBoundingClientRect();
-    dpr=Math.min(devicePixelRatio||1,1.6);
-    W=Math.max(1,Math.round(r.width)); H=Math.max(1,Math.round(r.height));
-    cv.width=off.width=W*dpr; cv.height=off.height=H*dpr;
-    ctx.setTransform(dpr,0,0,dpr,0,0); oc.setTransform(dpr,0,0,dpr,0,0);
-  }
-  const FUENTES=[0.18,0.46,0.74,0.92];
-  function soltar(){
-    if(gotas.length>190) return;
-    const f=FUENTES[(Math.random()*FUENTES.length)|0];
-    gotas.push({x:W*f+(Math.random()-.5)*W*0.04, y:-20-Math.random()*60,
-                vy:1.1+Math.random()*1.4, vx:(Math.random()-.5)*0.2,
-                r:7+Math.random()*13});
-  }
-  function paso(){
-    t+=0.016;
-    if(!reduce) for(let i=0;i<2;i++) soltar();
-    const suelo=H-nivel;
-    for(let i=gotas.length-1;i>=0;i--){
-      const g=gotas[i];
-      g.vy+=0.28; g.y+=g.vy; g.x+=g.vx;
-      if(g.y>suelo+g.r*0.3){ gotas.splice(i,1); nivel=Math.min(H*0.3,nivel+0.09); }
-    }
-    oc.clearRect(0,0,W,H);
-    oc.fillStyle='#7A4A28';
-    for(const g of gotas){
-      oc.beginPath();
-      oc.ellipse(g.x,g.y,g.r*0.78,g.r*(1+Math.min(.9,g.vy*0.07)),0,0,7); oc.fill();
-    }
-    /* el charco, con su oleaje */
-    oc.beginPath(); oc.moveTo(0,H);
-    for(let x=0;x<=W;x+=12){
-      const y=H-nivel+Math.sin(x*0.018+t*1.5)*5+Math.sin(x*0.047-t*2.1)*2.6;
-      oc.lineTo(x,y);
-    }
-    oc.lineTo(W,H); oc.closePath(); oc.fill();
-
-    ctx.clearRect(0,0,W,H);
-    ctx.save();
-    ctx.filter='blur(9px) contrast(22)';      /* lo que funde las gotas */
-    ctx.drawImage(off,0,0,W,H);
-    ctx.restore();
-    /* un filo de luz por el lado izquierdo del chorro, que es lo que lo hace
-       chocolate líquido y no una mancha */
-    ctx.save();
-    ctx.globalCompositeOperation='source-atop';
-    const gl=ctx.createLinearGradient(0,0,W*0.55,0);
-    gl.addColorStop(0,'rgba(255,214,150,.0)');
-    gl.addColorStop(.5,'rgba(255,214,150,.16)');
-    gl.addColorStop(1,'rgba(0,0,0,.24)');
-    ctx.fillStyle=gl; ctx.fillRect(0,0,W,H);
-    ctx.restore();
-    /* brillo encima del charco, que es lo que lo hace chocolate y no barro */
-    const g2=ctx.createLinearGradient(0,H-nivel-18,0,H);
-    g2.addColorStop(0,'rgba(217,154,43,.30)');
-    g2.addColorStop(.25,'rgba(255,255,255,.07)');
-    g2.addColorStop(1,'rgba(0,0,0,0)');
-    ctx.fillStyle=g2; ctx.fillRect(0,H-nivel-18,W,nivel+18);
-    raf=requestAnimationFrame(paso);
-  }
-  addEventListener('resize',()=>{clearTimeout(window.__pr);
-    window.__pr=setTimeout(()=>{medir();nivel=Math.min(nivel,H*0.3);},200);});
-  document.addEventListener('visibilitychange',()=>{
-    if(document.hidden) cancelAnimationFrame(raf); else raf=requestAnimationFrame(paso);});
-  medir(); nivel=H*0.12; raf=requestAnimationFrame(paso);
-})();
 
 /* el borde de abajo del hero, como el chocolate que escurre */
 (function goteo(){
@@ -1080,15 +1027,20 @@ function pintaRejilla(){
   if(!l.length){ g.appendChild(el('div',{class:'vacio'},
     'No hay nada con esa búsqueda. Prueba con «pistacho» o quita el filtro.')); return; }
   l.forEach(p=>{
-    const t=el('button',{class:'tarjeta',type:'button','aria-label':p.n+', '+eur(p.p)});
+    const t=el('button',{class:'tarjeta',type:'button','aria-label':p.n+(p.p==null?', precio por confirmar':', '+eur(p.p))});
     t.innerHTML='<div class="foto">'+
       (p.nuevo?'<span class="etq">Nuevo</span>':'')+
       (p.top&&!p.nuevo?'<span class="etq etq--oro">Más pedida</span>':'')+
       '<canvas></canvas></div>'+
       '<div class="txt"><span class="cat">'+p.c+'</span><h3>'+p.n+'</h3>'+
       '<p class="dsc">'+p.d+'</p>'+
-      '<div class="precio"><b>'+eur(p.p)+'</b><span>por unidad · IVA incl.</span></div></div>';
-    t.addEventListener('click',()=>{anade(p.id,1);});
+      '<div class="precio">'+(p.p==null
+        ? '<b style="font-size:1.05rem;color:var(--faint)">Precio por confirmar</b>'
+        : '<b>'+eur(p.p)+'</b><span>por unidad · + IVA 10 %</span>')+'</div></div>';
+    t.addEventListener('click',()=>{
+      if(p.p==null){ toast('Ese todavía no tiene precio confirmado'); return; }
+      anade(p.id,1);
+    });
     g.appendChild(t);
     requestAnimationFrame(()=>bola($('canvas',t),p,{r:0.34,mordida:true}));
   });
@@ -1111,24 +1063,25 @@ function fija(id,n){
   store.set('cesta',cesta); pintaCesta(); pintaPanel(); cuenta();
 }
 function totales(){
-  let uds=0,total=0,sab=0;
+  let uds=0,base=0,sab=0;
   for(const id in cesta){
-    const p=PROD.find(x=>x.id===id); if(!p) continue;
-    uds+=cesta[id]; total+=p.p*cesta[id]; sab++;
+    const p=PROD.find(x=>x.id===id); if(!p||p.p==null) continue;
+    uds+=cesta[id]; base+=p.p*cesta[id]; sab++;
   }
-  return {uds,total,sab,base:total/(1+IVA),iva:total-total/(1+IVA)};
+  const iva=base*IVA;
+  return {uds,sab,base,iva,total:base+iva};
 }
 function pintaCesta(){
   const c=$('#cesta'); c.innerHTML='';
-  PROD.forEach(p=>{
+  PROD.filter(p=>p.p!=null).forEach(p=>{
     const n=cesta[p.id]||0;
     const row=el('div',{class:'linea'});
     row.innerHTML='<canvas></canvas>'+
-      '<div class="n">'+p.n+'<small>'+eur(p.p)+' · '+p.c+'</small></div>'+
+      '<div class="n">'+p.n+'<small>'+(p.p==null?'precio por confirmar':eur(p.p)+' + IVA')+' · '+p.c+'</small></div>'+
       '<div class="cant"><button type="button" aria-label="Quitar una">−</button>'+
       '<input type="number" min="0" value="'+n+'" aria-label="Unidades de '+p.n+'">'+
       '<button type="button" aria-label="Añadir una">+</button></div>'+
-      '<div class="sub">'+eur(p.p*n)+'</div>';
+      '<div class="sub">'+(p.p==null?'—':eur(p.p*n))+'</div>';
     const [menos,mas]=$$('button',row);
     menos.addEventListener('click',()=>anade(p.id,-1));
     mas.addEventListener('click',()=>anade(p.id,1));
@@ -1156,7 +1109,8 @@ function texto(){
     const p=PROD.find(x=>x.id===id); if(!p) continue;
     s+='· '+cesta[id]+' × '+p.n+' — '+eur(p.p*cesta[id])+'\n';
   }
-  s+='\nUnidades: '+t.uds+'\nTotal (IVA 10 % incl.): '+eur(t.total);
+  s+='\nUnidades: '+t.uds+'\nSubtotal: '+eur(t.base)+'\nIVA 10 %: '+eur(t.iva)+
+     '\nTotal: '+eur(t.total);
   return s;
 }
 function pintaPanel(){
@@ -1169,7 +1123,7 @@ function pintaPanel(){
       const p=PROD.find(x=>x.id===id); if(!p) continue;
       const row=el('div',{class:'linea'});
       row.innerHTML='<canvas></canvas>'+
-        '<div class="n">'+p.n+'<small>'+cesta[id]+' × '+eur(p.p)+'</small></div>'+
+        '<div class="n">'+p.n+'<small>'+cesta[id]+' × '+eur(p.p)+' + IVA</small></div>'+
         '<div class="sub">'+eur(p.p*cesta[id])+'</div>'+
         '<button class="quitar" aria-label="Quitar">×</button>';
       $('.quitar',row).addEventListener('click',()=>fija(p.id,0));
@@ -1236,6 +1190,22 @@ $$('#menu a').forEach(a=>a.addEventListener('click',()=>{
     if(i===2){ p.bano=p.masa; }
     requestAnimationFrame(()=>bola($('canvas',d2),p,{r:0.40,mordida:i>=2}));
   });
+})();
+
+(function ingredientes(){
+  const c=$('#ingr'); if(!c) return;
+  const con=PROD.filter(p=>p.ing);
+  con.forEach(p=>{
+    const d=el('details');
+    d.innerHTML='<summary>'+p.n+'</summary><p>'+p.ing+'</p>';
+    c.appendChild(d);
+  });
+  const faltan=PROD.filter(p=>!p.ing).map(p=>p.n).join(' · ');
+  const d=el('details');
+  d.innerHTML='<summary>Pendientes de confirmar</summary><p>'+faltan+
+    '. Todos llevan harina de trigo, así que gluten seguro; y según el relleno, '+
+    'leche, huevo y frutos secos. Si hay alergia de por medio, pregunta antes de pedir.</p>';
+  c.appendChild(d);
 })();
 
 (function faq(){
